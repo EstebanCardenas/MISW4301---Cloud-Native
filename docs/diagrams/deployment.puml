@@ -1,0 +1,111 @@
+@startuml deployment
+!define DOCKER ./docs/icons/docker.png
+
+person "User" as user
+
+frame "k8s" {
+   component "users-app-service" as usersAppService
+   component "posts-app-service" as postsAppService
+   component "offers-app-service" as offersAppService
+   component "routes-app-service" as routesAppService
+
+  user ..> usersAppService : "HTTP"
+  user ..> postsAppService : "HTTP"
+  user ..> offersAppService : "HTTP"
+  user ..> routesAppService : "HTTP"
+
+  frame "pod" as usersAppPod {
+    frame "users-app" {
+      frame "<img:DOCKER{scale=0.5}>" as usersAppDocker {
+        component "users_app" as usersAppComponent
+      }
+    }
+  }
+
+  frame "pod" as postsAppPod {
+    frame "posts-app" {
+      frame "<img:DOCKER{scale=0.5}>" as postsAppDocker {
+        component "posts_app" as postsAppComponent
+      }
+    }
+  }
+
+  frame "pod" as offersAppPod {
+    frame "offers-app" {
+      frame "<img:DOCKER{scale=0.5}>" as offersAppDocker {
+        component "offers_app" as offersAppComponent
+      }
+    }
+  }
+
+  frame "pod" as routesAppPod {
+    frame "routes-app" {
+      frame "<img:DOCKER{scale=0.5}>" as routesAppDocker {
+        component "routes_app" as routesAppComponent
+      }
+    }
+  }
+
+  usersAppService --> usersAppComponent
+  postsAppService --> postsAppComponent
+  offersAppService --> offersAppComponent
+  routesAppService --> routesAppComponent
+
+  component "users-db-service" as usersDbService
+  component "posts-db-service" as postsDbService
+  component "offers-db-service" as offersDbService
+  component "routes-db-service" as routesDbService
+
+  usersAppComponent --> usersDbService
+  postsAppComponent --> postsDbService
+  offersAppComponent --> offersDbService
+  routesAppComponent --> routesDbService
+
+  frame "pod" as usersDbPod {
+    frame "users-db" {
+      frame "<img:DOCKER{scale=0.5}>" as usersDbDocker {
+        database "users_db" as usersDbComponent
+      }
+    }
+  }
+
+  frame "pod" as postsDbPod {
+    frame "posts-db" {
+      frame "<img:DOCKER{scale=0.5}>" as postsDbDocker {
+        database "posts_db" as postsDbComponent
+      }
+    }
+  }
+
+  frame "pod" as offersDbPod {
+    frame "offers-db" {
+      frame "<img:DOCKER{scale=0.5}>" as offersDbDocker {
+        database "offers_db" as offersDbComponent
+      }
+    }
+  }
+
+  frame "pod" as routesDbPod {
+    frame "routes-db" {
+      frame "<img:DOCKER{scale=0.5}>" as routesDbDocker {
+        database "routes_db" as routesDbComponent
+      }
+    }
+  }
+
+  usersDbService --> usersDbComponent
+  postsDbService --> postsDbComponent
+  offersDbService --> offersDbComponent
+  routesDbService --> routesDbComponent
+
+  artifact "users-db-volumen" as usersDbVolume
+  artifact "posts-db-volumen" as postsDbVolume
+  artifact "offers-db-volumen" as offersDbVolume
+  artifact "routes-db-volumen" as routesDbVolume
+
+  usersDbComponent --> usersDbVolume
+  postsDbComponent --> postsDbVolume
+  offersDbComponent --> offersDbVolume
+  routesDbComponent --> routesDbVolume
+}
+@enduml
