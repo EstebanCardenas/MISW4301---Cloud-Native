@@ -5,6 +5,7 @@ import "github.com/gin-gonic/gin"
 func sendResponse(
 	ctx *gin.Context,
 	statusCode int,
-	data any) {
+	data any,
+) {
 	ctx.JSON(statusCode, data)
 }

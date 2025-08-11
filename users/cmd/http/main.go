@@ -51,6 +51,7 @@ func main() {
 
 	// Init gin router and start server
 	router := http.NewRouter(
+		tokenService,
 		userHandler,
 		authHandler,
 	)

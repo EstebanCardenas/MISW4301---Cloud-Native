@@ -43,11 +43,15 @@ type UpdateUserRequest struct {
 type UserService interface {
 	CreateUser(ctx context.Context, request *CreateUserRequest) (*CreateUserResponse, error)
 	UpdateUser(ctx context.Context, userId int, request *UpdateUserRequest) error
+	QueryMyself(ctx context.Context, userId uint) (*domain.User, error)
+	GetUserCount(ctx context.Context) (uint, error)
 }
 
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *domain.User) error
 	UpdateUser(ctx context.Context, userId int, user *UpdateUserRequest) error
 	GetUserByUsername(ctx context.Context, username string) (*domain.User, error)
+	GetUserById(ctx context.Context, userId uint) (*domain.User, error)
 	SaveUserToken(ctx context.Context, id uint, tokenResponse *CreateTokenResponse) error
+	GetUserCount(ctx context.Context) (uint, error)
 }

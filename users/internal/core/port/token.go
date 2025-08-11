@@ -4,11 +4,10 @@ import (
 	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
-	"github.com/google/uuid"
 )
 
 type TokenPayload struct {
-	ID uuid.UUID
+	ID uint
 }
 
 type CreateTokenResponse struct {

@@ -68,3 +68,21 @@ func (userService *UserService) UpdateUser(ctx context.Context, userId int, requ
 
 	return nil
 }
+
+func (userServcie *UserService) QueryMyself(ctx context.Context, userId uint) (*domain.User, error) {
+	user, err := userServcie.userRepo.GetUserById(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (userService *UserService) GetUserCount(ctx context.Context) (uint, error) {
+	count, err := userService.userRepo.GetUserCount(ctx)
+	if err != nil {
+		return 0, nil
+	}
+
+	return count, nil
+}

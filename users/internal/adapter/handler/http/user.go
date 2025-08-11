@@ -106,3 +106,34 @@ func (handler *UserHandler) UpdateUser(ctx *gin.Context) {
 		"msg": "el usuario ha sido actualizado",
 	})
 }
+
+func (handler *UserHandler) QueryMyself(ctx *gin.Context) {
+	userId := ctx.MustGet(UserIdKey).(uint)
+	user, err := handler.service.QueryMyself(ctx, userId)
+	if err != nil {
+		sendErrorResponse(ctx, 500, err.Error())
+		return
+	}
+
+	sendResponse(ctx, 200, gin.H{
+		"id":          user.Id,
+		"username":    user.Username,
+		"email":       user.Email,
+		"fullName":    user.FullName,
+		"dni":         user.Dni,
+		"phoneNumber": user.PhoneNumber,
+		"status":      user.Status,
+	})
+}
+
+func (handler *UserHandler) GetUserCount(ctx *gin.Context) {
+	count, err := handler.service.GetUserCount(ctx)
+	if err != nil {
+		sendErrorResponse(ctx, 500, err.Error())
+		return
+	}
+
+	sendResponse(ctx, 200, gin.H{
+		"count": count,
+	})
+}

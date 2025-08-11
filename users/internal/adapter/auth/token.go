@@ -6,7 +6,6 @@ import (
 	"aidanwoods.dev/go-paseto"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
-	"github.com/google/uuid"
 )
 
 /**
@@ -38,16 +37,10 @@ func NewTokenService() port.TokenService {
 
 // CreateToken creates a new paseto token
 func (pt *PasetoToken) CreateToken(user *domain.User) (*port.CreateTokenResponse, error) {
-	id, err := uuid.NewRandom()
-	if err != nil {
-		return nil, domain.ErrTokenCreation
-	}
-
 	payload := &port.TokenPayload{
-		ID: id,
+		ID: user.Id,
 	}
-
-	err = pt.token.Set("payload", payload)
+	err := pt.token.Set("payload", payload)
 	if err != nil {
 		return nil, domain.ErrTokenCreation
 	}

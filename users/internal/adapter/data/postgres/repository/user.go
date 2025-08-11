@@ -102,7 +102,7 @@ func (repo *UserRepository) UpdateUser(ctx context.Context, userId int, request 
 
 func (repo *UserRepository) GetUserByUsername(ctx context.Context, username string) (*domain.User, error) {
 	var userModel models.User
-	result := repo.DB.Where("username = ?", username).First(&userModel)
+	result := repo.DB.Model(&models.User{}).Where("username = ?", username).First(&userModel)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, domain.ErrUserDoesNotExist
@@ -116,7 +116,7 @@ func (repo *UserRepository) GetUserByUsername(ctx context.Context, username stri
 
 func (repo *UserRepository) SaveUserToken(ctx context.Context, id uint, tokenResponse *port.CreateTokenResponse) error {
 	var userModel models.User
-	result := repo.DB.Where("id = ?", id).First(&userModel)
+	result := repo.DB.Model(&models.User{}).Where("id = ?", id).First(&userModel)
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return domain.ErrUserDoesNotExist
@@ -132,4 +132,28 @@ func (repo *UserRepository) SaveUserToken(ctx context.Context, id uint, tokenRes
 	}
 
 	return nil
+}
+
+func (repo *UserRepository) GetUserById(ctx context.Context, userId uint) (*domain.User, error) {
+	var userModel models.User
+	result := repo.DB.Model(&models.User{}).Where("id = ?", userId).First(&userModel)
+	if err := result.Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, domain.ErrUserDoesNotExist
+		}
+		return nil, err
+	}
+
+	return userModel.ToDomainModel(), nil
+}
+
+func (repo *UserRepository) GetUserCount(ctx context.Context) (uint, error) {
+	var usersCount int64
+	res := repo.DB.Model(&models.User{}).Count(&usersCount)
+
+	if err := res.Error; err != nil {
+		return 0, err
+	}
+
+	return uint(usersCount), nil
 }

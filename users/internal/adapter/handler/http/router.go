@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,7 @@ type Router struct {
 }
 
 func NewRouter(
+	tokenService port.TokenService,
 	userHandler *UserHandler,
 	authHandler *AuthHandler,
 ) *Router {
@@ -25,6 +27,8 @@ func NewRouter(
 	usersGroup := router.Group("/users")
 	usersGroup.POST("/", userHandler.CreateUser)
 	usersGroup.PATCH("/:id", userHandler.UpdateUser)
+	usersGroup.GET("/me", authMiddleware(tokenService), userHandler.QueryMyself)
+	usersGroup.GET("/count", userHandler.GetUserCount)
 
 	// Add auth EPs
 	authGroup := usersGroup.Group("/auth")
