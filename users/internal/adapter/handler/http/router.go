@@ -30,6 +30,10 @@ func NewRouter(
 	authGroup := usersGroup.Group("/auth")
 	authGroup.POST("/", authHandler.Login)
 
+	// Add healthcheck
+	pingGroup := usersGroup.Group("/ping")
+	pingGroup.GET("/", healthcheck)
+
 	return &Router{router}
 }
 
@@ -40,4 +44,8 @@ func (router *Router) Serve(addr string) error {
 	}
 
 	return nil
+}
+
+func healthcheck(ctx *gin.Context) {
+	ctx.String(200, "pong")
 }
