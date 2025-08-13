@@ -86,3 +86,12 @@ func (userService *UserService) GetUserCount(ctx context.Context) (uint, error) 
 
 	return count, nil
 }
+
+func (userService *UserService) ResetUsers(ctx context.Context) error {
+	err := userService.userRepo.ResetUsers(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

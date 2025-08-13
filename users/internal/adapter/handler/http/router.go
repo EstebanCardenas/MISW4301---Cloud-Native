@@ -29,6 +29,7 @@ func NewRouter(
 	usersGroup.PATCH("/:id", userHandler.UpdateUser)
 	usersGroup.GET("/me", authMiddleware(tokenService), userHandler.QueryMyself)
 	usersGroup.GET("/count", userHandler.GetUserCount)
+	usersGroup.POST("/reset", userHandler.ResetUsers)
 
 	// Add auth EPs
 	authGroup := usersGroup.Group("/auth")

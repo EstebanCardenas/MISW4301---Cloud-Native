@@ -45,6 +45,7 @@ type UserService interface {
 	UpdateUser(ctx context.Context, userId int, request *UpdateUserRequest) error
 	QueryMyself(ctx context.Context, userId uint) (*domain.User, error)
 	GetUserCount(ctx context.Context) (uint, error)
+	ResetUsers(ctx context.Context) error
 }
 
 type UserRepository interface {
@@ -54,4 +55,5 @@ type UserRepository interface {
 	GetUserById(ctx context.Context, userId uint) (*domain.User, error)
 	SaveUserToken(ctx context.Context, id uint, tokenResponse *CreateTokenResponse) error
 	GetUserCount(ctx context.Context) (uint, error)
+	ResetUsers(ctx context.Context) error
 }

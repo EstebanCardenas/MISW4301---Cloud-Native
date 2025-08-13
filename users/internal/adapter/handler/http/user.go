@@ -30,7 +30,7 @@ type CreateUserRequestBody struct {
 func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 	var reqBody CreateUserRequestBody
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
-		sendErrorResponse(ctx, 400, "Missing fields from request body")
+		sendErrorResponse(ctx, 400, "Invalid create user payload")
 		return
 	}
 
@@ -49,7 +49,7 @@ func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 		case domain.ErrUsernameOrEmailExists:
 			sendErrorResponse(ctx, 412, "Username or email already exists")
 		case domain.ErrInvalidCreateUserPayload:
-			sendErrorResponse(ctx, 400, "Missing fields from request body")
+			sendErrorResponse(ctx, 400, "Missing mandatory fields from request body")
 		default:
 			sendErrorResponse(ctx, 500, err.Error())
 		}
@@ -135,5 +135,16 @@ func (handler *UserHandler) GetUserCount(ctx *gin.Context) {
 
 	sendResponse(ctx, 200, gin.H{
 		"count": count,
+	})
+}
+
+func (handler *UserHandler) ResetUsers(ctx *gin.Context) {
+	err := handler.service.ResetUsers(ctx)
+	if err != nil {
+		sendErrorResponse(ctx, 500, err.Error())
+	}
+
+	sendResponse(ctx, 200, gin.H{
+		"msg": "Todos los datos fueron eliminados",
 	})
 }

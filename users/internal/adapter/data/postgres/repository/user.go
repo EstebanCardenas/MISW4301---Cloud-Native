@@ -157,3 +157,12 @@ func (repo *UserRepository) GetUserCount(ctx context.Context) (uint, error) {
 
 	return uint(usersCount), nil
 }
+
+func (repo *UserRepository) ResetUsers(ctx context.Context) error {
+	result := repo.DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Unscoped().Delete(&models.User{})
+	if err := result.Error; err != nil {
+		return err
+	}
+
+	return nil
+}
