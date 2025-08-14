@@ -9,6 +9,7 @@ import (
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/postgres"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/postgres/repository"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/handler/http"
+	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/hash"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/service"
 	"github.com/joho/godotenv"
 )
@@ -35,6 +36,8 @@ func main() {
 
 	// Token service
 	tokenService := auth.NewTokenService()
+	// Bycrypt service
+	bycryptService := hash.NewBycryptService()
 
 	// Init user
 	userRepo, err := repository.NewUserRepository(conn.DB)
@@ -42,11 +45,11 @@ func main() {
 		slog.Error("Failed to init userRepo", "error", err)
 		os.Exit(1)
 	}
-	userService := service.NewUserService(userRepo)
+	userService := service.NewUserService(userRepo, bycryptService)
 	userHandler := http.NewUserHandler(userService)
 
 	// Init auth
-	authService := service.NewAuthService(userRepo, tokenService)
+	authService := service.NewAuthService(userRepo, tokenService, bycryptService)
 	authHandler := http.NewAuthHandler(authService)
 
 	// Init gin router and start server

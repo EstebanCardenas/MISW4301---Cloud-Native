@@ -5,19 +5,21 @@ import (
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
-	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/service/util"
 	"github.com/hashicorp/go-set/v3"
 )
 
 type UserService struct {
-	userRepo port.UserRepository
+	userRepo    port.UserRepository
+	hashService port.HashService
 }
 
 func NewUserService(
 	repo port.UserRepository,
+	hashService port.HashService,
 ) *UserService {
 	return &UserService{
-		userRepo: repo,
+		userRepo:    repo,
+		hashService: hashService,
 	}
 }
 
@@ -28,7 +30,7 @@ func (userService *UserService) CreateUser(ctx context.Context, request *port.Cr
 
 	user := request.ToDomainModel()
 
-	hasedPwd, salt, err := util.HashPassword(user.Password)
+	hasedPwd, salt, err := userService.hashService.HashPassword(user.Password)
 	if err != nil {
 		return nil, domain.ErrInternal
 	}

@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -31,7 +30,6 @@ func NewPostgressConn() (*PostgresConn, error) {
 			dsn += " "
 		}
 	}
-	slog.Info("Current DSN", "dsn", dsn)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err

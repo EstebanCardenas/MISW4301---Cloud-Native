@@ -5,16 +5,22 @@ import (
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
-	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/service/util"
 )
 
 type AuthService struct {
 	userRepo     port.UserRepository
 	tokenService port.TokenService
+	hashService  port.HashService
 }
 
-func NewAuthService(repo port.UserRepository, tokenService port.TokenService) *AuthService {
-	return &AuthService{repo, tokenService}
+func NewAuthService(
+	repo port.UserRepository,
+	tokenService port.TokenService,
+	hashService port.HashService,
+) *AuthService {
+	return &AuthService{
+		repo, tokenService, hashService,
+	}
 }
 
 func (service *AuthService) Login(ctx context.Context, req *port.LoginRequest) (*port.LoginResponse, error) {
@@ -27,7 +33,7 @@ func (service *AuthService) Login(ctx context.Context, req *port.LoginRequest) (
 		return nil, err
 	}
 
-	err = util.ComparePassword(req.Password, user.Password)
+	err = service.hashService.ComparePassword(req.Password, user.Password)
 	if err != nil {
 		return nil, domain.ErrUserDoesNotExist
 	}

@@ -1,4 +1,4 @@
-package util
+package hash
 
 import (
 	"errors"
@@ -7,8 +7,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type BycryptService struct{}
+
+func NewBycryptService() *BycryptService {
+	return &BycryptService{}
+}
+
 // HashPassword hashes input password using bcrypt and returns the hashed password and its salt
-func HashPassword(password string) (string, string, error) {
+func (service *BycryptService) HashPassword(password string) (string, string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", "", err
@@ -26,6 +32,6 @@ func HashPassword(password string) (string, string, error) {
 }
 
 // ComparePassword compares input password with hashed password
-func ComparePassword(password, hashedPassword string) error {
+func (service *BycryptService) ComparePassword(password, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
