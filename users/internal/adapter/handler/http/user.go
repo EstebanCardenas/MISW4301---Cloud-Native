@@ -51,7 +51,7 @@ func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 		case domain.ErrInvalidCreateUserPayload:
 			sendErrorResponse(ctx, 400, "Missing mandatory fields from request body")
 		default:
-			sendErrorResponse(ctx, 500, err.Error())
+			sendErrorResponse(ctx, 500, "Internal server error")
 		}
 		return
 	}
@@ -111,7 +111,7 @@ func (handler *UserHandler) QueryMyself(ctx *gin.Context) {
 	userId := ctx.MustGet(UserIdKey).(uint)
 	user, err := handler.service.QueryMyself(ctx, userId)
 	if err != nil {
-		sendErrorResponse(ctx, 500, err.Error())
+		sendErrorResponse(ctx, 500, "Internal server error")
 		return
 	}
 
@@ -129,7 +129,7 @@ func (handler *UserHandler) QueryMyself(ctx *gin.Context) {
 func (handler *UserHandler) GetUserCount(ctx *gin.Context) {
 	count, err := handler.service.GetUserCount(ctx)
 	if err != nil {
-		sendErrorResponse(ctx, 500, err.Error())
+		sendErrorResponse(ctx, 500, "Internal server error")
 		return
 	}
 
@@ -141,7 +141,8 @@ func (handler *UserHandler) GetUserCount(ctx *gin.Context) {
 func (handler *UserHandler) ResetUsers(ctx *gin.Context) {
 	err := handler.service.ResetUsers(ctx)
 	if err != nil {
-		sendErrorResponse(ctx, 500, err.Error())
+		sendErrorResponse(ctx, 500, "Internal server error")
+		return
 	}
 
 	sendResponse(ctx, 200, gin.H{

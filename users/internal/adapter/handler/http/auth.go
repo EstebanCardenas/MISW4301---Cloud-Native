@@ -43,7 +43,7 @@ func (handler *AuthHandler) Login(ctx *gin.Context) {
 		case domain.ErrUserDoesNotExist:
 			sendErrorResponse(ctx, 404, "Username or password are incorrect")
 		default:
-			sendErrorResponse(ctx, 500, err.Error())
+			sendErrorResponse(ctx, 500, "Internal server error")
 		}
 		return
 	}
