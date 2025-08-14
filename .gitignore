@@ -208,3 +208,6 @@ __marimo__/
 
 .DS_STORE
 /.idea
+
+# BD test
+test.db

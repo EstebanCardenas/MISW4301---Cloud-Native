@@ -1,0 +1,61 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ==== ENTIDADES ====
+
+class User {
+    +id: uuid
+    +username: String
+    +email: String
+    +phoneNumber: String
+    +dni: String
+    +fullName: String
+    +password: String
+    +salt: String
+    +token: String
+    +status: String <<POR_VERIFICAR | NO_VERIFICADO | VERIFICADO>>
+    +expireAt: DateTime
+    +createdAt: DateTime
+    +updatedAt: DateTime
+}
+
+class Route {
+    +id: uuid
+    +flightId: String
+    +sourceAirportCode: String
+    +sourceCountry: String
+    +destinyAirportCode: String
+    +destinyCountry: String
+    +bagCost: Integer
+    +plannedStartDate: DateTime
+    +plannedEndDate: DateTime
+    +createdAt: DateTime
+    +updatedAt: DateTime
+}
+
+class Post {
+    +id: uuid
+    +routeId: String
+    +userId: String
+    +expireAt: DateTime
+    +createdAt: DateTime
+}
+
+class Offer {
+    +id: uuid
+    +postId: String
+    +userId: String
+    +description: String <<max 140 chars>>
+    +size: String <<LARGE | MEDIUM | SMALL>>
+    +fragile: Boolean
+    +offer: Number
+    +createdAt: DateTime
+}
+
+
+' ==== RELACIONES ====
+User "1" -- "*" Post
+Post "1" -- "1" Route
+Post "1" -- "*" Offer
+
+@enduml

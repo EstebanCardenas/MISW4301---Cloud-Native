@@ -8,86 +8,46 @@ on:
     branches:
       - main
 jobs:
-  users_app:
+  verify-app:
     runs-on: ubuntu-latest
-    name: Verify users_app
-    if: ${{ hashFiles('users_app/**') != '' }}
     strategy:
       fail-fast: true
+      matrix:
+        app: [users_app, offers_app, posts_app, routes_app]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - name: Set up Poetry
-        uses: abatilo/actions-poetry@v3
-        with:
-          poetry-version: 2.1.1
-      - name: Run linter checkers in users_app
-        run: make lintcheck DIR=users_app
-      - name: Run unit tests
-        run: make unittest DIR=users_app
 
-  offers_app:
-    runs-on: ubuntu-latest
-    name: Verify offers_app
-    if: ${{ hashFiles('offers_app/**') != '' }}
-    strategy:
-      fail-fast: true
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - name: Set up Poetry
-        uses: abatilo/actions-poetry@v3
-        with:
-          poetry-version: 2.1.1
-      - name: Run linter checkers in offers_app
-        run: make lintcheck DIR=offers_app
-      - name: Run unit tests
-        run: make unittest DIR=offers_app
+      - name: Check if folder exists
+        id: check_folder
+        run: |
+          if [ -d "${{ matrix.app }}" ]; then
+            echo "exists=true" >> $GITHUB_ENV
+          else
+            echo "exists=false" >> $GITHUB_ENV
+          fi
 
-  posts_app:
-    runs-on: ubuntu-latest
-    name: Verify posts_app
-    if: ${{ hashFiles('posts_app/**') != '' }}
-    strategy:
-      fail-fast: true
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - name: Set up Poetry
-        uses: abatilo/actions-poetry@v3
-        with:
-          poetry-version: 2.1.1
-      - name: Run linter checkers in posts_app
-        run: make lintcheck DIR=posts_app
-      - name: Run unit tests
-        run: make unittest DIR=posts_app
+      - name: Stop if folder missing
+        if: env.exists == 'false'
+        run: |
+          echo "Skipping because folder '${{ matrix.app }}' does not exist."
+          exit 0
 
-  routes_app:
-    runs-on: ubuntu-latest
-    name: Verify routes_app
-    if: ${{ hashFiles('routes_app/**') != '' }}
-    strategy:
-      fail-fast: true
-    steps:
-      - uses: actions/checkout@v4
       - name: Set up Python
+        if: env.exists == 'true'
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: 3.12
+
       - name: Set up Poetry
+        if: env.exists == 'true'
         uses: abatilo/actions-poetry@v3
         with:
           poetry-version: 2.1.1
-      - name: Run linter checkers in routes_app
-        run: make lintcheck DIR=routes_app
-      - name: Run unit tests
-        run: make unittest DIR=routes_app
+
+      - name: Run linter checkers in ${{ matrix.app }}
+        if: env.exists == 'true'
+        run: make lintcheck DIR=${{ matrix.app }}
+
+      - name: Run unit tests in ${{ matrix.app }}
+        if: env.exists == 'true'
+        run: make unittest DIR=${{ matrix.app }}
