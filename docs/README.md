@@ -17,3 +17,37 @@ Líder: Andrés Donoso
 4. En todos los trabajos grupales el equipo se compromete a aspirar a una nota de 5. 
 5. Se definen las siguientes herramientas de colaboración adicionales: Google Docs para edición de documentos, Slack/WhatsApp para preguntas, Zoom para reuniones, Slides para edición de diapositivas. 
 6. Comunicar a tiempo algún contratiempo que no permita subirse a las reuniones o cumplir a tiempo una actividad, con el fin de que el equipo brinde el soporte en caso de ser necesario. 
+
+# Tecnologías
+1. Lenguajes: Python - Framework: FastAPI
+2. Librerías de pruebas: pytest y httpx
+3. Base de datos: PostgreSQL (producción), SQLite (pruebas)
+4. ORM: SQLAlchemy
+5. Serialización/validación: Pydantic
+6. Servidor ASGI: Uvicorn
+7. Manejo de dependencias: pip
+8. Ejecución entorno de desarrollo
+   1. Instalar dependencias: `pip install -r requirements.txt`
+   2. Levantar servidor local `uvicorn app.main:app --reload`
+9. Ejecución de Pruebas
+   1. Para ejecutar todas las pruebas: `pytest`
+   2. Para incruir reoporte de cobertura: `pytest --cov=app` (debe tener instalado pytest-cov `pip install pytest-cov`)
+10. Despliegue: Docker
+
+## Vistas de arquitectura
+
+* Vista de información
+
+![Vista de información](./diagrams/entities.png "Vista de información")
+
+* Vista funcional
+  
+![Vista funcional](./diagrams/components.png "Vista funcional")
+
+* Vista de despliegue
+
+![Vista de despliegue](./diagrams/deployment.png "Vista de despliegue")
+
+![Vista de red](./diagrams/networks.png "Vista de red")
+
+* Vista de desarrollo
