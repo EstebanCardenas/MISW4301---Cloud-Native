@@ -12,11 +12,11 @@ team:
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/253/views/1
 docs: <link al github pages del equipo>
 users_app:
-  folder: <nombre de la carpeta donde está la aplicación de usuarios>
+  folder: users
   image_name: <nombre de la imagen de la aplicación de usuarios, mismo que el nombre en el archivo de despliegue de k8s>
   image_tag: <tag de la imagen de la aplicación de usuarios, por ejemplo: latest, v1.0.0. Debe ser el mismo que el tag en el archivo de despliegue de k8s>
   authors:
-    - <usuario uniandes>
+    - ne.cardenas
 posts_app:
   folder: posts_app
   image_name: <nombre de la imagen de la aplicación de publicaciones, mismo que el nombre en el archivo de despliegue de k8s>
