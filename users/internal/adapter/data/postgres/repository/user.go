@@ -144,6 +144,7 @@ func (repo *UserRepository) SaveUserToken(ctx context.Context, id uuid.UUID) (ti
 	userModel.Token = &id
 	expireAt := time.Now().Add(time.Hour * 48)
 	userModel.ExpireAt = &expireAt
+	userModel.UpdatedAt = time.Now()
 	saveRes := repo.DB.Save(&userModel)
 	if err := saveRes.Error; err != nil {
 		return time.Time{}, err
