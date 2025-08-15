@@ -7,23 +7,23 @@ import (
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/auth/mock"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
-	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAuthMiddleware(t *testing.T) {
 	router := gin.Default()
-	mockTokenService := &mock.MockPasetoToken{}
+	mockTokenService := &mock.MockTokenService{}
 	dummyHandler := func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"message": "success"})
 	}
 	router.GET("/protected", authMiddleware(mockTokenService), dummyHandler)
 
 	t.Run("successful authentication", func(t *testing.T) {
-		payload := &port.TokenPayload{ID: 1}
-		mockTokenService.VerifyTokenFunc = func(token string) (*port.TokenPayload, error) {
-			return payload, nil
+		id := uuid.New()
+		mockTokenService.VerifyTokenFunc = func(token string) (*uuid.UUID, error) {
+			return &id, nil
 		}
 		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
 		req.Header.Set("Authorization", "Bearer valid-token")
@@ -43,7 +43,7 @@ func TestAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("expired token", func(t *testing.T) {
-		mockTokenService.VerifyTokenFunc = func(token string) (*port.TokenPayload, error) {
+		mockTokenService.VerifyTokenFunc = func(token string) (*uuid.UUID, error) {
 			return nil, domain.ErrExpiredToken
 		}
 		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)
@@ -55,7 +55,7 @@ func TestAuthMiddleware(t *testing.T) {
 	})
 
 	t.Run("invalid token", func(t *testing.T) {
-		mockTokenService.VerifyTokenFunc = func(token string) (*port.TokenPayload, error) {
+		mockTokenService.VerifyTokenFunc = func(token string) (*uuid.UUID, error) {
 			return nil, domain.ErrInvalidToken
 		}
 		req, _ := http.NewRequest(http.MethodGet, "/protected", nil)

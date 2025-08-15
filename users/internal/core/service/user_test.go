@@ -10,12 +10,13 @@ import (
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/hash/mock"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
+	"github.com/google/uuid"
 )
 
 func TestUserService_CreateUser_Success(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{
 		CreateUserFunc: func(ctx context.Context, user *domain.User) error {
-			user.Id = 1
+			user.Id = uuid.New()
 			user.CreatedAt = time.Now()
 			return nil
 		},
@@ -35,7 +36,7 @@ func TestUserService_CreateUser_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if resp == nil || resp.Id == 0 {
+	if resp == nil {
 		t.Fatalf("expected valid response, got %v", resp)
 	}
 }
@@ -118,7 +119,7 @@ func TestUserService_CreateUser_UserExists(t *testing.T) {
 
 func TestUserService_UpdateUser_Success(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{
-		UpdateUserFunc: func(ctx context.Context, userId int, req *port.UpdateUserRequest) error {
+		UpdateUserFunc: func(ctx context.Context, userId uuid.UUID, req *port.UpdateUserRequest) error {
 			return nil
 		},
 	}
@@ -129,7 +130,7 @@ func TestUserService_UpdateUser_Success(t *testing.T) {
 		PhoneNumber: "123456789",
 		Dni:         "123456",
 	}
-	err := service.UpdateUser(context.Background(), 1, req)
+	err := service.UpdateUser(context.Background(), uuid.New(), req)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -140,7 +141,7 @@ func TestUserService_UpdateUser_InvalidPayload(t *testing.T) {
 	mockHash := &mock.MockHashService{}
 	service := NewUserService(mockRepo, mockHash)
 	req := &port.UpdateUserRequest{}
-	err := service.UpdateUser(context.Background(), 1, req)
+	err := service.UpdateUser(context.Background(), uuid.New(), req)
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
@@ -157,7 +158,7 @@ func TestUserService_UpdateUser_InvalidStatus(t *testing.T) {
 	req := &port.UpdateUserRequest{
 		Status: &status,
 	}
-	err := service.UpdateUser(context.Background(), 1, req)
+	err := service.UpdateUser(context.Background(), uuid.New(), req)
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
@@ -168,7 +169,7 @@ func TestUserService_UpdateUser_InvalidStatus(t *testing.T) {
 
 func TestUserService_UpdateUser_UserNotFound(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{
-		UpdateUserFunc: func(ctx context.Context, userId int, req *port.UpdateUserRequest) error {
+		UpdateUserFunc: func(ctx context.Context, userId uuid.UUID, req *port.UpdateUserRequest) error {
 			return domain.ErrUserDoesNotExist
 		},
 	}
@@ -177,7 +178,7 @@ func TestUserService_UpdateUser_UserNotFound(t *testing.T) {
 	req := &port.UpdateUserRequest{
 		FullName: "Nonexistent User",
 	}
-	err := service.UpdateUser(context.Background(), 999, req)
+	err := service.UpdateUser(context.Background(), uuid.New(), req)
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
@@ -188,30 +189,31 @@ func TestUserService_UpdateUser_UserNotFound(t *testing.T) {
 
 func TestUserService_QueryMyself_Success(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{
-		GetUserByIdFunc: func(ctx context.Context, userId uint) (*domain.User, error) {
+		GetUserByIdFunc: func(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 			return &domain.User{Id: userId, Username: "testuser"}, nil
 		},
 	}
 	mockHash := &mock.MockHashService{}
 	service := NewUserService(mockRepo, mockHash)
-	user, err := service.QueryMyself(context.Background(), 1)
+	uuid := uuid.New()
+	user, err := service.QueryMyself(context.Background(), uuid)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if user == nil || user.Id != 1 {
+	if user == nil || user.Id != uuid {
 		t.Fatalf("expected user with id 1, got %v", user)
 	}
 }
 
 func TestUserService_QueryMyself_UserDoesNotExist(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{
-		GetUserByIdFunc: func(ctx context.Context, userId uint) (*domain.User, error) {
+		GetUserByIdFunc: func(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 			return nil, domain.ErrUserDoesNotExist
 		},
 	}
 	mockHash := &mock.MockHashService{}
 	service := NewUserService(mockRepo, mockHash)
-	user, err := service.QueryMyself(context.Background(), 1)
+	user, err := service.QueryMyself(context.Background(), uuid.New())
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}

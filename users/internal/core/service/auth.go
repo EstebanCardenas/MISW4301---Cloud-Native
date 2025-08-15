@@ -38,19 +38,14 @@ func (service *AuthService) Login(ctx context.Context, req *port.LoginRequest) (
 		return nil, domain.ErrUserDoesNotExist
 	}
 
-	tokenRes, err := service.tokenService.CreateToken(user)
-	if err != nil {
-		return nil, err
-	}
-
-	err = service.userRepo.SaveUserToken(ctx, user.Id, tokenRes)
+	expireAt, err := service.userRepo.SaveUserToken(ctx, user.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	return &port.LoginResponse{
 		Id:       user.Id,
-		Token:    tokenRes.Token,
-		ExpireAt: &tokenRes.ExpireAt,
+		Token:    user.Id,
+		ExpireAt: &expireAt,
 	}, nil
 }

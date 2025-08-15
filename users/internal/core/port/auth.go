@@ -3,6 +3,8 @@ package port
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type LoginRequest struct {
@@ -11,8 +13,8 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Id       uint
-	Token    string
+	Id       uuid.UUID
+	Token    uuid.UUID
 	ExpireAt *time.Time
 }
 

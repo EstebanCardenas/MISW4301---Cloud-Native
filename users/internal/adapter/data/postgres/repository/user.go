@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"fmt"
-	"log/slog"
+	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/postgres/models"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -37,13 +38,31 @@ func (repo *UserRepository) CreateUser(ctx context.Context, user *domain.User) e
 		return domain.ErrUsernameOrEmailExists
 	}
 
+	// Create UUID
+	newUuid, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+	var usersWithUuidCount int64
+	repo.DB.Model(&models.User{}).Where("id = ?", newUuid).Count(&usersWithUuidCount)
+	for usersWithUuidCount > 0 {
+		newUuid, err = uuid.NewRandom()
+		if err != nil {
+			return err
+		}
+		repo.DB.Model(&models.User{}).Where("id = ?", newUuid).Count(&usersWithUuidCount)
+	}
+
 	// Create user in DB
 	userModel := models.User{
-		Username: user.Username,
-		Password: user.Password,
-		Email:    user.Email,
-		Salt:     user.Salt,
-		Status:   user.Status,
+		ID:        newUuid,
+		Username:  user.Username,
+		Password:  user.Password,
+		Email:     user.Email,
+		Salt:      user.Salt,
+		Status:    user.Status,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 	if user.Dni != nil {
 		dni := fmt.Sprint(*user.Dni)
@@ -59,7 +78,7 @@ func (repo *UserRepository) CreateUser(ctx context.Context, user *domain.User) e
 	}
 
 	ctxBackground := context.Background()
-	err := gorm.G[models.User](repo.DB).Create(
+	err = gorm.G[models.User](repo.DB).Create(
 		ctxBackground,
 		&userModel,
 	)
@@ -67,21 +86,18 @@ func (repo *UserRepository) CreateUser(ctx context.Context, user *domain.User) e
 		return err
 	}
 	user.Id = userModel.ID
-	user.CreatedAt = userModel.CreatedAt
 
 	return nil
 }
 
-func (repo *UserRepository) UpdateUser(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+func (repo *UserRepository) UpdateUser(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 	var userCount int64
-	slog.Info("User id", "id", userId)
 	repo.DB.Model(&models.User{}).Where("id = ?", userId).Count(&userCount)
 	if userCount == 0 {
 		return domain.ErrUserDoesNotExist
 	}
 
-	userModel := models.User{}
-	userModel.ID = uint(userId)
+	userModel := models.User{ID: userId}
 	repo.DB.First(&userModel)
 	if request.Status != nil {
 		userModel.Status = *request.Status
@@ -95,6 +111,7 @@ func (repo *UserRepository) UpdateUser(ctx context.Context, userId int, request 
 	if request.PhoneNumber != "" {
 		userModel.PhoneNumber = &request.PhoneNumber
 	}
+	userModel.UpdatedAt = time.Now()
 	repo.DB.Save(&userModel)
 
 	return nil
@@ -114,27 +131,28 @@ func (repo *UserRepository) GetUserByUsername(ctx context.Context, username stri
 	return domainUser, nil
 }
 
-func (repo *UserRepository) SaveUserToken(ctx context.Context, id uint, tokenResponse *port.CreateTokenResponse) error {
+func (repo *UserRepository) SaveUserToken(ctx context.Context, id uuid.UUID) (time.Time, error) {
 	var userModel models.User
 	result := repo.DB.Model(&models.User{}).Where("id = ?", id).First(&userModel)
 	if err := result.Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return domain.ErrUserDoesNotExist
+			return time.Time{}, domain.ErrUserDoesNotExist
 		}
-		return err
+		return time.Time{}, err
 	}
 
-	userModel.Token = &tokenResponse.Token
-	userModel.ExpireAt = &tokenResponse.ExpireAt
+	userModel.Token = &id
+	expireAt := time.Now().Add(time.Hour * 48)
+	userModel.ExpireAt = &expireAt
 	saveRes := repo.DB.Save(&userModel)
 	if err := saveRes.Error; err != nil {
-		return err
+		return time.Time{}, err
 	}
 
-	return nil
+	return expireAt, nil
 }
 
-func (repo *UserRepository) GetUserById(ctx context.Context, userId uint) (*domain.User, error) {
+func (repo *UserRepository) GetUserById(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 	var userModel models.User
 	result := repo.DB.Model(&models.User{}).Where("id = ?", userId).First(&userModel)
 	if err := result.Error; err != nil {

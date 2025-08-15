@@ -2,6 +2,8 @@ package domain
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type UserStatus string
@@ -17,7 +19,7 @@ var UserStatusValues = []UserStatus{
 }
 
 type User struct {
-	Id          uint
+	Id          uuid.UUID
 	Username    string
 	Email       string
 	PhoneNumber *string
@@ -25,7 +27,7 @@ type User struct {
 	FullName    *string
 	Password    string
 	Salt        string
-	Token       *string
+	Token       *uuid.UUID
 	Status      UserStatus
 	ExpireAt    *time.Time
 	CreatedAt   time.Time

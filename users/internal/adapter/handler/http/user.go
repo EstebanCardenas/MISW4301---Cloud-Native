@@ -1,13 +1,12 @@
 package http
 
 import (
-	"log/slog"
-	"strconv"
 	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -44,7 +43,6 @@ func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 	}
 	res, err := handler.service.CreateUser(ctx, &createUserReq)
 	if err != nil {
-		slog.Info("Error while creating user", "error", err)
 		switch err {
 		case domain.ErrUsernameOrEmailExists:
 			sendErrorResponse(ctx, 412, "Username or email already exists")
@@ -76,7 +74,7 @@ func (handler *UserHandler) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(ctx.Param("id"))
+	id, err := uuid.Parse(ctx.Param("id"))
 	if err != nil {
 		sendErrorResponse(ctx, 400, "Invalid user ID")
 		return
@@ -108,8 +106,9 @@ func (handler *UserHandler) UpdateUser(ctx *gin.Context) {
 }
 
 func (handler *UserHandler) QueryMyself(ctx *gin.Context) {
-	userId := ctx.MustGet(UserIdKey).(uint)
-	user, err := handler.service.QueryMyself(ctx, userId)
+	userIdStr := ctx.GetString(UserIdKey)
+	id, _ := uuid.Parse(userIdStr)
+	user, err := handler.service.QueryMyself(ctx, id)
 	if err != nil {
 		sendErrorResponse(ctx, 500, "Internal server error")
 		return

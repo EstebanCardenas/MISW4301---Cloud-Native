@@ -3,9 +3,9 @@ module github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/u
 go 1.24.4
 
 require (
-	aidanwoods.dev/go-paseto v1.5.4
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
+	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-set/v3 v3.0.1
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.10.0
@@ -16,7 +16,6 @@ require (
 )
 
 require (
-	aidanwoods.dev/go-result v0.3.1 // indirect
 	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect

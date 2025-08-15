@@ -1,6 +1,8 @@
 package http
 
 import (
+	"fmt"
+
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/gin-gonic/gin"
@@ -42,7 +44,7 @@ func authMiddleware(tokenService port.TokenService) gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set(UserIdKey, payload.ID)
+		ctx.Set(UserIdKey, fmt.Sprint(*payload))
 		ctx.Next()
 	}
 }

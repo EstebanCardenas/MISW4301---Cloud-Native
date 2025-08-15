@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
-	"gorm.io/gorm"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	gorm.Model
+	ID          uuid.UUID `gorm:"type:uuid"`
 	Username    string
 	Email       string
 	PhoneNumber *string
@@ -16,9 +16,11 @@ type User struct {
 	FullName    *string
 	Password    string
 	Salt        string
-	Token       *string
+	Token       *uuid.UUID
 	Status      domain.UserStatus
 	ExpireAt    *time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 func (user *User) ToDomainModel() *domain.User {

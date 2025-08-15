@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
+	"github.com/google/uuid"
 )
 
 type CreateUserRequest struct {
@@ -29,7 +30,7 @@ func (req *CreateUserRequest) ToDomainModel() *domain.User {
 }
 
 type CreateUserResponse struct {
-	Id        uint
+	Id        uuid.UUID
 	CreatedAt time.Time
 }
 
@@ -42,18 +43,18 @@ type UpdateUserRequest struct {
 
 type UserService interface {
 	CreateUser(ctx context.Context, request *CreateUserRequest) (*CreateUserResponse, error)
-	UpdateUser(ctx context.Context, userId int, request *UpdateUserRequest) error
-	QueryMyself(ctx context.Context, userId uint) (*domain.User, error)
+	UpdateUser(ctx context.Context, userId uuid.UUID, request *UpdateUserRequest) error
+	QueryMyself(ctx context.Context, userId uuid.UUID) (*domain.User, error)
 	GetUserCount(ctx context.Context) (uint, error)
 	ResetUsers(ctx context.Context) error
 }
 
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *domain.User) error
-	UpdateUser(ctx context.Context, userId int, user *UpdateUserRequest) error
+	UpdateUser(ctx context.Context, userId uuid.UUID, user *UpdateUserRequest) error
 	GetUserByUsername(ctx context.Context, username string) (*domain.User, error)
-	GetUserById(ctx context.Context, userId uint) (*domain.User, error)
-	SaveUserToken(ctx context.Context, id uint, tokenResponse *CreateTokenResponse) error
+	GetUserById(ctx context.Context, userId uuid.UUID) (*domain.User, error)
+	SaveUserToken(ctx context.Context, id uuid.UUID) (time.Time, error)
 	GetUserCount(ctx context.Context) (uint, error)
 	ResetUsers(ctx context.Context) error
 }

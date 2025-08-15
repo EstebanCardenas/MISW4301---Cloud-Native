@@ -3,11 +3,11 @@ package repository
 import (
 	"fmt"
 	"testing"
-	"time"
 
 	mockData "github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/mock"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
+	"github.com/google/uuid"
 )
 
 func TestUserRepository_CreateUser_Success(t *testing.T) {
@@ -154,7 +154,7 @@ func TestUserRepository_UpdateUser_Success(t *testing.T) {
 		FullName:    "Updated Name",
 		PhoneNumber: "123456789",
 	}
-	err = repo.UpdateUser(t.Context(), int(user.Id), req)
+	err = repo.UpdateUser(t.Context(), user.Id, req)
 	if err != nil {
 		t.Fatalf("UpdateUser failed: %v", err)
 	}
@@ -188,7 +188,7 @@ func TestUserRepository_UpdateUser_UserDoesNotExist(t *testing.T) {
 		FullName:    "Updated Name",
 		PhoneNumber: "123456789",
 	}
-	err := repo.UpdateUser(t.Context(), 9999, req)
+	err := repo.UpdateUser(t.Context(), uuid.New(), req)
 	if err != domain.ErrUserDoesNotExist {
 		t.Errorf("expected ErrUserDoesNotExist, got %v", err)
 	}
@@ -213,7 +213,7 @@ func TestUserRepository_UpdateUser_PartialUpdate(t *testing.T) {
 	req := &port.UpdateUserRequest{
 		FullName: "Partial Name",
 	}
-	err = repo.UpdateUser(t.Context(), int(user.Id), req)
+	err = repo.UpdateUser(t.Context(), user.Id, req)
 	if err != nil {
 		t.Fatalf("UpdateUser failed: %v", err)
 	}
@@ -264,7 +264,7 @@ func TestUserRepository_UpdateUser_EmptyOptionalFields(t *testing.T) {
 		FullName:    "",
 		PhoneNumber: "",
 	}
-	err = repo.UpdateUser(t.Context(), int(user.Id), req)
+	err = repo.UpdateUser(t.Context(), user.Id, req)
 	if err != nil {
 		t.Fatalf("UpdateUser failed: %v", err)
 	}
@@ -352,14 +352,8 @@ func TestUserRepository_SaveUserToken_Success(t *testing.T) {
 		t.Fatalf("Failed to create user: %v", err)
 	}
 
-	// Prepare the token response
-	tokenResponse := &port.CreateTokenResponse{
-		Token:    "new-test-token-123",
-		ExpireAt: time.Now().Add(time.Hour),
-	}
-
 	// Act: Save the token for the created user
-	err = repo.SaveUserToken(t.Context(), user.Id, tokenResponse)
+	expireAt, err := repo.SaveUserToken(t.Context(), user.Id)
 	if err != nil {
 		t.Fatalf("SaveUserToken failed: %v", err)
 	}
@@ -369,11 +363,11 @@ func TestUserRepository_SaveUserToken_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to retrieve updated user: %v", err)
 	}
-	if updatedUser.Token == nil || *updatedUser.Token != tokenResponse.Token {
-		t.Errorf("Expected token %s, but got %v", tokenResponse.Token, updatedUser.Token)
+	if updatedUser.Token == nil {
+		t.Errorf("Expected token not nil, but got nil")
 	}
-	if updatedUser.ExpireAt == nil || !updatedUser.ExpireAt.Equal(tokenResponse.ExpireAt) {
-		t.Errorf("Expected ExpireAt %v, but got %v", tokenResponse.ExpireAt, updatedUser.ExpireAt)
+	if updatedUser.ExpireAt == nil {
+		t.Errorf("Expected ExpireAt %v, but got %v", expireAt, updatedUser.ExpireAt)
 	}
 }
 
@@ -382,14 +376,10 @@ func TestUserRepository_SaveUserToken_UserDoesNotExist(t *testing.T) {
 	repo, _ := NewUserRepository(db)
 
 	// Arrange: A non-existent user ID
-	nonExistentUserID := uint(9999)
-	tokenResponse := &port.CreateTokenResponse{
-		Token:    "some-token",
-		ExpireAt: time.Now().Add(time.Hour),
-	}
+	nonExistentUserID := uuid.New()
 
 	// Act: Try to save a token for a non-existent user
-	err := repo.SaveUserToken(t.Context(), nonExistentUserID, tokenResponse)
+	_, err := repo.SaveUserToken(t.Context(), nonExistentUserID)
 
 	// Assert: Check that the expected error is returned
 	if err == nil {
@@ -446,7 +436,7 @@ func TestUserRepository_GetUserById_UserDoesNotExist(t *testing.T) {
 	repo, _ := NewUserRepository(db)
 
 	// Act: Try to get a user that doesn't exist
-	nonExistentID := uint(9999)
+	nonExistentID := uuid.New()
 	foundUser, err := repo.GetUserById(t.Context(), nonExistentID)
 
 	// Assert

@@ -34,8 +34,6 @@ func main() {
 	}
 	slog.Info("Connected to database successfully")
 
-	// Token service
-	tokenService := auth.NewTokenService()
 	// Bycrypt service
 	bycryptService := hash.NewBycryptService()
 
@@ -47,6 +45,9 @@ func main() {
 	}
 	userService := service.NewUserService(userRepo, bycryptService)
 	userHandler := http.NewUserHandler(userService)
+
+	// Token service
+	tokenService := auth.NewTokenService(userRepo)
 
 	// Init auth
 	authService := service.NewAuthService(userRepo, tokenService, bycryptService)

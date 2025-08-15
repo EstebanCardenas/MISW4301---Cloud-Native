@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/service/mock"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,10 +28,11 @@ func TestLogin(t *testing.T) {
 	t.Run("successful login", func(t *testing.T) {
 		// Mock the service to return a successful login response
 		expirationTime := time.Date(2025, time.August, 14, 0, 0, 0, 0, time.UTC)
+		id := uuid.New()
 		mockService.LoginFunc = func(ctx context.Context, req *port.LoginRequest) (*port.LoginResponse, error) {
 			return &port.LoginResponse{
-				Id:       1,
-				Token:    "test-token",
+				Id:       id,
+				Token:    id,
 				ExpireAt: &expirationTime,
 			}, nil
 		}
@@ -49,8 +52,8 @@ func TestLogin(t *testing.T) {
 		// Assert the response
 		assert.Equal(t, http.StatusOK, w.Code)
 		expectedResponse := map[string]any{
-			"id":       float64(1),
-			"token":    "test-token",
+			"id":       fmt.Sprint(id),
+			"token":    fmt.Sprint(id),
 			"expireAt": expirationTime.Format(time.RFC3339),
 		}
 		var actualResponse map[string]any

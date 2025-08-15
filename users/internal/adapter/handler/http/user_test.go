@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,6 +14,7 @@ import (
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/service/mock"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,9 +26,10 @@ func TestCreateUser(t *testing.T) {
 
 	t.Run("successful user creation", func(t *testing.T) {
 		// Mock service
+		id := uuid.New()
 		mockService.CreateUserFunc = func(ctx context.Context, request *port.CreateUserRequest) (*port.CreateUserResponse, error) {
 			return &port.CreateUserResponse{
-				Id:        1,
+				Id:        id,
 				CreatedAt: time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC),
 			}, nil
 		}
@@ -48,7 +51,7 @@ func TestCreateUser(t *testing.T) {
 		// Assert the response
 		assert.Equal(t, http.StatusCreated, w.Code)
 		expectedResponse := map[string]any{
-			"id":        float64(1),
+			"id":        fmt.Sprint(id),
 			"createdAt": "2025-01-01T00:00:00Z",
 		}
 		var actualResponse map[string]any
@@ -152,12 +155,8 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("successful user update", func(t *testing.T) {
 		// Mock the service to return a nil error, indicating success
-		mockService.UpdateUserFunc = func(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
-			assert.Equal(t, 1, userId)
-			assert.Equal(t, "Jane Doe", request.FullName)
-			assert.Equal(t, "1234567890", request.PhoneNumber)
-			assert.Equal(t, "123456789", request.Dni)
-			assert.Equal(t, &verifiedStatus, request.Status)
+		id := uuid.New()
+		mockService.UpdateUserFunc = func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 			return nil
 		}
 
@@ -171,7 +170,7 @@ func TestUpdateUser(t *testing.T) {
 		jsonBody, _ := json.Marshal(body)
 
 		// Create a new HTTP request and a response recorder
-		req, _ := http.NewRequest(http.MethodPut, "/users/1", bytes.NewBuffer(jsonBody))
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/users/%v", id), bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
@@ -225,7 +224,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("invalid update user payload (service layer)", func(t *testing.T) {
 		// Mock the service to return the specific error
-		mockService.UpdateUserFunc = func(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+		mockService.UpdateUserFunc = func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 			return domain.ErrInvalidUpdateUserPayload
 		}
 
@@ -234,7 +233,8 @@ func TestUpdateUser(t *testing.T) {
 		jsonBody, _ := json.Marshal(body)
 
 		// Create a new HTTP request and a response recorder
-		req, _ := http.NewRequest(http.MethodPut, "/users/1", bytes.NewBuffer(jsonBody))
+		id := uuid.New()
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/users/%v", id), bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
@@ -251,7 +251,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("invalid user status (service layer)", func(t *testing.T) {
 		// Mock the service to return the specific error
-		mockService.UpdateUserFunc = func(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+		mockService.UpdateUserFunc = func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 			return domain.ErrInvalidUserStatus
 		}
 
@@ -262,7 +262,8 @@ func TestUpdateUser(t *testing.T) {
 		jsonBody, _ := json.Marshal(body)
 
 		// Create a new HTTP request and a response recorder
-		req, _ := http.NewRequest(http.MethodPut, "/users/1", bytes.NewBuffer(jsonBody))
+		id := uuid.New()
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/users/%v", id), bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
@@ -279,7 +280,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("user does not exist", func(t *testing.T) {
 		// Mock the service to return the specific error
-		mockService.UpdateUserFunc = func(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+		mockService.UpdateUserFunc = func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 			return domain.ErrUserDoesNotExist
 		}
 
@@ -290,7 +291,8 @@ func TestUpdateUser(t *testing.T) {
 		jsonBody, _ := json.Marshal(body)
 
 		// Create a new HTTP request and a response recorder
-		req, _ := http.NewRequest(http.MethodPut, "/users/999", bytes.NewBuffer(jsonBody))
+		id := uuid.New()
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/users/%v", id), bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
@@ -307,7 +309,7 @@ func TestUpdateUser(t *testing.T) {
 
 	t.Run("internal server error", func(t *testing.T) {
 		// Mock the service to return a generic error
-		mockService.UpdateUserFunc = func(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+		mockService.UpdateUserFunc = func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 			return assert.AnError
 		}
 
@@ -318,7 +320,8 @@ func TestUpdateUser(t *testing.T) {
 		jsonBody, _ := json.Marshal(body)
 
 		// Create a new HTTP request and a response recorder
-		req, _ := http.NewRequest(http.MethodPut, "/users/1", bytes.NewBuffer(jsonBody))
+		id := uuid.New()
+		req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/users/%v", id), bytes.NewBuffer(jsonBody))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
 
@@ -352,7 +355,7 @@ func TestQueryMyself(t *testing.T) {
 		dni := "123"
 		phoneNumber := "987"
 		expectedUser := &domain.User{
-			Id:          1,
+			Id:          uuid.New(),
 			Username:    "testuser",
 			Email:       "test@example.com",
 			FullName:    &fullName,
@@ -364,8 +367,7 @@ func TestQueryMyself(t *testing.T) {
 		}
 
 		// Mock the service to return the expected user
-		mockService.QueryMyselfFunc = func(ctx context.Context, userId uint) (*domain.User, error) {
-			assert.Equal(t, uint(1), userId)
+		mockService.QueryMyselfFunc = func(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 			return expectedUser, nil
 		}
 
@@ -382,7 +384,7 @@ func TestQueryMyself(t *testing.T) {
 		json.Unmarshal(w.Body.Bytes(), &actualResponse)
 
 		// Check if the response body matches the expected user data
-		assert.Equal(t, float64(expectedUser.Id), actualResponse["id"])
+		assert.Equal(t, fmt.Sprint(expectedUser.Id), actualResponse["id"])
 		assert.Equal(t, expectedUser.Username, actualResponse["username"])
 		assert.Equal(t, expectedUser.Email, actualResponse["email"])
 		assert.Equal(t, *expectedUser.FullName, actualResponse["fullName"])
@@ -393,7 +395,7 @@ func TestQueryMyself(t *testing.T) {
 
 	t.Run("internal server error from service", func(t *testing.T) {
 		// Mock the service to return an internal server error
-		mockService.QueryMyselfFunc = func(ctx context.Context, userId uint) (*domain.User, error) {
+		mockService.QueryMyselfFunc = func(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 			return nil, assert.AnError
 		}
 

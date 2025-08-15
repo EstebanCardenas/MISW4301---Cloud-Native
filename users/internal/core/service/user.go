@@ -5,6 +5,7 @@ import (
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
+	"github.com/google/uuid"
 	"github.com/hashicorp/go-set/v3"
 )
 
@@ -50,7 +51,7 @@ func (userService *UserService) CreateUser(ctx context.Context, request *port.Cr
 	return res, nil
 }
 
-func (userService *UserService) UpdateUser(ctx context.Context, userId int, request *port.UpdateUserRequest) error {
+func (userService *UserService) UpdateUser(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error {
 	if request.Dni == "" && request.FullName == "" && request.PhoneNumber == "" && request.Status == nil {
 		return domain.ErrInvalidUpdateUserPayload
 	}
@@ -71,7 +72,7 @@ func (userService *UserService) UpdateUser(ctx context.Context, userId int, requ
 	return nil
 }
 
-func (userServcie *UserService) QueryMyself(ctx context.Context, userId uint) (*domain.User, error) {
+func (userServcie *UserService) QueryMyself(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
 	user, err := userServcie.userRepo.GetUserById(ctx, userId)
 	if err != nil {
 		return nil, err
