@@ -1,0 +1,59 @@
+@startuml
+skinparam shadowing false
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor Black
+}
+skinparam cloud {
+  BackgroundColor #fff8dc
+}
+
+cloud "Internet" as internet
+
+package "K8s" {
+  node "Node" {
+
+    ' USERS NETWORK
+    rectangle "users-network" {
+      node "Port: 30000" as port30000 {
+        [users-app-service\nPort: 80] --> [users_app\n(pod)\nPort: xxxx]
+        [users_app\n(pod)\nPort: xxxx] --> [users-db-service\nPort: 5432]
+        [users-db-service\nPort: 5432] --> [users_db\n(pod)\nPort: 5432]
+      }
+    }
+
+    ' POSTS NETWORK
+    rectangle "posts-network" {
+      node "Port: 30001" as port30001 {
+        [posts-app-service\nPort: 80] --> [posts_app\n(pod)\nPort: xxxx]
+        [posts_app\n(pod)\nPort: xxxx] --> [posts-db-service\nPort: 5432]
+        [posts-db-service\nPort: 5432] --> [posts_db\n(pod)\nPort: 5432]
+      }
+    }
+
+    ' ROUTES NETWORK
+    rectangle "routes-network" {
+      node "Port: 30002" as port30002 {
+        [routes-app-service\nPort: 80] --> [routes_app\n(pod)\nPort: xxxx]
+        [routes_app\n(pod)\nPort: xxxx] --> [routes-db-service\nPort: 5432]
+        [routes-db-service\nPort: 5432] --> [routes_db\n(pod)\nPort: 5432]
+      }
+    }
+
+    ' OFFERS NETWORK
+    rectangle "offers-network" {
+      node "Port: 30003" as port30003 {
+        [offers-app-service\nPort: 80] --> [offers_app\n(pod)\nPort: xxxx]
+        [offers_app\n(pod)\nPort: xxxx] --> [offers-db-service\nPort: 5432]
+        [offers-db-service\nPort: 5432] --> [offers_db\n(pod)\nPort: 5432]
+      }
+    }
+
+  }
+}
+
+internet --> port30000
+internet --> port30001
+internet --> port30002
+internet --> port30003
+@enduml
