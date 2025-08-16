@@ -14,13 +14,14 @@
 .
 ├── github/
 │   └── workflows/          # Pipelines del repositorio
-├── k8s/                    # Archivos para despliegue en k8s
 ├── docs/                   # Archivos de documentación técnica
-├── <aplicación>            # Archivos de aplicación. Una carpeta por cada una.
-├── vale.ini                # Configuración para Vale. NO MODIFICAR
-├── config.yaml             # Configuración del repositorio. Modifíquelo como primera tarea
-├── Makefile                # Scripts para evaluación. NO MODIFICAR las reglas actuales
-└── README.md               # Este archivo
+├── k8s/                    # Archivos para despliegue en k8s
+├── routes_app              # Aplicación de trayectos
+├── users_app               # Aplicación de usuarios
+├── vale.ini                # Configuración para Vale.
+├── config.yaml             # Configuración del repositorio.
+├── Makefile                # Scripts para evaluación.
+└── README.md               
 ```
 
 1. **github/workflows**: los archivos en esta carpeta no se pueden modificar a excepción del archivo `ci_evaluador_unit.yml` el cuál debe ser utilizado para agregar un job por cada aplicación.
