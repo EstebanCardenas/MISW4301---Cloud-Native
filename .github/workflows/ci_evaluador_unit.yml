@@ -11,7 +11,7 @@ jobs:
   verify-app:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         app: [users_app, offers_app, posts_app, routes_app]
     steps:
