@@ -10,6 +10,7 @@ on:
 jobs:
   verify-python-apps:
     runs-on: ubuntu-latest
+    name: Verify Python apps
     strategy:
       fail-fast: false
       matrix:
