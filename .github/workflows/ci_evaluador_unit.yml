@@ -8,12 +8,12 @@ on:
     branches:
       - main
 jobs:
-  verify-app:
+  verify-python-apps:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        app: [users_app, offers_app, posts_app, routes_app]
+        app: [offers_app, posts_app, routes_app]
     steps:
       - uses: actions/checkout@v4
 
@@ -51,3 +51,21 @@ jobs:
       - name: Run unit tests in ${{ matrix.app }}
         if: env.exists == 'true'
         run: make unittest DIR=${{ matrix.app }}
+  verify-users-app:
+    runs-on: ubuntu-latest
+    name: Verify users-app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24.4
+      - name: Display Go version
+        run: go version
+      - name: Install dependencies
+        run: cd users_app && go mod download
+      - name: Run tests with coverage thresholds
+        working-directory: users_app
+        run: |
+          set -euo pipefail
+          bash scripts/test.sh
