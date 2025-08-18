@@ -164,18 +164,5 @@ spec:
             failureThreshold: 3
       volumes:
         - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: users-db-volumen
-
----
-# DB volume
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: users-db-volumen
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+          emptyDir:
+            sizeLimit: 1Gi
