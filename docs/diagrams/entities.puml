@@ -1,61 +1,64 @@
 @startuml
-skinparam classAttributeIconSize 0
 
-' ==== ENTIDADES ====
+skinparam linetype polyline
+skinparam linetype ortho
 
-class User {
-    +id: uuid
-    +username: String
-    +email: String
-    +phoneNumber: String
-    +dni: String
-    +fullName: String
-    +password: String
-    +salt: String
-    +token: String
-    +status: String <<POR_VERIFICAR | NO_VERIFICADO | VERIFICADO>>
-    +expireAt: DateTime
-    +createdAt: DateTime
-    +updatedAt: DateTime
+entity "users" as users {
+    * id : uuid
+    --
+    * username : varchar(255)
+    * email : varchar(255)
+    phoneNumber : varchar(255)
+    dni : varchar(255)
+    fullName : varchar(255)
+    * password : varchar(255)
+    * salt : varchar(255)
+    * token : varchar(255)
+    * status : varchar(50) <<POR_VERIFICAR | NO_VERIFICADO | VERIFICADO>>
+    * expireAt : timestamptz
+    * createdAt : timestamptz
+    * updatedAt : timestamptz
 }
 
-class Route {
-    +id: uuid
-    +flightId: String
-    +sourceAirportCode: String
-    +sourceCountry: String
-    +destinyAirportCode: String
-    +destinyCountry: String
-    +bagCost: Integer
-    +plannedStartDate: DateTime
-    +plannedEndDate: DateTime
-    +createdAt: DateTime
-    +updatedAt: DateTime
+entity "routes" as routes {
+    * id : uuid
+    --
+    * flightId : varchar(255)
+    * sourceAirportCode : varchar(10)
+    * sourceCountry : varchar(255)
+    * destinyAirportCode : varchar(10)
+    * destinyCountry : varchar(255)
+    * bagCost : int
+    * plannedStartDate : timestamptz
+    * plannedEndDate : timestamptz
+    * createdAt : timestamptz
+    * updatedAt : timestamptz
 }
 
-class Post {
-    +id: uuid
-    +routeId: String
-    +userId: String
-    +expireAt: DateTime
-    +createdAt: DateTime
+entity "posts" as posts {
+    * id : uuid
+    --
+    * routeId : uuid
+    * userId : uuid
+    * expireAt : timestamptz
+    * createdAt : timestamptz
 }
 
-class Offer {
-    +id: uuid
-    +postId: String
-    +userId: String
-    +description: String <<max 140 chars>>
-    +size: String <<LARGE | MEDIUM | SMALL>>
-    +fragile: Boolean
-    +offer: Number
-    +createdAt: DateTime
+entity "offers" as offers {
+    * id : uuid
+    --
+    * postId : uuid
+    * userId : uuid
+    * description : varchar(140)
+    * size : varchar(20) <<LARGE | MEDIUM | SMALL>>
+    * fragile : boolean
+    * offer : numeric
+    * createdAt : timestamptz
 }
-
 
 ' ==== RELACIONES ====
-User "1" -- "*" Post
-Post "1" -- "1" Route
-Post "1" -- "*" Offer
+users ||--o{ posts
+posts ||--|| routes
+posts ||--o{ offers
 
 @enduml
