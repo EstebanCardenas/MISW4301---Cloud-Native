@@ -6,7 +6,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Use a default SQLite database for testing if DATABASE_URL is not set
+DATABASE_URL = os.getenv("DATABASE_URL") or "sqlite:///./test.db"
 
 
 # Function to create engine dynamically

@@ -1,79 +1,44 @@
-from typing import Optional
-from uuid import UUID
-
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
-from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse
 
-from . import crud, models, schemas
-from .database import engine, get_db
+from src.api.http_server import router as route_router
+from src.database.config import Base, engine
+from src.exceptions.api_exception import ApiException, ApiExceptionType
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="routes-app")
+
+API_EXCEPTION_STATUS_MAP = {
+    ApiExceptionType.VALIDATION_FAILED: 412,
+    ApiExceptionType.NOT_FOUND: 404,
+    ApiExceptionType.INVALID_INPUT: 400,
+}
+
+PYDANTIC_EXCEPTION_STATUS_MAP: dict[str, int] = {"enum": 412}
 
 
-# 🎯 Interceptar errores de validación de Pydantic y devolver 400 en vez de 422
+@app.middleware("http")
+async def api_exception_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except ApiException as exc:
+        status_code = API_EXCEPTION_STATUS_MAP.get(exc.type, 500)
+        return JSONResponse(
+            status_code=status_code,
+            content={"msg": exc.detail},
+        )
+    except Exception as exc:
+        return JSONResponse(status_code=500, content={"msg": str(exc)})
+
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST, content={"detail": exc.errors()}
+        status_code=PYDANTIC_EXCEPTION_STATUS_MAP.get(exc.errors()[0]["type"], 400),
+        content={"detail": exc.errors()},
     )
 
 
-@app.post(
-    "/routes",
-    response_model=schemas.RouteCreatedResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def create_route(route: schemas.RouteCreate, db: Session = Depends(get_db)):
-    try:
-        return crud.create_route(db=db, route=route)
-    except ValueError as e:
-        return JSONResponse(
-            status_code=status.HTTP_412_PRECONDITION_FAILED, content=e.args[0]
-        )
-
-
-@app.get("/routes", response_model=list[schemas.Route])
-def read_routes(
-    skip: int = 0,
-    limit: int = 100,
-    flight: Optional[str] = None,
-    db: Session = Depends(get_db),
-):
-    return crud.get_routes(db, skip=skip, limit=limit, flight=flight)
-
-
-@app.get("/routes/count")
-def get_routes_count(db: Session = Depends(get_db)):
-    count = crud.get_routes_count(db)
-    return {"count": count}
-
-
-@app.get("/routes/ping", response_class=PlainTextResponse)
-def ping():
-    return "pong"
-
-
-@app.post("/routes/reset")
-def reset_routes(db: Session = Depends(get_db)):
-    crud.reset_routes(db)
-    return {"msg": "Todos los datos fueron eliminados"}
-
-
-@app.get("/routes/{route_id}", response_model=schemas.Route)
-def read_route(route_id: UUID, db: Session = Depends(get_db)):
-    db_route = crud.get_route(db, route_id=route_id)
-    if db_route is None:
-        raise HTTPException(status_code=404, detail="Route not found")
-    return db_route
-
-
-@app.delete("/routes/{route_id}")
-def delete_route(route_id: UUID, db: Session = Depends(get_db)):
-    db_route = crud.delete_route(db, route_id=route_id)
-    if db_route is None:
-        raise HTTPException(status_code=404, detail="Route not found")
-    return {"msg": "el trayecto fue eliminado"}
+app.include_router(route_router)

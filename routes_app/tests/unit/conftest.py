@@ -5,7 +5,7 @@ os.environ["DATABASE_URL"] = "sqlite:///./test.db"
 
 import pytest
 
-from src.database import Base
+from src.database.config import Base
 from tests.unit.test_main import test_engine  # Import your test engine
 
 

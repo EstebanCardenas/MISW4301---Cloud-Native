@@ -4,7 +4,7 @@ from uuid import UUID
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
 
-from src.database import Base, get_db, get_engine
+from src.database.config import Base, get_db, get_engine
 from src.main import app
 
 # Create test DB engine (SQLite)
@@ -36,7 +36,7 @@ client = TestClient(app)
 def test_read_main():
     response = client.get("/routes/ping")
     assert response.status_code == 200
-    assert response.text == "pong"
+    assert response.json() == "pong"
 
 
 def test_create_route():
