@@ -99,7 +99,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-service
+  name: users-db-service
 spec:
   type: ClusterIP
   selector:
@@ -114,16 +114,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-deployment
+  name: users-db-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db
+      app: users-db
   template:
     metadata:
       labels:
-        app: db
+        app: users-db
     spec:
       containers:
         - name: postgres-db
@@ -173,24 +173,11 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: deny-all-db
+  name: users-network
 spec:
   podSelector:
     matchLabels:
-      app: db
-  policyTypes:
-    - Ingress
-
----
-# Allow users-app to DB Network Policy
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-app-to-db
-spec:
-  podSelector:
-    matchLabels:
-      app: db
+      app: users-db
   policyTypes:
     - Ingress
   ingress:
