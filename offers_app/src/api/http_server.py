@@ -83,7 +83,7 @@ def get_offer(
 
 @router.delete("/{id}", status_code=status.HTTP_200_OK)
 def delete_offer(
-    id: UUID = Path(description="The ID of the offer to retrieve"),
+    id: UUID = Path(description="The ID of the offer to delete"),
     controller: OfferController = Depends(build_offer_controller),
     db=Depends(get_db),
 ) -> DeleteOfferResponse:
