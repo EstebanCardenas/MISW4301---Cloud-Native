@@ -51,7 +51,7 @@ spec:
           - containerPort: 3000
           livenessProbe:
             httpGet:
-              path: /ping
+              path: /users/ping
               port: 3000
             initialDelaySeconds: 5 
             periodSeconds: 30
@@ -92,7 +92,7 @@ spec:
             - name: GIN_MODE
               value: "release"
             - name: DB_HOST
-              value: "db-service"
+              value: "users-db-service"
 
 ---
 # DB service
