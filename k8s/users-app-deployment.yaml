@@ -103,7 +103,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: db
+    app: users-db
   ports:
     - protocol: TCP
       port: 5432
