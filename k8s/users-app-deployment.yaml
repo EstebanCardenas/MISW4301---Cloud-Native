@@ -115,6 +115,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: users-db-deployment
+  labels:
+    app: users-db
 spec:
   replicas: 1
   selector:

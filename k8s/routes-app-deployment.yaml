@@ -85,6 +85,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: routes-db-deployment
+  labels:
+    app: routes-db
 spec:
   replicas: 1
   selector:

@@ -113,6 +113,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: posts-db-deployment
+  labels:
+    app: posts-db
 spec:
   replicas: 1
   selector:

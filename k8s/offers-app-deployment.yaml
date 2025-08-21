@@ -81,6 +81,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: offers-db-deployment
+  labels:
+    app: offers-db
 spec:
   replicas: 1
   selector:
