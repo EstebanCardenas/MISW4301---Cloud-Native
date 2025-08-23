@@ -10,7 +10,7 @@ team:
       - user: ne.cardenas
         percentage: 25
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/253/views/1
-docs: <link al github pages del equipo>
+docs: https://probable-chainsaw-ormk5yn.pages.github.io/
 users_app:
   folder: users_app
   image_name: users-app
