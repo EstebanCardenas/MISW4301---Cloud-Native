@@ -21,9 +21,9 @@ spec:
     app: offers-app
   ports:
     - protocol: TCP
-      port: 9000
+      port: 80
       targetPort: 9000
-      nodePort: 30001
+      nodePort: 30003
 
 ---
 # App deployment
