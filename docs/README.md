@@ -1,14 +1,15 @@
 # Grupo
 Nombre: Alfa buena maravilla onda dinamita escuadrón lobo
+
 Líder: Andrés Donoso
 
 # Integrantes
-|      Nombre      |            Correo           |  Usuario GitHub |       Rol       |     Interés     |
-|----------------|---------------------------|---------------|---------------|---------------|
-|   Andrés Donoso  |  af.donoso@uniandes.edu.co  |    afDonosoD    |     Backend     |   Desarrollo    |
-|  Germán Martínez | gd.martinez@uniandes.edu.co |    DavidMS73    |     Backend     |   Desarrollo    |
-| Nicolas Cárdenas | ne.cardenas@uniandes.edu.co | EstebanCardenas |     Backend     |   Desarrollo    |
-|   Daniel Corzo   | d.corzos@uniandes.edu.co    |   daniel-corzo  |     Backend     |   Desarrollo    |
+| Nombre          | Correo                       | Usuario GitHub  | Rol     | Interés     |
+|-----------------|------------------------------|-----------------|---------|-------------|
+| Andrés Donoso   | af.donoso@uniandes.edu.co    | afDonosoD       | Backend | Desarrollo  |
+| Germán Martínez | gd.martinez@uniandes.edu.co  | DavidMS73       | Backend | Desarrollo  |
+| Nicolas Cárdenas| ne.cardenas@uniandes.edu.co  | EstebanCardenas | Backend | Desarrollo  |
+| Daniel Corzo    | d.corzos@uniandes.edu.co     | daniel-corzo    | Backend | Desarrollo  |
 
 # Reglas
 1. Entrar a las reuniones programadas a tiempo (máximo 5 minutos tarde). 
