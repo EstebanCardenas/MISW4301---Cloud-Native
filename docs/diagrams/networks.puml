@@ -1,79 +1,100 @@
 @startuml
 skinparam shadowing false
-skinparam frame {
-  BackgroundColor White
-  BorderColor Black
+skinparam rectangle {
+    BackgroundColor White
+    BorderColor Black
 }
 skinparam cloud {
-  BackgroundColor #fff8dc
+    BackgroundColor #fff8dc
+    BorderColor Black
+}
+skinparam frame {
+    BackgroundColor White
+    BorderColor Black
+}
+skinparam component {
+    BackgroundColor White
+    BorderColor Black
 }
 
 cloud "Internet" as internet
 
 frame "K8s" {
-  frame "Node" {
+    frame "Node" {
+        ' INTERNET -> NODE PORTS
+        internet ..> n1 : Port: 30000
+        internet ..> n2 : Port: 30001
+        internet ..> n3 : Port: 30002
+        internet ..> n4 : Port: 30003
 
-    ' USERS NETWORK
-    frame "users-network" {
-      frame "Port: 30000" as port30000 {
-        component "users-app-service\nPort: 80" as users_app_service
-        component "users_app\n(pod)\nPort: xxxx" as users_app
-        component "users-db-service\nPort: 5432" as users_db_service
-        component "users_db\n(pod)\nPort: 5432" as users_db
+        ' USERS NETWORK
+        frame "users-network" #Green {
+            component "users-app-service" <<Port: 80>> as usersAppService
+            
+            component "users-app" <<Port: xxxx>> as usersAppPod {
+              component "users_app" as usersApp
+            }
+            component "users-db-service" <<Port: 5432>> as usersDbService
+            component "users-db" <<Port: 5432>> as usersDbPod {
+                component "users_db" as usersDb
+            }
 
-        users_app_service --> users_app
-        users_app --> users_db_service
-        users_db_service --> users_db
-      }
+            n1 --> usersAppService
+            usersAppService --> usersAppPod
+            usersApp --> usersDbService
+            usersDbService --> usersDbPod
+        }
+
+        ' POSTS NETWORK
+        frame "posts-network" #Green {
+            component "posts-app-service" <<Port: 80>> as postsAppService
+            component "posts-app" <<Port: xxxx>> as postsAppPod {
+                component "posts_app" as postsApp
+            }
+            component "posts-db-service" <<Port: 5432>> as postsDbService
+            component "posts-db" <<Port: 5432>> as postsDbPod {
+                component "posts_db" as postsDb
+            }
+
+            n2 --> postsAppService
+            postsAppService --> postsAppPod
+            postsApp --> postsDbService
+            postsDbService --> postsDbPod
+        }
+
+        ' ROUTES NETWORK
+        frame "routes-network" #Green {
+            component "routes-app-service" <<Port: 80>> as routesAppService
+            component "routes-app" <<Port: xxxx>> as routesAppPod {
+                component "routes_app" as routesApp
+            }
+            component "routes-db-service" <<Port: 5432>> as routesDbService
+            component "routes-db" <<Port: 5432>> as routesDbPod {
+                component "routes_db" as routesDb
+            }
+
+            n3 --> routesAppService
+            routesAppService --> routesAppPod
+            routesApp --> routesDbService
+            routesDbService --> routesDbPod
+        }
+
+        ' OFFERS NETWORK
+        frame "offers-network" #Green {
+            component "offers-app-service" <<Port: 80>> as offersAppService
+            component "offers-app" <<Port: xxxx>> as offersAppPod {
+                component "offers_app" as offersApp
+            }
+            component "offers-db-service" <<Port: 5432>> as offersDbService
+            component "offers-db" <<Port: 5432>> as offersDbPod {
+                component "offers_db" as offersDb
+            }
+
+            n4 --> offersAppService
+            offersAppService --> offersAppPod
+            offersApp --> offersDbService
+            offersDbService --> offersDbPod
+        }
     }
-
-    ' POSTS NETWORK
-    frame "posts-network" {
-      frame "Port: 30001" as port30001 {
-        component "posts-app-service\nPort: 80" as posts_app_service
-        component "posts_app\n(pod)\nPort: xxxx" as posts_app
-        component "posts-db-service\nPort: 5432" as posts_db_service
-        component "posts_db\n(pod)\nPort: 5432" as posts_db
-
-        posts_app_service --> posts_app
-        posts_app --> posts_db_service
-        posts_db_service --> posts_db
-      }
-    }
-
-    ' ROUTES NETWORK
-    frame "routes-network" {
-      frame "Port: 30002" as port30002 {
-        component "routes-app-service\nPort: 80" as routes_app_service
-        component "routes_app\n(pod)\nPort: xxxx" as routes_app
-        component "routes-db-service\nPort: 5432" as routes_db_service
-        component "routes_db\n(pod)\nPort: 5432" as routes_db
-
-        routes_app_service --> routes_app
-        routes_app --> routes_db_service
-        routes_db_service --> routes_db
-      }
-    }
-
-    ' OFFERS NETWORK
-    frame "offers-network" {
-      frame "Port: 30003" as port30003 {
-        component "offers-app-service\nPort: 80" as offers_app_service
-        component "offers_app\n(pod)\nPort: xxxx" as offers_app
-        component "offers-db-service\nPort: 5432" as offers_db_service
-        component "offers_db\n(pod)\nPort: 5432" as offers_db
-
-        offers_app_service --> offers_app
-        offers_app --> offers_db_service
-        offers_db_service --> offers_db
-      }
-    }
-
-  }
 }
-
-internet --> port30000
-internet --> port30001
-internet --> port30002
-internet --> port30003
 @enduml
