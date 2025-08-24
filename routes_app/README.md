@@ -106,7 +106,7 @@ minikube start --cpus=2 --memory=3g --cni calico
 #make mkbuild
 minikube image load ${APP_NAME}:${APP_VERSION}
 
-kubectl apply -f k8s
+kubectl apply -f .\k8s\routes-app-deployment.yaml
 minikube service routes-app-service
 ```
 
