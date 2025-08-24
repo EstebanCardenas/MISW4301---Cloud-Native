@@ -16,12 +16,12 @@ frame "K8s" {
     ' USERS NETWORK
     frame "users-network" {
       frame "Port: 30000" as port30000 {
-        component "users-app-service\nPort: 80" as users_service
+        component "users-app-service\nPort: 80" as users_app_service
         component "users_app\n(pod)\nPort: xxxx" as users_app
         component "users-db-service\nPort: 5432" as users_db_service
         component "users_db\n(pod)\nPort: 5432" as users_db
 
-        users_service --> users_app
+        users_app_service --> users_app
         users_app --> users_db_service
         users_db_service --> users_db
       }
@@ -30,12 +30,12 @@ frame "K8s" {
     ' POSTS NETWORK
     frame "posts-network" {
       frame "Port: 30001" as port30001 {
-        component "posts-app-service\nPort: 80" as posts_service
+        component "posts-app-service\nPort: 80" as posts_app_service
         component "posts_app\n(pod)\nPort: xxxx" as posts_app
         component "posts-db-service\nPort: 5432" as posts_db_service
         component "posts_db\n(pod)\nPort: 5432" as posts_db
 
-        posts_service --> posts_app
+        posts_app_service --> posts_app
         posts_app --> posts_db_service
         posts_db_service --> posts_db
       }
@@ -44,12 +44,12 @@ frame "K8s" {
     ' ROUTES NETWORK
     frame "routes-network" {
       frame "Port: 30002" as port30002 {
-        component "routes-app-service\nPort: 80" as routes_service
+        component "routes-app-service\nPort: 80" as routes_app_service
         component "routes_app\n(pod)\nPort: xxxx" as routes_app
         component "routes-db-service\nPort: 5432" as routes_db_service
         component "routes_db\n(pod)\nPort: 5432" as routes_db
 
-        routes_service --> routes_app
+        routes_app_service --> routes_app
         routes_app --> routes_db_service
         routes_db_service --> routes_db
       }
@@ -58,12 +58,12 @@ frame "K8s" {
     ' OFFERS NETWORK
     frame "offers-network" {
       frame "Port: 30003" as port30003 {
-        component "offers-app-service\nPort: 80" as offers_service
+        component "offers-app-service\nPort: 80" as offers_app_service
         component "offers_app\n(pod)\nPort: xxxx" as offers_app
         component "offers-db-service\nPort: 5432" as offers_db_service
         component "offers_db\n(pod)\nPort: 5432" as offers_db
 
-        offers_service --> offers_app
+        offers_app_service --> offers_app
         offers_app --> offers_db_service
         offers_db_service --> offers_db
       }
