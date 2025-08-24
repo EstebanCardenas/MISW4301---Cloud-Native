@@ -4,12 +4,43 @@ Nombre: Alfa buena maravilla onda dinamita escuadrón lobo
 Líder: Andrés Donoso
 
 # Integrantes
-| Nombre          | Correo                       | Usuario GitHub  | Rol     | Interés     |
-|-----------------|------------------------------|-----------------|---------|-------------|
-| Andrés Donoso   | af.donoso@uniandes.edu.co    | afDonosoD       | Backend | Desarrollo  |
-| Germán Martínez | gd.martinez@uniandes.edu.co  | DavidMS73       | Backend | Desarrollo  |
-| Nicolas Cárdenas| ne.cardenas@uniandes.edu.co  | EstebanCardenas | Backend | Desarrollo  |
-| Daniel Corzo    | d.corzos@uniandes.edu.co     | daniel-corzo    | Backend | Desarrollo  |
+<table>
+  <tr>
+    <th>Nombre</th>
+    <th>Correo</th>
+    <th>Usuario GitHub</th>
+    <th>Rol</th>
+    <th>Interés</th>
+  </tr>
+  <tr>
+    <td>Andrés Donoso</td>
+    <td>af.donoso@uniandes.edu.co</td>
+    <td>afDonosoD</td>
+    <td>Backend</td>
+    <td>Desarrollo</td>
+  </tr>
+  <tr>
+    <td>Germán Martínez</td>
+    <td>gd.martinez@uniandes.edu.co</td>
+    <td>DavidMS73</td>
+    <td>Backend</td>
+    <td>Desarrollo</td>
+  </tr>
+  <tr>
+    <td>Nicolas Cárdenas</td>
+    <td>ne.cardenas@uniandes.edu.co</td>
+    <td>EstebanCardenas</td>
+    <td>Backend</td>
+    <td>Desarrollo</td>
+  </tr>
+  <tr>
+    <td>Daniel Corzo</td>
+    <td>d.corzos@uniandes.edu.co</td>
+    <td>daniel-corzo</td>
+    <td>Backend</td>
+    <td>Desarrollo</td>
+  </tr>
+</table>
 
 # Reglas
 1. Entrar a las reuniones programadas a tiempo (máximo 5 minutos tarde). 
