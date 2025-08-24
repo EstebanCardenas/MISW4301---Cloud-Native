@@ -7,6 +7,12 @@
   - [Estructura del Proyecto](#estructura-del-proyecto)
   - [Archivo de configuración](#archivo-de-configuración)
   - [Estructura de cada aplicación](#estructura-de-cada-aplicación)
+  - [Despliegue de la aplicación completa](#despliegue-de-la-aplicación-completa)
+    - [Requisitos](#requisitos)
+    - [1. Creación de imágenes](#1-creación-de-imágenes)
+    - [2. Cargar imágenes a Minikube](#2-cargar-imágenes-a-minikube)
+    - [3. Ejecutar en Minikube](#3-ejecutar-en-minikube)
+    - [4. Obtener url de un servicio](#4-obtener-url-de-un-servicio)
 
 ## Estructura del Proyecto
 
@@ -16,9 +22,9 @@
 │   └── workflows/          # Pipelines del repositorio
 ├── docs/                   # Archivos de documentación técnica
 ├── k8s/                    # Archivos para despliegue en k8s
-├── offers_app              # Aplicación de trayectos
-├── posts_app               # Aplicación de usuarios
-├── routes_app               # Aplicación de usuarios
+├── offers_app              # Aplicación de ofertas
+├── posts_app               # Aplicación de publicaciones
+├── routes_app              # Aplicación de trayectos
 ├── users_app               # Aplicación de usuarios
 ├── vale.ini                # Configuración para Vale.
 ├── config.yaml             # Configuración del repositorio.
@@ -46,3 +52,34 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 2. [posts](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/posts_app)
 3. [routes](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/routes_app)
 4. [users](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/users_app)
+
+## Despliegue de la aplicación completa
+### Requisitos
+- Tener instalado `minikube`, `kubectl` y Docker
+
+### 1. Creación de imágenes
+Para crear la imagen de cada aplicación corra el siguiente comando:
+```bash
+docker build --rm -t <app-name>:1.0.0 ./<app-folder>
+```
+Por ejemplo, para la app de Offers sería:
+```bash
+docker build --rm -t offer-app:1.0.0 ./offer_app
+```
+### 2. Cargar imágenes a Minikube
+```bash
+minikube start --cpus=2 --memory=3g --cni calico
+minikube image load <app-name>:1.0.0
+```
+
+### 3. Ejecutar en Minikube
+```bash
+kubectl apply -f k8s
+```
+
+### 4. Obtener url de un servicio
+```bash
+minikube service <app-name>-service
+```
+
+**TODO: Crear script de makefile para este proceso**
