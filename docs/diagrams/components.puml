@@ -1,0 +1,32 @@
+@startuml components
+skinparam componentStyle rectangle
+
+actor User
+
+frame "env" {
+    
+    component "users_app" as usersApp
+    database "users_db" as usersDb
+
+    component "posts_app" as postsApp
+    database "posts_db" as postsDb
+
+    component "offers_app" as offersApp
+    database "offers_db" as offersDb
+
+    component "routes_app" as routesApp
+    database "routes_db" as routesDb
+
+    ' Conexiones usuario -> apps
+    User ..> usersApp
+    User ..> postsApp
+    User ..> offersApp
+    User ..> routesApp
+
+    ' Conexiones apps -> bases de datos
+    usersApp --> usersDb
+    postsApp --> postsDb
+    offersApp --> offersDb
+    routesApp --> routesDb
+}
+@enduml
