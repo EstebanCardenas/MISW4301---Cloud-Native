@@ -94,99 +94,99 @@ spec:
             - name: DB_HOST
               value: "users-db-service"
 
----
-# DB service
-apiVersion: v1
-kind: Service
-metadata:
-  name: users-db-service
-spec:
-  type: ClusterIP
-  selector:
-    app: users-db
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+# ---
+# # DB service
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: users-db-service
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: users-db
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
 
----
-# DB deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: users-db-deployment
-  labels:
-    app: users-db
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: users-db
-  template:
-    metadata:
-      labels:
-        app: users-db
-    spec:
-      containers:
-        - name: postgres-db
-          image: postgres
-          ports:
-          - containerPort: 5432
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-          env:
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: users-app-config
-                  key: DB_NAME
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: users-app-config
-                  key: DB_PASSWORD
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
-      volumes:
-        - name: postgres-storage
-          emptyDir:
-            sizeLimit: 1Gi
----
-# Block traffic DB Network Policy
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: users-network
-spec:
-  podSelector:
-    matchLabels:
-      app: users-db
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            app: users-app
-      ports:
-        - protocol: TCP
-          port: 5432
+# ---
+# # DB deployment
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: users-db-deployment
+#   labels:
+#     app: users-db
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: users-db
+#   template:
+#     metadata:
+#       labels:
+#         app: users-db
+#     spec:
+#       containers:
+#         - name: postgres-db
+#           image: postgres
+#           ports:
+#           - containerPort: 5432
+#           volumeMounts:
+#             - name: postgres-storage
+#               mountPath: /var/lib/postgresql/data
+#           env:
+#             - name: POSTGRES_DB
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: users-app-config
+#                   key: DB_NAME
+#             - name: POSTGRES_PASSWORD
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: users-app-config
+#                   key: DB_PASSWORD
+#           livenessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             timeoutSeconds: 5
+#             failureThreshold: 5
+#           readinessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 5
+#             periodSeconds: 5
+#             timeoutSeconds: 3
+#             failureThreshold: 3
+#       volumes:
+#         - name: postgres-storage
+#           emptyDir:
+#             sizeLimit: 1Gi
+# ---
+# # Block traffic DB Network Policy
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: users-network
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: users-db
+#   policyTypes:
+#     - Ingress
+#   ingress:
+#     - from:
+#       - podSelector:
+#           matchLabels:
+#             app: users-app
+#       ports:
+#         - protocol: TCP
+#           port: 5432

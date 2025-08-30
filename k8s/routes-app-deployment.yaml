@@ -64,100 +64,100 @@ spec:
                   name: routes-app-config
                   key: DATABASE_URL
 
----
-# DB service
-apiVersion: v1
-kind: Service
-metadata:
-  name: routes-db-service
-spec:
-  type: ClusterIP
-  selector:
-    app: routes-db
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+# ---
+# # DB service
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: routes-db-service
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: routes-db
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
 
----
-# DB deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: routes-db-deployment
-  labels:
-    app: routes-db
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: routes-db
-  template:
-    metadata:
-      labels:
-        app: routes-db
-    spec:
-      containers:
-        - name: postgres-db
-          image: postgres
-          ports:
-            - containerPort: 5432
-          volumeMounts:
-            - name: routes-db-volume
-              mountPath: /var/lib/postgresql/data
-          env:
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: routes-app-config
-                  key: DB_NAME
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: routes-app-config
-                  key: DB_PASSWORD
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
-      volumes:
-        - name: routes-db-volume
-          emptyDir:
-            sizeLimit: 1Gi
+# ---
+# # DB deployment
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: routes-db-deployment
+#   labels:
+#     app: routes-db
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: routes-db
+#   template:
+#     metadata:
+#       labels:
+#         app: routes-db
+#     spec:
+#       containers:
+#         - name: postgres-db
+#           image: postgres
+#           ports:
+#             - containerPort: 5432
+#           volumeMounts:
+#             - name: routes-db-volume
+#               mountPath: /var/lib/postgresql/data
+#           env:
+#             - name: POSTGRES_DB
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: routes-app-config
+#                   key: DB_NAME
+#             - name: POSTGRES_PASSWORD
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: routes-app-config
+#                   key: DB_PASSWORD
+#           livenessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             timeoutSeconds: 5
+#             failureThreshold: 5
+#           readinessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 5
+#             periodSeconds: 5
+#             timeoutSeconds: 3
+#             failureThreshold: 3
+#       volumes:
+#         - name: routes-db-volume
+#           emptyDir:
+#             sizeLimit: 1Gi
 
----
-# Allow routes-app to DB Network Policy
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: routes-network
-spec:
-  podSelector:
-    matchLabels:
-      app: routes-db
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: routes-app
-      ports:
-        - protocol: TCP
-          port: 5432
+# ---
+# # Allow routes-app to DB Network Policy
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: routes-network
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: routes-db
+#   policyTypes:
+#     - Ingress
+#   ingress:
+#     - from:
+#         - podSelector:
+#             matchLabels:
+#               app: routes-app
+#       ports:
+#         - protocol: TCP
+#           port: 5432
