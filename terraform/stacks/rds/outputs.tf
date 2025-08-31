@@ -13,11 +13,6 @@ output "rds_engine" {
   value       = module.rds.engine
 }
 
-output "rds_db_name" {
-  description = "Nombre de la base de datos RDS."
-  value       = module.rds.db_name
-}
-
 output "secrets_manager_secret_arn" {
   description = "ARN del secreto de AWS Secrets Manager."
   value       = module.secrets_manager.secret_arn
