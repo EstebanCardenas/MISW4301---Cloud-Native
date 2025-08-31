@@ -4,12 +4,7 @@ kind: ConfigMap
 metadata:
   name: routes-app-config
 data:
-  # DB vars
-  DB_USER: "postgres"
-  DB_PASSWORD: "1234"
-  DB_NAME: "routes_db"
-  DB_PORT: "5432"
-  DATABASE_URL: "postgresql://postgres:1234@routes-db-service:5432/routes_db"
+  DATABASE_URL: "postgresql://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
 
 ---
 # App service
@@ -18,14 +13,13 @@ kind: Service
 metadata:
   name: routes-app-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: routes-app
   ports:
     - protocol: TCP
       port: 80
       targetPort: 9000
-      nodePort: 30002
 
 ---
 # App deployment
@@ -47,7 +41,7 @@ spec:
     spec:
       containers:
         - name: routes-app
-          image: routes-app:1.0.0
+          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/routes-app:2.0.0
           ports:
             - containerPort: 9000
           livenessProbe:

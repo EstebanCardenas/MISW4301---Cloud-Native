@@ -4,10 +4,7 @@ kind: ConfigMap
 metadata:
   name: offers-app-config
 data:
-  DB_USER: "postgres"
-  DB_PASSWORD: "1234"
-  DB_NAME: "offers_db"
-  DB_URL: "postgresql+psycopg2://postgres:1234@offers-db-service:5432/offers_db"
+  DB_URL: "postgresql+psycopg2://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
 
 ---
 # App service
@@ -16,14 +13,13 @@ kind: Service
 metadata:
   name: offers-app-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: offers-app
   ports:
     - protocol: TCP
       port: 80
       targetPort: 9000
-      nodePort: 30003
 
 ---
 # App deployment
@@ -43,7 +39,7 @@ spec:
     spec:
       containers:
         - name: offers-app
-          image: offers-app:1.0.0
+          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/offers-app:2.0.0
           ports:
           - containerPort: 9000
           livenessProbe:
