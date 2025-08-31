@@ -4,13 +4,7 @@ kind: ConfigMap
 metadata:
   name: posts-app-config
 data:
-  SERVER_URL: "0.0.0.0"
-  SERVER_PORT: "9000"
-  # DB vars
-  DB_USER: "postgres"
-  DB_PASSWORD: "1234"
-  DB_NAME: "posts-db"
-  DB_PORT: "5432"
+  DATABASE_URL: "postgresql://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
 
 ---
 # App service
@@ -19,14 +13,13 @@ kind: Service
 metadata:
   name: posts-app-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: posts-app
   ports:
     - protocol: TCP
       port: 80
       targetPort: 9000
-      nodePort: 30001
 
 ---
 # App deployment
@@ -46,7 +39,7 @@ spec:
     spec:
       containers:
         - name: posts-app
-          image: posts-app:1.0.0
+          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/posts-app:2.0.0
           ports:
           - containerPort: 9000
           livenessProbe:
@@ -57,135 +50,106 @@ spec:
             periodSeconds: 30
             failureThreshold: 3
           env:
-            - name: SERVER_URL
+            - name: DATABASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: posts-app-config
-                  key: SERVER_URL
-            - name: SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: SERVER_PORT
-            - name: DB_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_NAME
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_PORT
-            - name: DEBUG
-              value: "false"
-            - name: DB_HOST
-              value: "db-service"
+                  name: routes-app-config
+                  key: DATABASE_URL
 
----
-# DB service
-apiVersion: v1
-kind: Service
-metadata:
-  name: posts-db-service
-spec:
-  type: ClusterIP
-  selector:
-    app: posts-db
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+# ---
+# # DB service
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: posts-db-service
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: posts-db
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
 
----
-# DB deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: posts-db-deployment
-  labels:
-    app: posts-db
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: posts-db
-  template:
-    metadata:
-      labels:
-        app: posts-db
-    spec:
-      containers:
-        - name: postgres-db
-          image: postgres
-          ports:
-          - containerPort: 5432
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-          env:
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_NAME
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: posts-app-config
-                  key: DB_PASSWORD
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
-      volumes:
-        - name: postgres-storage
-          emptyDir:
-            sizeLimit: 1Gi
+# ---
+# # DB deployment
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: posts-db-deployment
+#   labels:
+#     app: posts-db
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: posts-db
+#   template:
+#     metadata:
+#       labels:
+#         app: posts-db
+#     spec:
+#       containers:
+#         - name: postgres-db
+#           image: postgres
+#           ports:
+#           - containerPort: 5432
+#           volumeMounts:
+#             - name: postgres-storage
+#               mountPath: /var/lib/postgresql/data
+#           env:
+#             - name: POSTGRES_DB
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: posts-app-config
+#                   key: DB_NAME
+#             - name: POSTGRES_PASSWORD
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: posts-app-config
+#                   key: DB_PASSWORD
+#           livenessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             timeoutSeconds: 5
+#             failureThreshold: 5
+#           readinessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 5
+#             periodSeconds: 5
+#             timeoutSeconds: 3
+#             failureThreshold: 3
+#       volumes:
+#         - name: postgres-storage
+#           emptyDir:
+#             sizeLimit: 1Gi
 
----
-# Allow posts-app to DB Network Policy
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: posts-network
-spec:
-  podSelector:
-    matchLabels:
-      app: posts-db
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            app: posts-app
-      ports:
-        - protocol: TCP
-          port: 5432
+# ---
+# # Allow posts-app to DB Network Policy
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: posts-network
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: posts-db
+#   policyTypes:
+#     - Ingress
+#   ingress:
+#     - from:
+#       - podSelector:
+#           matchLabels:
+#             app: posts-app
+#       ports:
+#         - protocol: TCP
+#           port: 5432
