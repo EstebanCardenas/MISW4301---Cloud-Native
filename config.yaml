@@ -11,27 +11,35 @@ team:
         percentage: 25
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/253/views/1
 docs: https://probable-chainsaw-ormk5yn.pages.github.io/
+url: <url del host de la aplicación, ejemplo https://host>
+cluster_name: dann-cluster
 users_app:
   folder: users_app
   image_name: users-app
-  image_tag: 1.0.0
+  image_tag: 2.0.0
   authors:
     - ne.cardenas
 posts_app:
   folder: posts_app
   image_name: posts-app
-  image_tag: 1.0.0
+  image_tag: 2.0.0
   authors:
     - d.corzos
 offers_app:
   folder: offers_app
   image_name: offers-app
-  image_tag: 1.0.0
+  image_tag: 2.0.0
   authors:
     - af.donoso
 routes_app:
   folder: routes_app
   image_name: routes-app
-  image_tag: 1.0.0
+  image_tag: 2.0.0
   authors:
     - gd.martinez
+rf003:
+  folder: rf003
+  image_name: rf003
+  image_tag: 2.0.0
+  authors:
+    - ne.cardenas
