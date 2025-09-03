@@ -15,8 +15,6 @@ metadata:
   name: users-app-secret
 type: Opaque
 stringData:
-  SERVER_URL: "0.0.0.0"
-  SERVER_PORT: "3000"
   # DB vars
   DB_USER: "postgres"
   DB_PASSWORD: "12345678"

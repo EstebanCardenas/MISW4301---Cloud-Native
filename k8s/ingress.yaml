@@ -35,3 +35,10 @@ spec:
                 name: routes-app-service
                 port:
                   number: 80
+          - path: /rf003
+            pathType: Prefix
+            backend:
+              service:
+                name: rf003-service
+                port:
+                  number: 80

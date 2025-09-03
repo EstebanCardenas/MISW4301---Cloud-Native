@@ -44,7 +44,7 @@ spec:
           - containerPort: 9000
           livenessProbe:
             httpGet:
-              path: /ping
+              path: /posts/ping
               port: 9000
             initialDelaySeconds: 5 
             periodSeconds: 30

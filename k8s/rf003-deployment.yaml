@@ -1,0 +1,76 @@
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rf003-app-config
+data:
+  SERVER_URL: "0.0.0.0"
+  SERVER_PORT: "3000"
+  USERS_HOST: "http://users-app-service"
+  ROUTES_HOST: "http://routes-app-service"
+  POSTS_HOST: "http://posts-app-service"
+
+---
+# App service
+apiVersion: v1
+kind: Service
+metadata:
+  name: rf003-service
+spec:
+  type: ClusterIP
+  selector:
+    app: rf003-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+# App deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf003-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf003-app
+  template:
+    metadata:
+      labels:
+        app: rf003-app
+    spec:
+      containers:
+        - name: rf003-app
+          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/rf003:2.0.0
+          ports:
+          - containerPort: 3000
+          env:
+            - name: SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: rf003-app-config
+                  key: SERVER_URL
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: rf003-app-config
+                  key: SERVER_PORT
+            - name: USERS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rf003-app-config
+                  key: USERS_HOST
+            - name: ROUTES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rf003-app-config
+                  key: ROUTES_HOST
+            - name: POSTS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rf003-app-config
+                  key: POSTS_HOST
+            - name: GIN_MODE
+              value: "release"
