@@ -1,9 +1,10 @@
-# ConfigMap
+# Secret
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: offers-app-config
-data:
+  name: offers-app-secret
+type: Opaque
+stringData:
   DB_URL: "postgresql+psycopg2://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
 
 ---
@@ -52,8 +53,8 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  name: offers-app-config
+                secretKeyRef:
+                  name: offers-app-secret
                   key: DB_URL
 
 # ---
@@ -100,17 +101,17 @@ spec:
 #           env:
 #             - name: POSTGRES_DB
 #               valueFrom:
-#                 configMapKeyRef:
+#                 secretKeyRef:
 #                   name: offers-app-config
 #                   key: DB_NAME
 #             - name: POSTGRES_PASSWORD
 #               valueFrom:
-#                 configMapKeyRef:
+#                 secretKeyRef:
 #                   name: offers-app-config
 #                   key: DB_PASSWORD
 #             - name: POSTGRES_USER
 #               valueFrom:
-#                 configMapKeyRef:
+#                 secretKeyRef:
 #                   name: offers-app-config
 #                   key: DB_USER
 #           livenessProbe:

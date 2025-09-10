@@ -60,6 +60,33 @@ Líder: Andrés Donoso
   
 ![Vista funcional](./diagrams/components.png "Vista funcional")
 
+<table>
+  <tr>
+    <th>Componente</th>
+    <th>Nombre del componente</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>1234</td>
+  </tr>
+</table>
+
 ### Vista de despliegue
 
 ![Vista de despliegue](./diagrams/deployment.png "Vista de despliegue")
@@ -79,3 +106,34 @@ Líder: Andrés Donoso
 6. Servidor ASGI: Uvicorn
 7. Manejo de dependencias: poetry
 8.  Despliegue: Docker
+
+### Patrones cada requerimiento
+
+#### RF003
+
+<table>
+  <tr>
+    <th>Requerimieno</th>
+    <th>RF003</th>
+  </tr>
+  <tr>
+    <td>Patrón utilizado</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Justificación</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Atributos de calidad favorecidos</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Atributos de calidad desfavorecidos</td>
+    <td>1234</td>
+  </tr>
+  <tr>
+    <td>Componentes involucrados</td>
+    <td>1234</td>
+  </tr>
+</table>

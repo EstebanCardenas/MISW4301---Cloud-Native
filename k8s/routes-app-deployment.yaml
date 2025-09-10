@@ -1,9 +1,10 @@
-# ConfigMap
+# Secret
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: routes-app-config
-data:
+  name: routes-app-secret
+type: Opaque
+stringData:
   DATABASE_URL: "postgresql://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
 
 ---
@@ -54,8 +55,8 @@ spec:
           env:
             - name: DATABASE_URL
               valueFrom:
-                configMapKeyRef:
-                  name: routes-app-config
+                secretKeyRef:
+                  name: routes-app-secret
                   key: DATABASE_URL
 
 # ---
@@ -102,12 +103,12 @@ spec:
 #           env:
 #             - name: POSTGRES_DB
 #               valueFrom:
-#                 configMapKeyRef:
+#                 secretKeyRef:
 #                   name: routes-app-config
 #                   key: DB_NAME
 #             - name: POSTGRES_PASSWORD
 #               valueFrom:
-#                 configMapKeyRef:
+#                 secretKeyRef:
 #                   name: routes-app-config
 #                   key: DB_PASSWORD
 #           livenessProbe:

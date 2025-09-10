@@ -35,6 +35,13 @@ spec:
                 name: routes-app-service
                 port:
                   number: 80
+          - path: /scores
+            pathType: Prefix
+            backend:
+              service:
+                name: scores-app-service
+                port:
+                  number: 80
           - path: /rf003
             pathType: Prefix
             backend:

@@ -1,9 +1,10 @@
 # ConfigMap
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: rf003-app-config
-data:
+  name: rf003-app-secret
+type: Opaque
+stringData:
   SERVER_URL: "0.0.0.0"
   SERVER_PORT: "3000"
   USERS_HOST: "http://users-app-service"
@@ -49,28 +50,28 @@ spec:
           env:
             - name: SERVER_URL
               valueFrom:
-                configMapKeyRef:
-                  name: rf003-app-config
+                secretKeyRef:
+                  name: rf003-app-secret
                   key: SERVER_URL
             - name: SERVER_PORT
               valueFrom:
-                configMapKeyRef:
-                  name: rf003-app-config
+                secretKeyRef:
+                  name: rf003-app-secret
                   key: SERVER_PORT
             - name: USERS_HOST
               valueFrom:
-                configMapKeyRef:
-                  name: rf003-app-config
+                secretKeyRef:
+                  name: rf003-app-secret
                   key: USERS_HOST
             - name: ROUTES_HOST
               valueFrom:
-                configMapKeyRef:
-                  name: rf003-app-config
+                secretKeyRef:
+                  name: rf003-app-secret
                   key: ROUTES_HOST
             - name: POSTS_HOST
               valueFrom:
-                configMapKeyRef:
-                  name: rf003-app-config
+                secretKeyRef:
+                  name: rf003-app-secret
                   key: POSTS_HOST
             - name: GIN_MODE
               value: "release"

@@ -1,0 +1,60 @@
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: scores-app-secret
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql://postgres:12345678@terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com:5432/danndb"
+
+---
+# App service
+apiVersion: v1
+kind: Service
+metadata:
+  name: scores-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: scores-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+
+---
+# App deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scores-app-deployment
+  labels:
+    app: scores-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scores-app
+  template:
+    metadata:
+      labels:
+        app: scores-app
+    spec:
+      containers:
+        - name: scores-app
+          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/scores-app:2.0.0
+          ports:
+            - containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /scores/ping
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            failureThreshold: 3
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: scores-app-secret
+                  key: DATABASE_URL
