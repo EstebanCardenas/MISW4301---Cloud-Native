@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from uuid import UUID
 
 from fastapi.testclient import TestClient
@@ -42,7 +42,12 @@ def test_read_main():
 def test_create_score():
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     data = response.json()
@@ -68,14 +73,24 @@ def test_create_score():
 def test_create_score_offerId_already_exists():
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     assert response.status_code == 201
 
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     assert response.status_code == 412
@@ -85,7 +100,12 @@ def test_create_score_offerId_already_exists():
 def test_get_score():
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     data = response.json()
@@ -111,7 +131,12 @@ def test_get_score():
 def test_get_scores():
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     data = response.json()
@@ -134,16 +159,27 @@ def test_get_scores():
     except ValueError:
         assert False, f"id is not a valid UUID: {data2[0]['id']}"
 
+
 def test_get_scores_with_filter():
     response1 = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
     data1 = response1.json()
 
     response2 = client.post(
         "/scores",
-        json={"offerId": "456", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "456",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
     data2 = response2.json()
 
@@ -155,10 +191,16 @@ def test_get_scores_with_filter():
     assert data1["id"] in ids
     assert data2["id"] in ids
 
+
 def test_get_scores_count():
     client.post(
         "/scores",
-       json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     response2 = client.get(
@@ -174,7 +216,12 @@ def test_get_scores_count():
 def test_delete_score():
     response = client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     data = response.json()
@@ -192,7 +239,12 @@ def test_delete_score():
 def test_reset_scores():
     client.post(
         "/scores",
-        json={"offerId": "398", "offerAmount": 1234.23, "bagSize": "SMALL", "bagCost": 100},
+        json={
+            "offerId": "398",
+            "offerAmount": 1234.23,
+            "bagSize": "SMALL",
+            "bagCost": 100,
+        },
     )
 
     response2 = client.post(

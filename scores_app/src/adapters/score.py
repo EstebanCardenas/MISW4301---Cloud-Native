@@ -5,13 +5,13 @@ from src.models.out.score import ScoreResponse
 
 
 def create_in_to_internal(score: CreateScoreRequest) -> Score:
-    
+
     ocupation_percentage = 0
-    if (score.bagSize == OfferSize.SMALL):
+    if score.bagSize == OfferSize.SMALL:
         ocupation_percentage = 0.25
-    elif (score.bagSize == OfferSize.MEDIUM):
+    elif score.bagSize == OfferSize.MEDIUM:
         ocupation_percentage = 0.5
-    elif (score.bagSize == OfferSize.LARGE):
+    elif score.bagSize == OfferSize.LARGE:
         ocupation_percentage = 1
 
     score_value = score.offerAmount - (score.bagCost * ocupation_percentage)
