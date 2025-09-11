@@ -118,22 +118,39 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Patrón utilizado</td>
-    <td>1234</td>
+    <td>Sagas</td>
   </tr>
   <tr>
     <td>Justificación</td>
-    <td>1234</td>
+    <td>Este patrón permite la implementación de transacciones que involucran varios microservicios. Es necesario aplicar el patrón a este requerimiento ya que se necesita acceder a diferentes microservicios para cumplir con el mismo. Por otra parte, el patrón usa operaciones para revertir las interacciones con cada servicio en caso de que ocurra una falla a fin de mantener la consistencia de los datos.</td>
   </tr>
   <tr>
     <td>Atributos de calidad favorecidos</td>
-    <td>1234</td>
+    <td>
+      <ul>
+        <li>Consistencia</li>
+        <li>Tolerancia a fallos</li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>Atributos de calidad desfavorecidos</td>
-    <td>1234</td>
+    <td>
+      <ul>
+        <li>Simplicidad</li>
+        <li>Depurabilidad</li>
+      </ul>
+    </td>
   </tr>
   <tr>
     <td>Componentes involucrados</td>
-    <td>1234</td>
+    <td>
+      <ul>
+        <li>rf003</li>
+        <li>Microservicio publicaciones</li>
+        <li>Microservicio trayectos</li>
+        <li>Microservicio usuarios</li>
+      </ul>
+    </td>
   </tr>
 </table>
