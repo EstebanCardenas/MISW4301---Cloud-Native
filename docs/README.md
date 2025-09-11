@@ -107,9 +107,7 @@ Líder: Andrés Donoso
 7. Manejo de dependencias: poetry
 8.  Despliegue: Docker
 
-### Patrones cada requerimiento
-
-#### RF003
+## Requerimientos
 
 <table>
   <tr>
@@ -154,3 +152,7 @@ Líder: Andrés Donoso
     </td>
   </tr>
 </table>
+
+#### Diagrama de proceso
+
+<img src="./diagrams/rf003-flow.jpg" alt="Diagrama de procesos rf003">
