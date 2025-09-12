@@ -37,6 +37,12 @@ routes_app:
   image_tag: 2.0.0
   authors:
     - gd.martinez
+scores_app:
+  folder: scores_app
+  image_name: scores-app
+  image_tag: 2.0.0
+  authors:
+    - gd.martinez
 rf003:
   folder: rf003
   image_name: rf003

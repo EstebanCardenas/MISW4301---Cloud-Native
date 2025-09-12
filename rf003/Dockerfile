@@ -16,7 +16,7 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /app/bin/app ./main.go
 
 # --- Stage 2: Create a minimal runtime image ---
-FROM alpine:3.19
+FROM alpine:3.19 as runner
 
 # Set the working directory
 WORKDIR /app

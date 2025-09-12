@@ -30,7 +30,7 @@ RUN poetry install --without dev
 # -------------------------
 # 2. Runtime stage: Final image
 # -------------------------
-FROM python:3.12-slim AS runtime
+FROM python:3.12-slim AS runner
 
 RUN useradd -m appuser
 
