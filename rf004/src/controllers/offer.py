@@ -25,5 +25,15 @@ class OfferController:
                 "La publicación seleccionada ya expiró",
             )
 
-        offer = self.http_client.create_offer(offer)
-        return offer
+        route = self.http_client.get_route_info(post.route_id)
+        new_offer = self.http_client.create_offer(offer)
+
+        try:
+            self.http_client.create_score(
+                new_offer.offer, new_offer.size, route.bag_cost, new_offer.id
+            )
+        except ApiException as e:
+            self.http_client.delete_offer(new_offer.id)
+            raise e
+
+        return new_offer
