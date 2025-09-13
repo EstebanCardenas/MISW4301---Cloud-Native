@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [offers_app, posts_app, routes_app, rf004, scores_app]
+        app: [offers_app, posts_app, routes_app, rf004, rf005, scores_app]
     steps:
       - uses: actions/checkout@v4
 

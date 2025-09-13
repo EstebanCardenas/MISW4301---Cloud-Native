@@ -49,3 +49,17 @@ spec:
                 name: rf003-service
                 port:
                   number: 80
+          - path: /rf004
+            pathType: Prefix
+            backend:
+              service:
+                name: rf004-service
+                port:
+                  number: 80
+          - path: /rf005
+            pathType: Prefix
+            backend:
+              service:
+                name: rf005-service
+                port:
+                  number: 80        

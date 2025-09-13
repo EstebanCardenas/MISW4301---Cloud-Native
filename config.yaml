@@ -49,3 +49,15 @@ rf003:
   image_tag: 2.0.0
   authors:
     - ne.cardenas
+rf004:
+  folder: rf004
+  image_name: rf004
+  image_tag: 2.0.0
+  authors:
+    - af.donoso
+rf005:
+  folder: rf005
+  image_name: rf005
+  image_tag: 2.0.0
+  authors:
+    - d.corzos
