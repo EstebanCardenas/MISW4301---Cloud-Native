@@ -63,27 +63,29 @@ Líder: Andrés Donoso
 <table>
   <tr>
     <th>Componente</th>
-    <th>Nombre del componente</th>
+    <th>rf003</th>
   </tr>
   <tr>
     <td>Código/Id del componente</td>
-    <td>1234</td>
+    <td>rf003</td>
   </tr>
   <tr>
     <td>Tipo</td>
-    <td>1234</td>
+    <td>Servicio</td>
   </tr>
   <tr>
     <td>Responsabilidad</td>
-    <td>1234</td>
+    <td>Gestionar el requerimiento rf003 e implementar el patrón Sagas</td>
   </tr>
   <tr>
     <td>Consideraciones de diseño</td>
-    <td>1234</td>
+    <td>
+      El componente rf003 funciona como orquestador de la transacción entera
+    </td>
   </tr>
   <tr>
     <td>Integraciones</td>
-    <td>1234</td>
+    <td>Comunicación síncrona con los microservicios de publicaciones, trayectos y usuarios a través de HTTP</td>
   </tr>
 </table>
 
