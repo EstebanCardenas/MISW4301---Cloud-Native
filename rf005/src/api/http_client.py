@@ -5,7 +5,7 @@ from pydantic import UUID4
 
 from src.models.internal.offer import Offer
 from src.models.internal.post import Post
-from src.models.internal.route import Route
+from src.models.internal.route import Route, RouteItem
 from src.models.internal.score import Score
 from src.models.internal.user import User
 
@@ -16,11 +16,11 @@ class HttpClient(ABC):
         pass
 
     @abstractmethod
-    def get_offers(self, offer_id: UUID4, auth_token: str) -> List[Offer]:
+    def get_offers(self, post_id: UUID4, auth_token: str) -> List[Offer]:
         pass
 
     @abstractmethod
-    def get_route(self, route_id: UUID4, auth_token: str) -> Route:
+    def get_route(self, route_id: UUID4, auth_token: str) -> RouteItem:
         pass
 
     @abstractmethod

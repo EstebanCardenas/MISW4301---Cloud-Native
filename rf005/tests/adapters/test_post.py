@@ -3,7 +3,7 @@ from datetime import datetime
 
 from src.adapters.mappings import info_to_response
 from src.models.internal.post import Post
-from src.models.internal.route import Airport, Route
+from src.models.internal.route import Airport, AirportItem, Route, RouteItem
 
 
 def test_types_info_to_response() -> None:
@@ -14,12 +14,12 @@ def test_types_info_to_response() -> None:
         expire_at=datetime.now(),
         created_at=datetime.now(),
     )
-    route = Route(
+    route = RouteItem(
         id=uuid.uuid4(),
-        flight_id=uuid.uuid4(),
-        origin=Airport(airport_code="BOG", country="Colombia"),
-        destiny=Airport(airport_code="MIA", country="USA"),
-        bag_cost=100,
+        flightId="4544",
+        origin=AirportItem(airportCode="BOG", country="Colombia"),
+        destiny=AirportItem(airportCode="MIA", country="USA"),
+        bagCost=100,
     )
     offers = []
     internal_post = info_to_response(post, route, offers)
@@ -38,12 +38,12 @@ def test_values_info_to_response():
         expire_at=datetime.now(),
         created_at=datetime.now(),
     )
-    route = Route(
+    route = RouteItem(
         id=uuid.uuid4(),
-        flight_id=uuid.uuid4(),
-        origin=Airport(airport_code="BOG", country="Colombia"),
-        destiny=Airport(airport_code="MIA", country="USA"),
-        bag_cost=100,
+        flightId="4544",
+        origin=AirportItem(airportCode="BOG", country="Colombia"),
+        destiny=AirportItem(airportCode="MIA", country="USA"),
+        bagCost=100,
     )
     offers = []
     internal_post = info_to_response(post, route, offers)
@@ -53,9 +53,9 @@ def test_values_info_to_response():
     assert internal_post.data.createdAt == post.created_at
     assert internal_post.data.offers == offers
     assert internal_post.data.route == route
-    assert internal_post.data.route.origin.airport_code == route.origin.airport_code
+    assert internal_post.data.route.origin.airportCode == route.origin.airportCode
     assert internal_post.data.route.origin.country == route.origin.country
-    assert internal_post.data.route.destiny.airport_code == route.destiny.airport_code
+    assert internal_post.data.route.destiny.airportCode == route.destiny.airportCode
     assert internal_post.data.route.destiny.country == route.destiny.country
-    assert internal_post.data.route.bag_cost == route.bag_cost
-    assert internal_post.data.route.flight_id == route.flight_id
+    assert internal_post.data.route.bagCost == route.bagCost
+    assert internal_post.data.route.flightId == route.flightId

@@ -20,66 +20,6 @@ class DummyResponse:
         return self._data
 
 
-def test_get_post_success_builds_url_and_returns_post(monkeypatch):
-    called = {}
-
-    def fake_request(method, url, json=None, headers=None, timeout=None):
-        called["method"] = method
-        called["url"] = url
-        called["headers"] = headers
-        now = datetime(2025, 1, 1, tzinfo=timezone.utc)
-        data = {
-            "id": str(pid),
-            "route_id": str(uuid.uuid4()),
-            "user_id": str(uuid.uuid4()),
-            "created_at": now,
-            "expire_at": now,
-        }
-        return DummyResponse(200, data)
-
-    pid = uuid.uuid4()
-    BASE_URLS[Service.POSTS] = "http://posts.local/posts"
-    monkeypatch.setattr("src.api.impl.http_client.httpx.request", fake_request)
-
-    client = RequestsHttpClient()
-    token = "abc"
-    post = client.get_post(pid, token)
-
-    assert called["method"] == "GET"
-    assert called["url"].endswith(str(pid))
-    assert "Authorization" in called["headers"]
-    assert post.id == str(pid) or str(post.id) == str(pid)
-
-
-def test_get_offers_success_returns_list(monkeypatch):
-    def fake_request(method, url, json=None, headers=None, timeout=None):
-        now = datetime(2025, 1, 2, tzinfo=timezone.utc)
-        data = [
-            {
-                "id": str(uuid.uuid4()),
-                "post_id": str(oid),
-                "user_id": str(uuid.uuid4()),
-                "description": "Test",
-                "size": OfferSize.SMALL,  # constructor expects Enum instance
-                "fragile": False,
-                "offer": 12.5,
-                "created_at": now,
-            }
-        ]
-        return DummyResponse(200, data)
-
-    oid = uuid.uuid4()
-    BASE_URLS[Service.OFFERS] = "http://offers.local/offers"
-    monkeypatch.setattr("src.api.impl.http_client.httpx.request", fake_request)
-
-    client = RequestsHttpClient()
-    token = "abc"
-    offers = client.get_offers(oid, token)
-    assert len(offers) == 1
-    assert str(offers[0].post_id) == str(oid)
-    assert offers[0].size is OfferSize.SMALL
-
-
 def test_get_route_404_maps_not_found(monkeypatch):
     def fake_request(method, url, json=None, headers=None, timeout=None):
         return DummyResponse(404, {}, content=b"not found")

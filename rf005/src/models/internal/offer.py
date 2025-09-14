@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from pydantic import UUID4
+from pydantic import UUID4, BaseModel
 
 
 class OfferSize(Enum):
@@ -31,7 +31,6 @@ class BaseOffer:
 
 
 class Offer(BaseOffer):
-
     def __init__(
         self,
         id: UUID4,
@@ -46,3 +45,14 @@ class Offer(BaseOffer):
         super().__init__(post_id, user_id, description, size, fragile, offer)
         self.id = id
         self.created_at = created_at
+
+
+class OfferItem(BaseModel):
+    id: UUID4
+    postId: UUID4
+    userId: UUID4
+    description: str
+    size: OfferSize
+    fragile: bool
+    offer: float
+    createdAt: datetime
