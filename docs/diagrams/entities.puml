@@ -8,9 +8,9 @@ entity "users" as users {
     --
     * username : varchar(255)
     * email : varchar(255)
-    phoneNumber : varchar(255)
-    dni : varchar(255)
-    fullName : varchar(255)
+    * phoneNumber : varchar(255)
+    * dni : varchar(255)
+    * fullName : varchar(255)
     * password : varchar(255)
     * salt : varchar(255)
     * token : varchar(255)
@@ -56,9 +56,18 @@ entity "offers" as offers {
     * createdAt : timestamptz
 }
 
+entity "scores" as scores {
+    * id : uuid
+    --
+    * offerId : uuid
+    * value : float
+    * createdAt : timestamptz
+}
+
 ' ==== RELACIONES ====
 users ||--o{ posts
 posts ||--|| routes
 posts ||--o{ offers
+offers ||--|| scores
 
 @enduml

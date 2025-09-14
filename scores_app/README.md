@@ -17,7 +17,6 @@ Esta app está desarrollada en FastAPI que implementa una arquitectura hexagonal
   - [API Endpoints](#api-endpoints)
   - [Pruebas](#pruebas)
     - [Unitarias](#unitarias)
-    - [Integración](#integración)
   - [Autor](#autor)
 
 ## Estructura
@@ -139,10 +138,6 @@ Para ejecutar las pruebas unitarias y establecer el porcentaje mínimo de cobert
 poetry install
 poetry run pytest --cov=src -v -s --cov-fail-under=70 --cov-report term-missing
 ```
-
-### Integración
-
-Las pruebas de integración se realizan por medio de Postman y newman. Encontrará un archivo de colección de postman en la carpeta `tests/api/` el cuál puede cargar en su aplicación de postman de manera local. Posteriormente puede ejecutar `Run collection` para verificar que la aplicación está funcionando correctamente. Tener en cuenta de asignar la URL adecuada.
 
 ## Autor
 

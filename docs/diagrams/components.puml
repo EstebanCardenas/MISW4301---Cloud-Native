@@ -4,29 +4,58 @@ skinparam componentStyle rectangle
 actor User
 
 frame "env" {
-    
+
+    component "Ingress" as ingress
+
     component "users_app" as usersApp
-    database "users_db" as usersDb
 
     component "posts_app" as postsApp
-    database "posts_db" as postsDb
 
     component "offers_app" as offersApp
-    database "offers_db" as offersDb
 
     component "routes_app" as routesApp
-    database "routes_db" as routesDb
+
+    component "scores_app" as scoresApp
+
+    component "rf003" as rf003
+    component "rf004" as rf004
+    component "rf005" as rf005
+
+    User ..> ingress
 
     ' Conexiones usuario -> apps
-    User ..> usersApp
-    User ..> postsApp
-    User ..> offersApp
-    User ..> routesApp
+    ingress ..> usersApp
+    ingress ..> postsApp
+    ingress ..> routesApp
+    ingress ..> offersApp
+    ingress ..> scoresApp
+    ingress ..> rf003
+    ingress ..> rf004
+    ingress ..> rf005
+
+    rf003 --> usersApp
+    rf003 --> postsApp
+    rf003 --> routesApp
+
+    rf004 --> usersApp
+    rf004 --> postsApp
+    rf004 --> routesApp
+    rf004 --> offersApp
+    rf004 --> scoresApp
+
+    rf005 --> usersApp
+    rf005 --> postsApp
+    rf005 --> routesApp
+    rf005 --> offersApp
+    rf005 --> scoresApp
+
 
     ' Conexiones apps -> bases de datos
-    usersApp --> usersDb
-    postsApp --> postsDb
-    offersApp --> offersDb
-    routesApp --> routesDb
+    database "db" as db
+    usersApp --> db
+    postsApp --> db
+    offersApp --> db
+    routesApp --> db
+    scoresApp --> db
 }
 @enduml

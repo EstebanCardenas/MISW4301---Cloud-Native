@@ -20,81 +20,128 @@ skinparam component {
 cloud "Internet" as internet
 
 frame "K8s" {
+    component "Ingress" as ingress
+    internet ..> ingress
+
     frame "Node" {
-        ' INTERNET -> NODE PORTS
-        internet ..> n1 : Port: 30000
-        internet ..> n2 : Port: 30001
-        internet ..> n3 : Port: 30002
-        internet ..> n4 : Port: 30003
+        ' INGRESS -> NODE PORTS
+        ingress ..> n1
+        ingress ..> n2
+        ingress ..> n3
+        ingress ..> n4
+        ingress ..> n5
+        ingress ..> n6
+        ingress ..> n7
+        ingress ..> n8
 
         ' USERS NETWORK
         frame "users-network" #Green {
             component "users-app-service" <<Port: 80>> as usersAppService
             
-            component "users-app" <<Port: xxxx>> as usersAppPod {
+            component "users-app" <<Port: 9000>> as usersAppPod {
               component "users_app" as usersApp
-            }
-            component "users-db-service" <<Port: 5432>> as usersDbService
-            component "users-db" <<Port: 5432>> as usersDbPod {
-                component "users_db" as usersDb
             }
 
             n1 --> usersAppService
             usersAppService --> usersAppPod
-            usersApp --> usersDbService
-            usersDbService --> usersDbPod
         }
 
         ' POSTS NETWORK
         frame "posts-network" #Green {
             component "posts-app-service" <<Port: 80>> as postsAppService
-            component "posts-app" <<Port: xxxx>> as postsAppPod {
+            component "posts-app" <<Port: 9000>> as postsAppPod {
                 component "posts_app" as postsApp
-            }
-            component "posts-db-service" <<Port: 5432>> as postsDbService
-            component "posts-db" <<Port: 5432>> as postsDbPod {
-                component "posts_db" as postsDb
             }
 
             n2 --> postsAppService
             postsAppService --> postsAppPod
-            postsApp --> postsDbService
-            postsDbService --> postsDbPod
         }
 
         ' ROUTES NETWORK
         frame "routes-network" #Green {
             component "routes-app-service" <<Port: 80>> as routesAppService
-            component "routes-app" <<Port: xxxx>> as routesAppPod {
+            component "routes-app" <<Port: 9000>> as routesAppPod {
                 component "routes_app" as routesApp
-            }
-            component "routes-db-service" <<Port: 5432>> as routesDbService
-            component "routes-db" <<Port: 5432>> as routesDbPod {
-                component "routes_db" as routesDb
             }
 
             n3 --> routesAppService
             routesAppService --> routesAppPod
-            routesApp --> routesDbService
-            routesDbService --> routesDbPod
         }
 
         ' OFFERS NETWORK
         frame "offers-network" #Green {
             component "offers-app-service" <<Port: 80>> as offersAppService
-            component "offers-app" <<Port: xxxx>> as offersAppPod {
+            component "offers-app" <<Port: 9000>> as offersAppPod {
                 component "offers_app" as offersApp
             }
-            component "offers-db-service" <<Port: 5432>> as offersDbService
-            component "offers-db" <<Port: 5432>> as offersDbPod {
-                component "offers_db" as offersDb
-            }
-
             n4 --> offersAppService
             offersAppService --> offersAppPod
-            offersApp --> offersDbService
-            offersDbService --> offersDbPod
+        }
+
+        ' SCORES NETWORK
+        frame "scores-network" #Green {
+            component "scores-app-service" <<Port: 80>> as scoresAppService
+            component "scores-app" <<Port: 9000>> as scoresAppPod {
+                component "scores_app" as scoresApp
+            }
+            n5 --> scoresAppService
+            scoresAppService --> scoresAppPod
+        }
+
+        ' RF003 NETWORK
+        frame "rf003-network" #LightBlue {
+            component "rf003-service" <<Port: 80>> as rf003Service
+            component "rf003" <<Port: 9000>> as rf003Pod {
+                component "rf003" as rf003
+            }
+            n6 --> rf003Service
+            rf003Service --> rf003Pod
+
+            rf003 ..> usersAppService
+            rf003 ..> postsAppService
+            rf003 ..> routesAppService
+        }
+
+        ' RF004 NETWORK
+        frame "rf004-network" #LightBlue {
+            component "rf004-service" <<Port: 80>> as rf004Service
+            component "rf004" <<Port: 9000>> as rf004Pod {
+                component "rf004" as rf004
+            }
+            n7 --> rf004Service
+            rf004Service --> rf004Pod
+
+            rf004 ..> usersAppService
+            rf004 ..> postsAppService
+            rf004 ..> routesAppService
+            rf004 ..> offersAppService
+            rf004 ..> scoresAppService
+        }
+
+        ' RF005 NETWORK
+        frame "rf005-network" #LightBlue {
+            component "rf005-service" <<Port: 80>> as rf005Service
+            component "rf005" <<Port: 9000>> as rf005Pod {
+                component "rf005" as rf005
+            }
+            n8 --> rf005Service
+            rf005Service --> rf005Pod
+
+            rf005 ..> usersAppService
+            rf005 ..> postsAppService
+            rf005 ..> routesAppService
+            rf005 ..> offersAppService
+            rf005 ..> scoresAppService
         }
     }
 }
+
+component "db" as db
+
+offersApp --> db
+postsApp --> db
+usersApp --> db
+routesApp --> db
+scoresApp --> db
+
 @enduml

@@ -4,15 +4,45 @@
 person "User" as user
 
 frame "k8s" {
+
+  
+   component "Ingress" as ingress
+   
+  user ..> ingress : "HTTP"
+
    component "users-app-service" as usersAppService
    component "posts-app-service" as postsAppService
    component "offers-app-service" as offersAppService
    component "routes-app-service" as routesAppService
+   component "scores-app-service" as scoresAppService
+   component "rf003-service" as rf003Service
+   component "rf004-service" as rf004Service
+   component "rf005-service" as rf005Service
 
-  user ..> usersAppService : "HTTP"
-  user ..> postsAppService : "HTTP"
-  user ..> offersAppService : "HTTP"
-  user ..> routesAppService : "HTTP"
+  ingress --> usersAppService : "HTTP"
+  ingress --> postsAppService : "HTTP"
+  ingress --> offersAppService : "HTTP"
+  ingress --> routesAppService : "HTTP"
+  ingress --> scoresAppService : "HTTP"
+  ingress --> rf003Service : "HTTP"
+  ingress --> rf004Service : "HTTP"
+  ingress --> rf005Service : "HTTP"
+
+  rf003Service ..> usersAppService : "HTTP"
+  rf003Service ..> postsAppService : "HTTP"
+  rf003Service ..> routesAppService : "HTTP"
+
+  rf004Service ..> usersAppService : "HTTP"
+  rf004Service ..> postsAppService : "HTTP"
+  rf004Service ..> routesAppService : "HTTP"
+  rf004Service ..> offersAppService : "HTTP"
+  rf004Service ..> scoresAppService : "HTTP"
+
+  rf005Service ..> usersAppService : "HTTP"
+  rf005Service ..> postsAppService : "HTTP"
+  rf005Service ..> routesAppService : "HTTP"
+  rf005Service ..> offersAppService : "HTTP"
+  rf005Service ..> scoresAppService : "HTTP"
 
   frame "pod" as usersAppPod {
     frame "users-app" {
@@ -46,66 +76,29 @@ frame "k8s" {
     }
   }
 
+  frame "pod" as scoresAppPod {
+    frame "scores-app" {
+      frame "<img:DOCKER{scale=0.5}>" as scoresAppDocker {
+        component "scores_app" as scoresAppComponent
+      }
+    }
+  }
+
   usersAppService --> usersAppComponent
   postsAppService --> postsAppComponent
   offersAppService --> offersAppComponent
   routesAppService --> routesAppComponent
+  scoresAppService --> scoresAppComponent
 
-  component "users-db-service" as usersDbService
-  component "posts-db-service" as postsDbService
-  component "offers-db-service" as offersDbService
-  component "routes-db-service" as routesDbService
+  database "db" as dbComponent
+  
+  usersAppComponent --> dbComponent
+  postsAppComponent --> dbComponent
+  offersAppComponent --> dbComponent
+  routesAppComponent --> dbComponent
 
-  usersAppComponent --> usersDbService
-  postsAppComponent --> postsDbService
-  offersAppComponent --> offersDbService
-  routesAppComponent --> routesDbService
+  artifact "db-volumen" as dbVolume
 
-  frame "pod" as usersDbPod {
-    frame "users-db" {
-      frame "<img:DOCKER{scale=0.5}>" as usersDbDocker {
-        database "users_db" as usersDbComponent
-      }
-    }
-  }
-
-  frame "pod" as postsDbPod {
-    frame "posts-db" {
-      frame "<img:DOCKER{scale=0.5}>" as postsDbDocker {
-        database "posts_db" as postsDbComponent
-      }
-    }
-  }
-
-  frame "pod" as offersDbPod {
-    frame "offers-db" {
-      frame "<img:DOCKER{scale=0.5}>" as offersDbDocker {
-        database "offers_db" as offersDbComponent
-      }
-    }
-  }
-
-  frame "pod" as routesDbPod {
-    frame "routes-db" {
-      frame "<img:DOCKER{scale=0.5}>" as routesDbDocker {
-        database "routes_db" as routesDbComponent
-      }
-    }
-  }
-
-  usersDbService --> usersDbComponent
-  postsDbService --> postsDbComponent
-  offersDbService --> offersDbComponent
-  routesDbService --> routesDbComponent
-
-  artifact "users-db-volumen" as usersDbVolume
-  artifact "posts-db-volumen" as postsDbVolume
-  artifact "offers-db-volumen" as offersDbVolume
-  artifact "routes-db-volumen" as routesDbVolume
-
-  usersDbComponent --> usersDbVolume
-  postsDbComponent --> postsDbVolume
-  offersDbComponent --> offersDbVolume
-  routesDbComponent --> routesDbVolume
+  dbComponent --> dbVolume
 }
 @enduml

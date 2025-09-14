@@ -3,6 +3,24 @@ Nombre: Alfa buena maravilla onda dinamita escuadrón lobo
 
 Líder: Andrés Donoso
 
+## Tabla de contenido
+
+- [Grupo](#grupo)
+  - [Tabla de contenido](#tabla-de-contenido)
+- [Integrantes](#integrantes)
+- [Reglas](#reglas)
+  - [Vistas de arquitectura](#vistas-de-arquitectura)
+    - [Vista de información](#vista-de-información)
+    - [Vista funcional](#vista-funcional)
+    - [Vista de despliegue](#vista-de-despliegue)
+    - [Vista de red](#vista-de-red)
+    - [Vista de desarrollo](#vista-de-desarrollo)
+      - [Tecnologías](#tecnologías)
+  - [Requerimientos](#requerimientos)
+    - [Requerimiento RF-003](#requerimiento-rf-003)
+    - [Requerimiento RF-004](#requerimiento-rf-004)
+    - [Requerimiento RF-005](#requerimiento-rf-005)
+
 # Integrantes
 <table>
   <tr>
@@ -75,19 +93,78 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Responsabilidad</td>
-    <td>Gestionar el requerimiento rf003 e implementar el patrón Sagas</td>
+    <td>Gestionar el requerimiento rf003 e implementar el patrón Saga</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>
+    <td>Consideraciones de diseño</td>  
     <td>
-      El componente rf003 funciona como orquestador de la transacción entera
+      El componente rf003 funciona como orquestador de la transacción entera. Con Saga se gana resiliencia pero se introduce complejidad adicional. Al ser un orquestador central, puede convertirse en un punto único de fallo y un cuello de botella.
     </td>
   </tr>
   <tr>
     <td>Integraciones</td>
-    <td>Comunicación síncrona con los microservicios de publicaciones, trayectos y usuarios a través de HTTP</td>
+    <td>Comunicación síncrona con los microservicios de publicaciones, trayectos y usuarios a través de HTTP.</td>
   </tr>
 </table>
+
+<table>
+  <tr>
+    <th>Componente</th>
+    <th>rf004</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>rf004</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Servicio</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Gestionar el requerimiento rf004 e implementar el patrón Saga</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      El componente rf004 funciona como orquestador de la transacción entera. Con Saga se gana resiliencia pero se introduce complejidad adicional. Al ser un orquestador central, puede convertirse en un punto único de fallo y un cuello de botella.
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Comunicación síncrona con los microservicios de publicaciones, trayectos, usuarios, ofertas y utilidades a través de HTTP.</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Componente</th>
+    <th>rf005</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>rf005</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Servicio</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Gestionar el requerimiento rf005</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      El componente rf005 funciona como orquestador de la transacción entera. Al ser un orquestador central, puede convertirse en un punto único de fallo y un cuello de botella.
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Comunicación síncrona con los microservicios de publicaciones, trayectos, usuarios, ofertas y utilidades a través de HTTP.</td>
+  </tr>
+</table>
+
 
 ### Vista de despliegue
 
@@ -111,14 +188,16 @@ Líder: Andrés Donoso
 
 ## Requerimientos
 
+### Requerimiento RF-003
+
 <table>
   <tr>
-    <th>Requerimieno</th>
+    <th>Requerimiento</th>
     <th>RF003</th>
   </tr>
   <tr>
     <td>Patrón utilizado</td>
-    <td>Sagas</td>
+    <td>Saga</td>
   </tr>
   <tr>
     <td>Justificación</td>
@@ -155,6 +234,89 @@ Líder: Andrés Donoso
   </tr>
 </table>
 
-#### Diagrama de proceso
+<img src="./diagrams/rf003-flow.jpg" alt="Diagrama de flujo rf003">
+<img src="./diagrams/rf003-sequence.jpg" alt="Diagrama de secuencia rf003">
 
-<img src="./diagrams/rf003-flow.jpg" alt="Diagrama de procesos rf003">
+### Requerimiento RF-004
+
+<table>
+  <tr>
+    <th>Requerimiento</th>
+    <th>RF004</th>
+  </tr>
+  <tr>
+    <td>Patrón utilizado</td>
+    <td>Saga</td>
+  </tr>
+  <tr>
+    <td>Justificación</td>
+    <td>Este patrón permite la implementación de transacciones que involucran varios microservicios. Es necesario aplicar el patrón a este requerimiento ya que se necesita acceder a diferentes microservicios para cumplir con el mismo. Por otra parte, el patrón usa operaciones para revertir las interacciones con cada servicio en caso de que ocurra una falla a fin de mantener la consistencia de los datos.</td>
+  </tr>
+  <tr>
+    <td>Atributos de calidad favorecidos</td>
+    <td>
+      <ul>
+        <li>Consistencia</li>
+        <li>Tolerancia a fallos</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Atributos de calidad desfavorecidos</td>
+    <td>
+      <ul>
+        <li>Simplicidad</li>
+        <li>Depurabilidad</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>Componentes involucrados</td>
+    <td>
+      <ul>
+        <li>rf004</li>
+        <li>Microservicio publicaciones</li>
+        <li>Microservicio trayectos</li>
+        <li>Microservicio usuarios</li>
+        <li>Microservicio utilidades</li>
+        <li>Microservicio ofertas</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<img src="./diagrams/rf004-flow.jpg" alt="Diagrama de flujo rf004">
+<img src="./diagrams/rf004-sequence.jpg" alt="Diagrama de secuencia rf004">
+
+### Requerimiento RF-005
+
+<table>
+  <tr>
+    <th>Requerimiento</th>
+    <th>RF005</th>
+  </tr>
+  <tr>
+    <td>Patrón utilizado</td>
+    <td>Ninguno</td>
+  </tr>
+  <tr>
+    <td>Justificación</td>
+    <td>No es necesario implemementar una Saga ya que no se presenta ninguna operación transaccional, por lo tanto, no es necesario un servicio de compensación. En este requerimiento únicamente se consulta información de otros microservicios</td>
+  </tr>
+  <tr>
+    <td>Componentes involucrados</td>
+    <td>
+      <ul>
+        <li>rf005</li>
+        <li>Microservicio publicaciones</li>
+        <li>Microservicio trayectos</li>
+        <li>Microservicio usuarios</li>
+        <li>Microservicio utilidades</li>
+        <li>Microservicio ofertas</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<img src="./diagrams/rf005-flow.jpg" alt="Diagrama de flujo rf005">
+<img src="./diagrams/rf005-sequence.jpg" alt="Diagrama de secuencia rf005">
