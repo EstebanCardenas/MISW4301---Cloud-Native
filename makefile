@@ -27,7 +27,7 @@ dklogin:
 
 # build and tag docker image
 dkbuild:
-	docker build --rm --platform linux/amd64 -t ${APP_NAME}:${APP_VERSION} --target runner --label version=${APP_VERSION} -f ${DIR}/Dockerfile ${DIR}
+	docker build --rm --platform linux/amd64 -t ${APP_NAME}:${APP_VERSION} --target runner --label version=${APP_VERSION} -f ${DIR}/Dockerfile ${DIR} --provenance=false --no-cache
 	docker tag ${APP_NAME}:${APP_VERSION} ${ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${APP_NAME}:${APP_VERSION}
 
 # push docker image to AWS ECR
@@ -81,12 +81,12 @@ eksingressurl:
 
 # apply k8s manifests to the EKS cluster
 eksapply:
-	envsubst < "${CURDIR}/k8s/producer_deployment.yml" | kubectl apply -f -
-	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl apply -f -
-	kubectl apply -f ${CURDIR}/k8s/ingress.yml
+# 	envsubst < "${CURDIR}/k8s/producer_deployment.yml" | kubectl apply -f -
+#	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl apply -f -
+	kubectl apply -f ${CURDIR}/k8s
 
 # delete all k8s resources from the EKS cluster
 eksdestroy:
-	kubectl delete -f ${CURDIR}/k8s/ingress.yml
-	envsubst < "${CURDIR}/k8s/producer_deployment.yml" | kubectl delete -f -
-	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl delete -f -
+	kubectl delete -f ${CURDIR}/k8s
+# 	envsubst < "${CURDIR}/k8s/producer_deployment.yml" | kubectl delete -f -
+# 	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl delete -f -

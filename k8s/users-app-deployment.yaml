@@ -20,7 +20,7 @@ stringData:
   DB_PASSWORD: "12345678"
   DB_NAME: "danndb"
   DB_PORT: "5432"
-  DB_HOST: "terraform-20250831023100339000000001.c9iaosc40uo3.us-east-1.rds.amazonaws.com"
+  DB_HOST: "terraform-20250914002711507500000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
 
 ---
 # App service
@@ -43,6 +43,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: users-app-deployment
+  labels:
+    app: users-app
 spec:
   replicas: 1
   selector:
@@ -55,7 +57,7 @@ spec:
     spec:
       containers:
         - name: users-app
-          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/users-app:2.0.0
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/users_app:2.0.0
           ports:
           - containerPort: 3000
           livenessProbe:

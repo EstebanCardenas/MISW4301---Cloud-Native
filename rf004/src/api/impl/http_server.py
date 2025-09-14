@@ -15,19 +15,13 @@ from src.models.out.create_offer import CreateOfferResponse, OfferData
 router = APIRouter(prefix="/rf004")
 
 
-def get_token(authorization: Annotated[str | None, Header()] = None) -> uuid.UUID:
+def get_token(authorization: Annotated[str | None, Header()] = None) -> str:
     if not authorization:
         raise ApiException(
             ApiExceptionType.AUTH_TOKEN_MISSING, "Authorization token is missing"
         )
 
-    try:
-        token = authorization.split(" ")[1]
-        return uuid.UUID(token)
-    except ValueError:
-        raise ApiException(
-            ApiExceptionType.AUTH_TOKEN_MISSING, "Invalid authorization token format"
-        )
+    return authorization
 
 
 @router.get("/ping", status_code=status.HTTP_200_OK)
@@ -43,10 +37,11 @@ def ping() -> str:
 def create_offer(
     offer: CreateOfferRequest,
     post_id: uuid.UUID = Path(description="The ID of the post to create an offer for"),
-    auth_token: uuid.UUID = Depends(get_token),
+    auth_token: str = Depends(get_token),
     offer_controller: OfferController = Depends(build_offer_controller),
     user_controller: UserController = Depends(build_user_controller),
 ) -> CreateOfferResponse:
+    print(auth_token)
     user_info = user_controller.get_user_info(auth_token)
     response = offer_controller.create_offer(
         user_info.id,

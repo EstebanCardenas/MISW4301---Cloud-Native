@@ -5,8 +5,8 @@ from src.models.out.create_offer import CreateOfferRequest
 
 def create_offer_internal_to_out(data: BaseOffer) -> CreateOfferRequest:
     return CreateOfferRequest(
-        postId=data.post_id,
-        userId=data.user_id,
+        postId=str(data.post_id),
+        userId=str(data.user_id),
         description=data.description,
         size=data.size.value,
         fragile=data.fragile,

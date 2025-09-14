@@ -8,7 +8,7 @@ class ApiExceptionType(Enum):
     UNKNOWN_ERROR = "unknown_error"
     SERVICE_UNAVAILABLE = "service_unavailable"
     AUTH_TOKEN_MISSING = "auth_token_missing"  # nosec
-    AUTH_TOKEN_EXPIRED = "auth_token_expired"  # nosec
+    AUTH_TOKEN_INVALID = "auth_token_invalid"  # nosec
 
 
 class ApiException(Exception):

@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime, timedelta
 
-from adapters.post import post_in_to_internal
-from models.incoming.posts import GetPostResponse
+from src.adapters.post import post_in_to_internal
+from src.models.incoming.posts import GetPostResponse
 
 
 def test_types_post_in_to_internal() -> None:

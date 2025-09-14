@@ -53,7 +53,7 @@ func (handlers *Handlers) RequirementHandler(ctx *gin.Context) {
 		return
 	}
 	if err != nil {
-		slog.Error(err.Error())
+		slog.Error("Error validating token", "error", err.Error())
 		msgResponse(ctx, 503, outOfServiceMsg)
 		return
 	}

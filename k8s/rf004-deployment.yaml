@@ -1,26 +1,26 @@
-# Secret
+# ConfigMap
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rf005-app-secret
+  name: rf004-app-secret
 type: Opaque
 stringData:
   POSTS_SERVICE_URL: "http://posts-app-service/posts"
   OFFERS_SERVICE_URL: "http://offers-app-service/offers"
-  ROUTES_SERVICE_URL: "http://routes-app-service/routes"
   USERS_SERVICE_URL: "http://users-app-service/users"
-  SCORES_SERVICE_URL: "http://scores-app-service/scores"
+  SCORE_SERVICE_URL: "http://scores-app-service/scores"
+  ROUTES_SERVICE_URL: "http://routes-app-service/routes"
 
 ---
 # App service
 apiVersion: v1
 kind: Service
 metadata:
-  name: rf005-service
+  name: rf004-service
 spec:
   type: ClusterIP
   selector:
-    app: rf005-app
+    app: rf004-app
   ports:
     - protocol: TCP
       port: 80
@@ -31,54 +31,47 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rf005-app-deployment
+  name: rf004-app-deployment
   labels:
-    app: rf005-app
+    app: rf004-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rf005-app
+      app: rf004-app
   template:
     metadata:
       labels:
-        app: rf005-app
+        app: rf004-app
     spec:
       containers:
-        - name: rf005-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf005:2.0.0
+        - name: rf004-app
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf004:2.0.0
           ports:
-            - containerPort: 9000
-          livenessProbe:
-            httpGet:
-              path: /rf005/ping
-              port: 9000
-            initialDelaySeconds: 5
-            periodSeconds: 30
-            failureThreshold: 3
+          - containerPort: 9000
           env:
             - name: POSTS_SERVICE_URL
               valueFrom:
                 secretKeyRef:
-                  name: rf005-app-secret
+                  name: rf004-app-secret
                   key: POSTS_SERVICE_URL
             - name: OFFERS_SERVICE_URL
               valueFrom:
                 secretKeyRef:
-                  name: rf005-app-secret
+                  name: rf004-app-secret
                   key: OFFERS_SERVICE_URL
-            - name: ROUTES_SERVICE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: rf005-app-secret
-                  key: ROUTES_SERVICE_URL
             - name: USERS_SERVICE_URL
               valueFrom:
                 secretKeyRef:
-                  name: rf005-app-secret
+                  name: rf004-app-secret
                   key: USERS_SERVICE_URL
-            - name: SCORES_SERVICE_URL
+            - name: SCORE_SERVICE_URL
               valueFrom:
                 secretKeyRef:
-                  name: rf005-app-secret
-                  key: SCORES_SERVICE_URL
+                  name: rf004-app-secret
+                  key: SCORE_SERVICE_URL
+            - name: ROUTES_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: rf004-app-secret
+                  key: ROUTES_SERVICE_URL

@@ -4,8 +4,8 @@ from pydantic import UUID4, BaseModel
 
 
 class CreateOfferRequest(BaseModel):
-    postId: UUID4
-    userId: UUID4
+    postId: str
+    userId: str
     description: str
     size: str
     fragile: bool

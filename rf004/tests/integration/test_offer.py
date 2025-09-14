@@ -105,6 +105,7 @@ def test_create_offer_post_doesnt_exist(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (404, {"detail": "Post not found"}),
         ],
     ):
@@ -141,6 +142,7 @@ def test_create_offer_post_is_from_same_user(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {
@@ -187,6 +189,7 @@ def test_create_offer_post_has_expired(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {
@@ -233,6 +236,7 @@ def test_create_offer_slow_response(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {
@@ -280,6 +284,7 @@ def test_create_offer_route_not_found(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {
@@ -329,6 +334,7 @@ def test_create_offer_score_fails_and_offer_is_deleted(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {
@@ -412,6 +418,7 @@ def test_create_offer_success(mock_requests_factory):
                     "status": "VERIFICADO",
                 },
             ),
+            (200, "pong"),
             (
                 200,
                 {

@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/rf003/app_errors"
@@ -26,8 +27,10 @@ func NewUsersClient() *UsersClient {
 func (client *UsersClient) GetUserInfo(token string) (map[string]any, error) {
 	url := fmt.Sprintf("%v/users/me", client.host)
 	var respJson map[string]any
+	var errorJson map[string]any
 	resp, err := client.httpClient.R().
 		SetAuthToken(token).
+		SetError(&errorJson).
 		SetResult(&respJson).
 		Get(url)
 	if err != nil {
@@ -37,6 +40,9 @@ func (client *UsersClient) GetUserInfo(token string) (map[string]any, error) {
 		return nil, app_errors.ErrInvalidToken
 	}
 	if resp.StatusCode() != 200 {
+		if errorJson != nil {
+			slog.Error("Failed to get user info", "errorJson", errorJson)
+		}
 		return nil, app_errors.ErrInternalServer
 	}
 

@@ -1,11 +1,11 @@
 import uuid
 from datetime import datetime, timedelta
 
-from models.incoming.create_offer import CreateOfferResponse
 from src.adapters.offer import (
     create_offer_in_to_internal_offer,
     create_offer_internal_to_out,
 )
+from src.models.incoming.create_offer import CreateOfferResponse
 from src.models.internal.offer import BaseOffer, OfferSize
 
 
@@ -20,8 +20,8 @@ def test_types_create_offer_internal_to_out() -> None:
     )
 
     out_offer = create_offer_internal_to_out(input_data)
-    assert isinstance(out_offer.postId, uuid.UUID)
-    assert isinstance(out_offer.userId, uuid.UUID)
+    assert isinstance(out_offer.postId, str)
+    assert isinstance(out_offer.userId, str)
     assert isinstance(out_offer.description, str)
     assert isinstance(out_offer.size, str)
     assert isinstance(out_offer.fragile, bool)
@@ -39,8 +39,8 @@ def test_values_post_in_to_internal():
     )
 
     out_offer = create_offer_internal_to_out(input_data)
-    assert out_offer.postId == input_data.post_id
-    assert out_offer.userId == input_data.user_id
+    assert out_offer.postId == str(input_data.post_id)
+    assert out_offer.userId == str(input_data.user_id)
     assert out_offer.description == input_data.description
     assert out_offer.size == input_data.size.value
     assert out_offer.fragile == input_data.fragile

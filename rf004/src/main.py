@@ -12,7 +12,7 @@ API_EXCEPTION_STATUS_MAP = {
     ApiExceptionType.NOT_FOUND: 404,
     ApiExceptionType.INVALID_INPUT: 400,
     ApiExceptionType.AUTH_TOKEN_MISSING: 403,
-    ApiExceptionType.AUTH_TOKEN_EXPIRED: 401,
+    ApiExceptionType.AUTH_TOKEN_INVALID: 401,
     ApiExceptionType.SERVICE_UNAVAILABLE: 503,
 }
 
@@ -27,18 +27,24 @@ async def api_exception_middleware(request: Request, call_next):
         status_code = API_EXCEPTION_STATUS_MAP.get(exc.type, 500)
         return JSONResponse(
             status_code=status_code,
-            content={"error_type": exc.type.value, "detail": exc.detail},
+            content={
+                "error_type": exc.type.value,
+                "detail": exc.detail,
+                "msg": exc.detail,
+            },
         )
     except Exception as exc:
         print(exc)
-        return JSONResponse(status_code=500, content={"detail": str(exc)})
+        return JSONResponse(
+            status_code=500, content={"detail": str(exc), "msg": str(exc)}
+        )
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=PYDANTIC_EXCEPTION_STATUS_MAP.get(exc.errors()[0]["type"], 400),
-        content={"detail": exc.errors()},
+        content={"detail": exc.errors(), "msg": exc.errors()},
     )
 
 

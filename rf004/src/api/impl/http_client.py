@@ -4,9 +4,6 @@ from enum import Enum
 import requests
 from pydantic import UUID4
 
-from models.internal.offer import OfferSize
-from models.internal.route import Route
-from models.internal.score import Score
 from src.adapters.offer import (
     create_offer_in_to_internal_offer,
     create_offer_internal_to_out,
@@ -22,8 +19,10 @@ from src.models.incoming.posts import GetPostResponse
 from src.models.incoming.route import RouteInfoResponse
 from src.models.incoming.score import CreateScoreResponse
 from src.models.incoming.users import GetUserResponse
-from src.models.internal.offer import BaseOffer, Offer
+from src.models.internal.offer import BaseOffer, Offer, OfferSize
 from src.models.internal.post import Post
+from src.models.internal.route import Route
+from src.models.internal.score import Score
 from src.models.out.score import CreateScoreRequest
 
 
@@ -36,20 +35,24 @@ class Service(Enum):
 
 
 BASE_URLS = {
-    Service.POSTS: os.environ.get("POSTS_SERVICE_URL"),
-    Service.OFFERS: os.environ.get("OFFERS_SERVICE_URL"),
-    Service.USERS: os.environ.get("USERS_SERVICE_URL"),
-    Service.SCORE: os.environ.get("SCORE_SERVICE_URL"),
-    Service.ROUTES: os.environ.get("ROUTES_SERVICE_URL"),
+    Service.POSTS: os.getenv("POSTS_SERVICE_URL"),
+    Service.OFFERS: os.getenv("OFFERS_SERVICE_URL"),
+    Service.USERS: os.getenv("USERS_SERVICE_URL"),
+    Service.SCORE: os.getenv("SCORE_SERVICE_URL"),
+    Service.ROUTES: os.getenv("ROUTES_SERVICE_URL"),
 }
 
 
 class RequestsHttpClient(HttpClient):
     def get_post(self, post_id: UUID4) -> Post:
         try:
+            print(f"{BASE_URLS[Service.POSTS]}/{post_id}")
             response = requests.get(
                 f"{BASE_URLS[Service.POSTS]}/{post_id}", timeout=(3, 10)
             )
+
+            print(response)
+            print(response.status_code)
 
             match response.status_code:
                 case 200:
@@ -69,7 +72,8 @@ class RequestsHttpClient(HttpClient):
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
                 "El servicio está temporalmente fuera de servicio.",
@@ -79,9 +83,11 @@ class RequestsHttpClient(HttpClient):
         try:
             response = requests.post(
                 f"{BASE_URLS[Service.OFFERS]}/",
-                json=create_offer_internal_to_out(data),
+                json=create_offer_internal_to_out(data).model_dump(),
                 timeout=(3, 10),
             )
+
+            print(response)
 
             match response.status_code:
                 case 201:
@@ -109,19 +115,22 @@ class RequestsHttpClient(HttpClient):
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
                 "El servicio está temporalmente fuera de servicio.",
             )
 
-    def get_user_info(self, auth_token: UUID4):
+    def get_user_info(self, auth_token: str):
         try:
             response = requests.get(
-                f"{BASE_URLS[Service.USERS]}/users/me",
-                headers={"Authorization": f"Bearer {auth_token}"},
+                f"{BASE_URLS[Service.USERS]}/me",
+                headers={"Authorization": f"{auth_token}"},
                 timeout=(3, 10),
             )
+
+            print(response)
 
             match response.status_code:
                 case 200:
@@ -131,18 +140,19 @@ class RequestsHttpClient(HttpClient):
 
                 case 401:
                     raise ApiException(
-                        ApiExceptionType.AUTH_TOKEN_EXPIRED,
-                        "El token de autorización ha expirado",
+                        ApiExceptionType.AUTH_TOKEN_INVALID,
+                        "El token de autorización ha expirado o es inválido",
                     )
 
                 case _:
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                "El servicio de usuarios está temporalmente fuera de servicio.",
+                "El servicio está temporalmente fuera de servicio.",
             )
 
     def create_score(
@@ -150,15 +160,17 @@ class RequestsHttpClient(HttpClient):
     ) -> Score:
         try:
             response = requests.post(
-                f"{BASE_URLS[Service.SCORE]}/scores",
+                f"{BASE_URLS[Service.SCORE]}/",
                 json=CreateScoreRequest(
                     offerAmount=offer_amount,
                     bagSize=offer_size.value,
                     bagCost=bag_cost,
                     offerId=str(offer_id),
-                ),
+                ).model_dump(),
                 timeout=(3, 10),
             )
+
+            print(response)
 
             match response.status_code:
                 case 201:
@@ -185,18 +197,21 @@ class RequestsHttpClient(HttpClient):
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                "El servicio de score está temporalmente fuera de servicio.",
+                "El servicio está temporalmente fuera de servicio.",
             )
 
     def delete_offer(self, offer_id: UUID4) -> None:
         try:
             response = requests.delete(
-                f"{BASE_URLS[Service.OFFERS]}/offers/{offer_id}",
+                f"{BASE_URLS[Service.OFFERS]}/{offer_id}",
                 timeout=(3, 10),
             )
+
+            print(response)
 
             match response.status_code:
                 case 204:
@@ -216,18 +231,21 @@ class RequestsHttpClient(HttpClient):
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                "El servicio de ofertas está temporalmente fuera de servicio.",
+                "El servicio está temporalmente fuera de servicio.",
             )
 
     def get_route_info(self, route_id: UUID4) -> Route:
         try:
             response = requests.get(
-                f"{BASE_URLS[Service.ROUTES]}/routes/{route_id}",
+                f"{BASE_URLS[Service.ROUTES]}/{route_id}",
                 timeout=(3, 10),
             )
+
+            print(response)
 
             match response.status_code:
                 case 200:
@@ -247,8 +265,34 @@ class RequestsHttpClient(HttpClient):
                     raise ApiException(
                         ApiExceptionType.UNKNOWN_ERROR, "Error desconocido"
                     )
-        except requests.RequestException:
+        except requests.RequestException as e:
+            print(e)
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                "El servicio de usuarios está temporalmente fuera de servicio.",
+                "El servicio está temporalmente fuera de servicio.",
+            )
+
+    def offers_service_health_check(self) -> bool:
+        try:
+            response = requests.get(
+                f"{BASE_URLS[Service.OFFERS]}/ping",
+                timeout=(3, 10),
+            )
+
+            print(response)
+
+            match response.status_code:
+                case 200:
+                    return True
+
+                case _:
+                    raise ApiException(
+                        ApiExceptionType.SERVICE_UNAVAILABLE,
+                        "El servicio está temporalmente fuera de servicio.",
+                    )
+        except requests.RequestException as e:
+            print(e)
+            raise ApiException(
+                ApiExceptionType.SERVICE_UNAVAILABLE,
+                "El servicio está temporalmente fuera de servicio.",
             )

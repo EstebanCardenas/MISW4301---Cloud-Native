@@ -43,7 +43,7 @@ spec:
             - name: POSTGRES_DB
               value: "danndb"
             - name: POSTGRES_PASSWORD
-              value: "1234"
+              value: "12345678"
           livenessProbe:
             exec:
               command:

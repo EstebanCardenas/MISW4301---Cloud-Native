@@ -1,0 +1,1 @@
+STACKS=("eks" "rds" "registry") 

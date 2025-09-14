@@ -1,5 +1,5 @@
-from models.incoming.route import RouteInfoResponse
-from models.internal.route import Route
+from src.models.incoming.route import RouteInfoResponse
+from src.models.internal.route import Route
 
 
 def get_route_in_to_internal(data: RouteInfoResponse) -> Route:

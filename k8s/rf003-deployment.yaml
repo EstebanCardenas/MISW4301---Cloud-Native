@@ -32,6 +32,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rf003-app-deployment
+  labels:
+    app: rf003-app
 spec:
   replicas: 1
   selector:
@@ -44,7 +46,8 @@ spec:
     spec:
       containers:
         - name: rf003-app
-          image: 484569227865.dkr.ecr.us-east-1.amazonaws.com/rf003:2.0.0
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf003:2.0.0
+          imagePullPolicy: Always
           ports:
           - containerPort: 3000
           env:

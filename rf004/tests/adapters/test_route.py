@@ -1,9 +1,9 @@
 import uuid
 from datetime import datetime, timedelta
 
-from models.incoming.route import RouteInfoResponse
-from models.internal.route import Route
 from src.adapters.route import get_route_in_to_internal
+from src.models.incoming.route import RouteInfoResponse
+from src.models.internal.route import Route
 
 
 def test_types_get_route_in_to_internal() -> None:

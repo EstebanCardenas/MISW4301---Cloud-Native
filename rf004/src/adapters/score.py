@@ -1,5 +1,5 @@
-from models.incoming.score import CreateScoreResponse
-from models.internal.score import Score
+from src.models.incoming.score import CreateScoreResponse
+from src.models.internal.score import Score
 
 
 def create_score_in_to_internal(data: CreateScoreResponse) -> Score:

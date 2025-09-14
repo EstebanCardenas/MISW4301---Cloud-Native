@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import UUID4
 
-from models.internal.offer import BaseOffer, Offer, OfferSize
+from src.models.internal.offer import BaseOffer, Offer, OfferSize
 from src.models.internal.post import Post
 from src.models.internal.route import Route
 from src.models.internal.score import Score
@@ -19,7 +19,7 @@ class HttpClient(ABC):
         pass
 
     @abstractmethod
-    def get_user_info(self, auth_token: UUID4) -> User:
+    def get_user_info(self, auth_token: str) -> User:
         pass
 
     @abstractmethod
@@ -34,4 +34,8 @@ class HttpClient(ABC):
 
     @abstractmethod
     def delete_offer(self, offer_id: UUID4) -> None:
+        pass
+
+    @abstractmethod
+    def offers_service_health_check(self) -> bool:
         pass
