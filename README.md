@@ -26,6 +26,9 @@
 ├── posts_app               # Aplicación de publicaciones
 ├── routes_app              # Aplicación de trayectos
 ├── users_app               # Aplicación de usuarios
+├── rf003                   # Aplicación para requerimiento rf003
+├── rf004                   # Aplicación para requerimiento rf004
+├── rf005                   # Aplicación para requerimiento rf005
 ├── vale.ini                # Configuración para Vale.
 ├── config.yaml             # Configuración del repositorio.
 ├── Makefile                # Scripts para evaluación.
@@ -33,13 +36,12 @@
 ```
 
 1. **github/workflows**: archivos de ci para validaciones del proyecto.
-   * `ci_evaluador_entrega1_k8s.yml` verifica configuración de k8s y ejecuta pruebas sobre cada aplicación.
-   * `ci_evaluador_entrega1_docs.yml` verifica que los diagramas de la documentación contengan los componentes esperados, hace una revisión gramática sobre el contenido del markdown.
+   * `ci_evaluador_entrega2_k8s.yml` verifica configuración de k8s y ejecuta pruebas sobre cada aplicación.
    * `ci_evaluador_unit.yml` ejecuta pruebas unitarias.
 2. **k8s**: archivos de configuración y despliegue de las aplicaciones.
 3. **docs**: archivos de la documentación técnica.
 4. **<aplicación>**: una carpeta por cada aplicación (offers, posts, routes, users, scores, rf003, rf004, rf005). 
-5. **makefile**: el archivo `makefile` es utilizado por los pipelines evaluadores.
+5. **makefile**: el archivo `makefile` es utilizado por los pipelines evaluadores, y contiene scripts de utilidad para construir la infraestructura del proyecto.
 
 ## Archivo de configuración
 
@@ -58,32 +60,48 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
 
 ## Despliegue de la aplicación completa
+
 ### Requisitos
-- Tener instalado `minikube`, `kubectl` y Docker
+- terraform
+- kubectl
+- docker
+- aws CLI
+- helm
+- make
 
-### 1. Creación de imágenes
-Para crear la imagen de cada aplicación corra el siguiente comando:
-```bash
-docker build --rm -t <app-name>:1.0.0 ./<app-folder>
+### 1. Creación de infraestructura
 ```
-Por ejemplo, para la app de Offers sería:
-```bash
-docker build --rm -t offer-app:1.0.0 ./offer_app
-```
-### 2. Cargar imágenes a Minikube
-```bash
-minikube start --cpus=2 --memory=3g --cni calico
-minikube image load <app-name>:1.0.0
+bash scripts/build_stacks.sh
 ```
 
-### 3. Ejecutar en Minikube
-```bash
-kubectl apply -f k8s
+### 2. Configuración base de datos
+
+<p>
+Entrar a los siguientes archivos:
+</p>
+<ul>
+  <li>k8s/offers-app-deployment</li>
+  <li>k8s/posts-app-deployment</li>
+  <li>k8s/routes-app-deployment</li>
+  <li>k8s/scores-app-deployment</li>
+  <li>k8s/users-app-deployment</li>
+</ul>
+
+Y actualizar el secreto del host de la base de datos en cada uno de ellos:
+
+![alt text](./docs/readme-assets/secret-config.png)
+
+### 3. Construir y subir imágenes
+
+```
+bash scripts/build_images.sh
 ```
 
-### 4. Obtener url de un servicio
+### 4. Aplicar deployments
 ```bash
-minikube service <app-name>-service
+bash scripts/build_k8s.sh
 ```
 
-**TODO: Crear script de makefile para este proceso**
+Puede que en este paso no se haya podido aplicar la configuración del ingress. Si se obtiene un mensaje de error relacionado a esto, correr el siguiente comando:
+
+`kubectl apply -f ./k8s`
