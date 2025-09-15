@@ -30,3 +30,7 @@ class HttpClient(ABC):
     @abstractmethod
     def get_user_info(self, auth_token: str) -> User:
         pass
+
+    @abstractmethod
+    def check_urls(self):
+        pass

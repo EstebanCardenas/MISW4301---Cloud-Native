@@ -11,7 +11,7 @@ team:
         percentage: 25
 board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/253/views/1
 docs: https://probable-chainsaw-ormk5yn.pages.github.io/
-url: aaf13936f0b2e433d9eb2bd868605c01-725202551.us-east-1.elb.amazonaws.com
+url: af8bbd1a74bba49c4b332daf7e79abbf-282802343.us-east-1.elb.amazonaws.com
 cluster_name: dann-cluster
 users_app:
   folder: users_app

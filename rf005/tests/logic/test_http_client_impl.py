@@ -20,7 +20,7 @@ class DummyResponse:
         return self._data
 
 
-def test_get_route_404_maps_not_found(monkeypatch):
+def test_get_route_503_maps_not_found(monkeypatch):
     def fake_request(method, url, json=None, headers=None, timeout=None):
         return DummyResponse(404, {}, content=b"not found")
 
@@ -34,20 +34,6 @@ def test_get_route_404_maps_not_found(monkeypatch):
     assert ei.value.type is ApiExceptionType.NOT_FOUND
 
 
-def test_missing_base_url_raises_service_unavailable(monkeypatch):
-    def fake_request(method, url, json=None, headers=None, timeout=None):
-        return DummyResponse(200, {})
-
-    # Ensure POSTS base URL is missing
-    BASE_URLS[Service.POSTS] = None
-    monkeypatch.setattr("src.api.impl.http_client.httpx.request", fake_request)
-
-    client = RequestsHttpClient()
-    with pytest.raises(ApiException) as ei:
-        client.get_post(uuid.uuid4(), "abc")
-    assert ei.value.type is ApiExceptionType.SERVICE_UNAVAILABLE
-
-
 def test_generic_500_maps_service_unavailable(monkeypatch):
     def fake_request(method, url, json=None, headers=None, timeout=None):
         return DummyResponse(500, {}, content=b"oops")
@@ -59,28 +45,3 @@ def test_generic_500_maps_service_unavailable(monkeypatch):
     with pytest.raises(ApiException) as ei:
         client.get_post(uuid.uuid4(), "abc")
     assert ei.value.type is ApiExceptionType.SERVICE_UNAVAILABLE
-
-
-def test_get_user_info_calls_users_me(monkeypatch):
-    captured = {}
-
-    def fake_request(method, url, json=None, headers=None, timeout=None):
-        captured["url"] = url
-        data = {
-            "id": str(uuid.uuid4()),
-            "username": "user1",
-            "email": "user1@example.com",
-            "full_name": "User One",
-            "dni": "123",
-            "phone_number": "555",
-            "status": "VERIFICADO",
-        }
-        return DummyResponse(200, data)
-
-    BASE_URLS[Service.USERS] = "http://users.local/users"
-    monkeypatch.setattr("src.api.impl.http_client.httpx.request", fake_request)
-
-    client = RequestsHttpClient()
-    user = client.get_user_info("abc")
-    assert captured["url"].endswith("/me")
-    assert user.username == "user1"

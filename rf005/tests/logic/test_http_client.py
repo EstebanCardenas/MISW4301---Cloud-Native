@@ -62,6 +62,9 @@ class DummyHttpClient(HttpClient):
             status=UserStatus.VERIFIED,
         )
 
+    def check_urls(self):
+        return True
+
 
 def test_http_client_abstract_methods_enforced():
     with pytest.raises(TypeError):

@@ -20,7 +20,7 @@ stringData:
   DB_PASSWORD: "12345678"
   DB_NAME: "danndb"
   DB_PORT: "5432"
-  DB_HOST: "terraform-20250914002711507500000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
+  DB_HOST: "terraform-20250914152707823100000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
 
 ---
 # App service

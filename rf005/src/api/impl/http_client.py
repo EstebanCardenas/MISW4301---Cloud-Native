@@ -41,7 +41,10 @@ class RequestsHttpClient(HttpClient):
             headers={"Authorization": f"Bearer {auth_token}"},
             error_map={
                 400: (ApiExceptionType.INVALID_INPUT, "ID de publicación inválido"),
-                404: (ApiExceptionType.NOT_FOUND, "La publicación no existe"),
+                404: (
+                    ApiExceptionType.NOT_FOUND,
+                    "Publicación no encontrada.",
+                ),
             },
         )
         created = self._parse_datetime(data.get("createdAt") or data.get("created_at"))
@@ -67,7 +70,10 @@ class RequestsHttpClient(HttpClient):
             headers={"Authorization": f"Bearer {auth_token}"},
             error_map={
                 400: (ApiExceptionType.INVALID_INPUT, "ID de ruta inválido"),
-                404: (ApiExceptionType.NOT_FOUND, "La ruta no existe"),
+                404: (
+                    ApiExceptionType.NOT_FOUND,
+                    "La ruta no fue encontrada.",
+                ),
             },
         )
         origin = AirportItem(
@@ -144,6 +150,10 @@ class RequestsHttpClient(HttpClient):
                     ApiExceptionType.AUTH_TOKEN_EXPIRED,
                     "El token de autorización ha expirado",
                 ),
+                404: (
+                    ApiExceptionType.NOT_FOUND,
+                    "Usuario no encontrado.",
+                ),
             },
         )
         return User(
@@ -177,12 +187,6 @@ class RequestsHttpClient(HttpClient):
                 ApiExceptionType.AUTH_TOKEN_EXPIRED, "Authorization token is expired"
             )
         base = BASE_URLS.get(service)
-        if not base:
-            raise ApiException(
-                ApiExceptionType.SERVICE_UNAVAILABLE,
-                f"URL base no configurada para {service.value}",
-            )
-
         url = f"{base.rstrip('/')}/{path.lstrip('/')}"
         try:
             resp = httpx.request(
@@ -195,7 +199,7 @@ class RequestsHttpClient(HttpClient):
         except httpx.RequestError:
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                f"El servicio {service.value} está temporalmente fuera de servicio.",
+                f"El servicio está temporalmente fuera de servicio.",
             )
 
         ok_codes = ok_codes or {200}
@@ -219,7 +223,7 @@ class RequestsHttpClient(HttpClient):
         if resp.status_code >= 500:
             raise ApiException(
                 ApiExceptionType.SERVICE_UNAVAILABLE,
-                "Servicio no disponible temporalmente",
+                "El servicio está temporalmente fuera de servicio.",
             )
         raise ApiException(ApiExceptionType.UNKNOWN_ERROR, "Error desconocido")
 
@@ -238,3 +242,24 @@ class RequestsHttpClient(HttpClient):
             except Exception:
                 return None
         return None
+
+    def check_urls(self):
+        for service, url in BASE_URLS.items():
+            try:
+                url_check = url.rstrip("/").lstrip("/")
+                resp = httpx.get(f"{url_check}/ping/")
+                if resp.status_code == 404 or resp.status_code == 503:
+                    raise ApiException(
+                        ApiExceptionType.SERVICE_UNAVAILABLE,
+                        "El servicio está temporalmente fuera de servicio.",
+                    )
+            except httpx.RequestError as e:
+                raise ApiException(
+                    ApiExceptionType.SERVICE_UNAVAILABLE,
+                    f"El servicio está temporalmente fuera de servicio.",
+                )
+            except httpx.HTTPStatusError as e:
+                raise ApiException(
+                    ApiExceptionType.SERVICE_UNAVAILABLE,
+                    f"El servicio está temporalmente fuera de servicio.",
+                )

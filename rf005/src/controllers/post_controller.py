@@ -45,3 +45,6 @@ class PostController:
         if not user_info:
             raise ApiException(type=ApiExceptionType.NOT_FOUND, detail="User not found")
         return user_info
+
+    def check_urls(self):
+        self.http_client.check_urls()

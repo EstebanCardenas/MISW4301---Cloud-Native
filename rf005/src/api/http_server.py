@@ -1,6 +1,7 @@
 from typing import Annotated
 from uuid import UUID
 
+import httpx
 from fastapi import APIRouter, Depends, Header, Path, status
 
 from src.adapters.mappings import info_to_response
@@ -37,6 +38,7 @@ def get_post(
     controller: PostController = Depends(build_post_controller),
     auth_token: str = Depends(get_token),
 ) -> RF005Response:
+    controller.check_urls()
     post = controller.get_post(id, auth_token)
     route = controller.get_route(post.route_id, auth_token)
     offers = controller.get_offers(post.id, auth_token)
