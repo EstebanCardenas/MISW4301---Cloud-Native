@@ -26,6 +26,7 @@
 ├── posts_app               # Aplicación de publicaciones
 ├── routes_app              # Aplicación de trayectos
 ├── users_app               # Aplicación de usuarios
+├── scores_app              # Aplicación de scores
 ├── rf003                   # Aplicación para requerimiento rf003
 ├── rf004                   # Aplicación para requerimiento rf004
 ├── rf005                   # Aplicación para requerimiento rf005
