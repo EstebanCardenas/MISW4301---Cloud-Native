@@ -1,0 +1,414 @@
+{
+	"info": {
+		"_postman_id": "23534ce7-ce74-4db7-9cbf-8c573f314f65",
+		"name": "[MISO] Entrega 2 - Scores",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38886553"
+	},
+	"item": [
+		{
+			"name": "Reset",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ROUTES_PATH}}/scores/reset",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"scores",
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Creación de score",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"let jsonData = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"tests[\"Response has id\"] = jsonData.id !== undefined;",
+							"tests[\"Response has createdAt\"] = jsonData.createdAt !== undefined;",
+							"",
+							"if(jsonData.id) {",
+							"    pm.collectionVariables.set('SCORE_ID', jsonData.id);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const offerId = pm.variables.replaceIn(\"{{$randomInt}}\");",
+							"const offerAmount = pm.variables.replaceIn(\"{{$randomInt}}\");",
+							"const bagCost = pm.variables.replaceIn(\"{{$randomInt}}\");",
+							"const bagSize = 'MEDIUM';",
+							"",
+							"pm.collectionVariables.set('SCORE_OFFERID', offerId);",
+							"pm.collectionVariables.set('SCORE_OFFERAMOUNT', bagCost);",
+							"pm.collectionVariables.set('SCORE_BAGCOST', bagCost);",
+							"pm.collectionVariables.set('SCORE_BAGSIZE', bagSize);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"offerId\": \"{{SCORE_OFFERID}}\",\n    \"offerAmount\": \"{{SCORE_OFFERAMOUNT}}\",\n    \"bagCost\": \"{{SCORE_BAGCOST}}\",\n    \"bagSize\": \"{{SCORE_BAGSIZE}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ROUTES_PATH}}/scores",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"scores"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar cantidad scores",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"let jsonData = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ROUTES_PATH}}/scores/count",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"scores",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar scores sin filtros",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"let jsonData = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ROUTES_PATH}}/scores",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"scores"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar score",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"let jsonData = JSON.parse(responseBody);",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ROUTES_PATH}}/routes/{{SCORE_ID}}",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"routes",
+						"{{SCORE_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consulta de salud del servicio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(pm.response.text())",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ROUTES_PATH}}/scores/ping",
+					"host": [
+						"{{ROUTES_PATH}}"
+					],
+					"path": [
+						"scores",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ROUTES_PATH",
+			"value": "http://localhost:3002",
+			"type": "string"
+		},
+		{
+			"key": "ROUTE_FLIGHTID",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_SOURCEAIRPORTCODE",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_SOURCECOUNTRY",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_DESTINYAIRPORTCODE",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_DESTINYCOUNTRY",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_BAGCOST",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_PLANNEDSTARTDATE",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_PLANNEDENDDATE",
+			"value": ""
+		},
+		{
+			"key": "ROUTE_ID",
+			"value": ""
+		},
+		{
+			"key": "SCORE_OFFERID",
+			"value": ""
+		},
+		{
+			"key": "SCORE_OFFERAMOUNT",
+			"value": ""
+		},
+		{
+			"key": "SCORE_BAGCOST",
+			"value": ""
+		},
+		{
+			"key": "SCORE_BAGSIZE",
+			"value": ""
+		},
+		{
+			"key": "SCORE_ID",
+			"value": ""
+		}
+	]
+}
