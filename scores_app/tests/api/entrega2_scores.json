@@ -279,12 +279,12 @@
 					}
 				},
 				"url": {
-					"raw": "{{ROUTES_PATH}}/routes/{{SCORE_ID}}",
+					"raw": "{{ROUTES_PATH}}/scores/{{SCORE_ID}}",
 					"host": [
 						"{{ROUTES_PATH}}"
 					],
 					"path": [
-						"routes",
+						"scores",
 						"{{SCORE_ID}}"
 					]
 				}
