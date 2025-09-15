@@ -297,11 +297,11 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Patrón utilizado</td>
-    <td>Ninguno</td>
+    <td>Agregador</td>
   </tr>
   <tr>
     <td>Justificación</td>
-    <td>No es necesario implemementar una Saga ya que no se presenta ninguna operación transaccional, por lo tanto, no es necesario un servicio de compensación. En este requerimiento únicamente se consulta información de otros microservicios</td>
+    <td>No es necesario implemementar una Saga ya que no se presenta ninguna operación transaccional, por lo tanto, no es necesario un servicio de compensación. En este requerimiento únicamente se consulta información de otros microservicios. En la solución de este requerimiento se puede ver que el componente se ubica en la mitad, entre el cliente que quiere consumirlo y los microservicios.</td>
   </tr>
   <tr>
     <td>Componentes involucrados</td>
