@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: truenative
+  labels:
+    app: truenative
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: truenative
+  template:
+    metadata:
+      labels:
+        app: truenative
+    spec:
+      containers:
+        - name: truenative
+          image: ghcr.io/misw-4301-desarrollo-apps-en-la-nube/true-native:2.0.0
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /native/ping
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            failureThreshold: 3
+          env:
+            - name: "SECRET_TOKEN"
+              value: <token>
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-truenative
+spec:
+  type: NodePort
+  selector:
+    app: truenative
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 31018
