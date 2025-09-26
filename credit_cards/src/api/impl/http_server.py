@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Header, status
 from src.exceptions.api_exception import ApiException, ApiExceptionType
 
-router = APIRouter(prefix="/rf006")
+router = APIRouter(prefix="/credit-cards")
 
 
 def get_token(authorization: Annotated[str | None, Header()] = None) -> str:

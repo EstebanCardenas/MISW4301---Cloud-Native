@@ -2,10 +2,10 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from src.api.impl.http_server import router as rf006_router
+from src.api.impl.http_server import router as credit_cards_router
 from src.exceptions.api_exception import ApiException, ApiExceptionType
 
-app = FastAPI(title="rf006-app")
+app = FastAPI(title="credit-cards")
 
 API_EXCEPTION_STATUS_MAP = {
     ApiExceptionType.VALIDATION_FAILED: 412,
@@ -48,4 +48,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-app.include_router(rf006_router)
+app.include_router(credit_cards_router)

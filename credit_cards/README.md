@@ -1,10 +1,10 @@
-# RF006 App
+# Credit Cards App
 
 Este servicio está encargado de procesar las ofertas. Incluye funciones para crear, obtener y borrar ofertas.
 
 ## Índice
 
-- [RF006 App](#rf006-app)
+- [Credit Cards App](#credit-cards-app)
   - [Índice](#índice)
   - [Estructura](#estructura)
   - [Ejecución](#ejecución)
