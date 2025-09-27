@@ -38,6 +38,13 @@ func (service *AuthService) Login(ctx context.Context, req *port.LoginRequest) (
 		return nil, domain.ErrUserDoesNotExist
 	}
 
+	if user.Status == domain.PendingVerify { // Check if user has verification pending
+		return nil, domain.ErrUserPendingVerify
+	}
+	if user.Status == domain.NotVerified {
+		return nil, domain.ErrUserNotVerified
+	}
+
 	expireAt, err := service.userRepo.SaveUserToken(ctx, user.Id)
 	if err != nil {
 		return nil, err

@@ -63,3 +63,10 @@ spec:
                 name: rf005-service
                 port:
                   number: 80        
+          - path: /native
+            pathType: Prefix
+            backend:
+              service:
+                name: service-truenative
+                port:
+                  number: 80        

@@ -13,4 +13,7 @@ var (
 	ErrUserDoesNotExist         = errors.New("user does not exist")
 	ErrInvalidUserStatus        = errors.New("user status is invalid")
 	ErrInvalidLoginPayload      = errors.New("invalid login payload")
+	ErrUserPendingVerify        = errors.New("user is pending for verification")
+	ErrUserNotVerified          = errors.New("user is not verified")
+	ErrInvalidVerifyToken       = errors.New("invalid verify token")
 )

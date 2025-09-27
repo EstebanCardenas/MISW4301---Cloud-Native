@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: postgres-db
-          image: postgres
+          image: postgres:16
           ports:
           - containerPort: 5432
           volumeMounts:
@@ -44,27 +44,7 @@ spec:
               value: "danndb"
             - name: POSTGRES_PASSWORD
               value: "12345678"
-          livenessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 5
-          readinessProbe:
-            exec:
-              command:
-                - pg_isready
-                - -U
-                - postgres
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
       volumes:
         - name: postgres-storage
-          emptyDir:
-            sizeLimit: 1Gi
+          persistentVolumeClaim:
+            claimName: postgres-pvc

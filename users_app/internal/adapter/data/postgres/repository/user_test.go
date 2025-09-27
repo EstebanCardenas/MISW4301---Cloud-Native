@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	mockData "github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/mock"
+	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/mock/client"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
 	"github.com/google/uuid"
@@ -16,7 +17,12 @@ func TestUserRepository_CreateUser_Success(t *testing.T) {
 		t.Fatalf("Failed to create db: %v", err.Error())
 	}
 
-	repo, err := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, err := NewUserRepository(db, &verificationClient)
 	if err != nil {
 		t.Fatalf("Failed to init user repo: %v", err.Error())
 	}
@@ -45,7 +51,12 @@ func TestUserRepository_CreateUser_Success(t *testing.T) {
 
 func TestUserRepository_CreateUser_UsernameExists(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	user1 := &domain.User{
 		Username: "duplicateuser",
@@ -71,7 +82,12 @@ func TestUserRepository_CreateUser_UsernameExists(t *testing.T) {
 
 func TestUserRepository_CreateUser_EmailExists(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	user1 := &domain.User{
 		Username: "user1",
@@ -97,7 +113,12 @@ func TestUserRepository_CreateUser_EmailExists(t *testing.T) {
 
 func TestUserRepository_CreateUser_WithOptionalFields(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	dni := "123456"
 	fullName := "Test User"
@@ -133,7 +154,12 @@ func TestUserRepository_CreateUser_WithOptionalFields(t *testing.T) {
 }
 func TestUserRepository_UpdateUser_Success(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	user := &domain.User{
 		Username: "updateuser",
@@ -179,7 +205,12 @@ func TestUserRepository_UpdateUser_Success(t *testing.T) {
 
 func TestUserRepository_UpdateUser_UserDoesNotExist(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	status := domain.Verified
 	req := &port.UpdateUserRequest{
@@ -196,7 +227,12 @@ func TestUserRepository_UpdateUser_UserDoesNotExist(t *testing.T) {
 
 func TestUserRepository_UpdateUser_PartialUpdate(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	user := &domain.User{
 		Username: "partialuser",
@@ -239,7 +275,12 @@ func TestUserRepository_UpdateUser_PartialUpdate(t *testing.T) {
 
 func TestUserRepository_UpdateUser_EmptyOptionalFields(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	dni := "123456"
 	fullName := "Test User"
@@ -286,7 +327,12 @@ func TestUserRepository_UpdateUser_EmptyOptionalFields(t *testing.T) {
 
 func TestUserRepository_GetUserByUsername_Success(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Create a user to be retrieved
 	userToCreate := &domain.User{
@@ -318,7 +364,12 @@ func TestUserRepository_GetUserByUsername_Success(t *testing.T) {
 
 func TestUserRepository_GetUserByUsername_UserDoesNotExist(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Act: Try to get a user that doesn't exist
 	foundUser, err := repo.GetUserByUsername(t.Context(), "nonexistentuser")
@@ -337,7 +388,12 @@ func TestUserRepository_GetUserByUsername_UserDoesNotExist(t *testing.T) {
 
 func TestUserRepository_SaveUserToken_Success(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Create a user first
 	user := &domain.User{
@@ -373,7 +429,12 @@ func TestUserRepository_SaveUserToken_Success(t *testing.T) {
 
 func TestUserRepository_SaveUserToken_UserDoesNotExist(t *testing.T) {
 	db, _ := mockData.NewTestDb()
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: A non-existent user ID
 	nonExistentUserID := uuid.New()
@@ -395,7 +456,12 @@ func TestUserRepository_GetUserById_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Create a user to be retrieved
 	userToCreate := &domain.User{
@@ -433,7 +499,12 @@ func TestUserRepository_GetUserById_UserDoesNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Act: Try to get a user that doesn't exist
 	nonExistentID := uuid.New()
@@ -456,7 +527,12 @@ func TestUserRepository_GetUserCount_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Create three users
 	for i := 0; i < 3; i++ {
@@ -490,7 +566,12 @@ func TestUserRepository_GetUserCount_Empty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Ensure the database is empty (or has been reset)
 	// mockData.NewTestDb should start with an empty table, but it's good practice to be explicit.
@@ -513,7 +594,12 @@ func TestUserRepository_ResetUsers_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Create some users
 	for i := 0; i < 5; i++ {
@@ -551,7 +637,12 @@ func TestUserRepository_ResetUsers_Empty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create mock DB: %v", err)
 	}
-	repo, _ := NewUserRepository(db)
+	verificationClient := client.MockVerificationClient{
+		CreateVerificationFunc: func(*port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	repo, _ := NewUserRepository(db, &verificationClient)
 
 	// Arrange: Ensure the database starts empty.
 	// We can explicitly call ResetUsers to guarantee this, though the test DB should be clean.

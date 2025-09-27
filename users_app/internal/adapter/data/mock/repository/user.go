@@ -10,13 +10,14 @@ import (
 )
 
 type MockUserRepository struct {
-	CreateUserFunc        func(ctx context.Context, user *domain.User) error
-	UpdateUserFunc        func(ctx context.Context, userId uuid.UUID, user *port.UpdateUserRequest) error
-	GetUserByUsernameFunc func(ctx context.Context, username string) (*domain.User, error)
-	GetUserByIdFunc       func(ctx context.Context, userId uuid.UUID) (*domain.User, error)
-	SaveUserTokenFunc     func(ctx context.Context, id uuid.UUID) (time.Time, error)
-	GetUserCountFunc      func(ctx context.Context) (uint, error)
-	ResetUsersFunc        func(ctx context.Context) error
+	CreateUserFunc                func(ctx context.Context, user *domain.User) error
+	UpdateUserFunc                func(ctx context.Context, userId uuid.UUID, user *port.UpdateUserRequest) error
+	GetUserByUsernameFunc         func(ctx context.Context, username string) (*domain.User, error)
+	GetUserByIdFunc               func(ctx context.Context, userId uuid.UUID) (*domain.User, error)
+	SaveUserTokenFunc             func(ctx context.Context, id uuid.UUID) (time.Time, error)
+	GetUserCountFunc              func(ctx context.Context) (uint, error)
+	ResetUsersFunc                func(ctx context.Context) error
+	CreateVerificationRequestFunc func(ctx context.Context, payload *port.VerificationRequestPayload) error
 }
 
 func (m *MockUserRepository) CreateUser(ctx context.Context, user *domain.User) error {
@@ -45,4 +46,8 @@ func (m *MockUserRepository) GetUserCount(ctx context.Context) (uint, error) {
 
 func (m *MockUserRepository) ResetUsers(ctx context.Context) error {
 	return m.ResetUsersFunc(ctx)
+}
+
+func (m *MockUserRepository) CreateVerificationRequest(ctx context.Context, payload *port.VerificationRequestPayload) error {
+	return m.CreateVerificationRequestFunc(ctx, payload)
 }

@@ -29,18 +29,17 @@ spec:
             failureThreshold: 3
           env:
             - name: "SECRET_TOKEN"
-              value: <token>
+              value: my-secret-token
 ---
 kind: Service
 apiVersion: v1
 metadata:
   name: service-truenative
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: truenative
   ports:
     - protocol: TCP
       port: 80
       targetPort: 3000
-      nodePort: 31018

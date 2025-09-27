@@ -38,9 +38,28 @@ dkpush:
 mkbuild: dkbuild
 	minikube image load ${DIR}:latest
 
+mksetupingress:
+	minikube addons enable ingress
+	
+mkget-ingress-url:
+	minikube service ingress-nginx-controller -n ingress-nginx --url
+
+mkssh-db:
+	@POSTGRES_POD=$$(kubectl get pods -l app=dann-db -o jsonpath='{.items[0].metadata.name}'); \
+	kubectl exec -it $${POSTGRES_POD} -- psql -U ${USER} -d ${DB}
+
 # delete all resources in default namespace
 mkdelete:
 	kubectl delete all --all -n default
+
+get-dply:
+	kubectl get deployments
+
+get-pods:
+	kubectl get pods
+
+restart-dply:
+	kubectl rollout restart deployment/${DPLY}
 
 # terraform initialize
 tfinit:

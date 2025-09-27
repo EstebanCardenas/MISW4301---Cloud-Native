@@ -6,6 +6,8 @@ metadata:
 data:
   SERVER_URL: "0.0.0.0"
   SERVER_PORT: "3000"
+  TRUE_NATIVE_HOST: http://service-truenative
+  USERS_HOST: http://users-app-service
 
 # Secret
 ---
@@ -21,6 +23,7 @@ stringData:
   DB_NAME: "danndb"
   DB_PORT: "5432"
   DB_HOST: "terraform-20250914152707823100000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
+  TRUE_NATIVE_SECRET_TOKEN: my-secret-token
 
 ---
 # App service
@@ -78,6 +81,16 @@ spec:
                 configMapKeyRef:
                   name: users-app-config
                   key: SERVER_PORT
+            - name: TRUE_NATIVE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: TRUE_NATIVE_HOST
+            - name: USERS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: USERS_HOST
 
             - name: DB_USER
               valueFrom:
@@ -104,6 +117,11 @@ spec:
                 secretKeyRef:
                   name: users-app-secret
                   key: DB_HOST
+            - name: TRUE_NATIVE_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: TRUE_NATIVE_SECRET_TOKEN
 
             - name: DEBUG
               value: "false"

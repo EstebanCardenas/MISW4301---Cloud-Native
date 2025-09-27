@@ -40,6 +40,10 @@ func (handler *AuthHandler) Login(ctx *gin.Context) {
 		switch err {
 		case domain.ErrInvalidLoginPayload:
 			sendErrorResponse(ctx, 400, "Invalid login payload")
+		case domain.ErrUserPendingVerify:
+			sendErrorResponse(ctx, 401, "User is pending for verification")
+		case domain.ErrUserNotVerified:
+			sendErrorResponse(ctx, 401, "User is not verified")
 		case domain.ErrUserDoesNotExist:
 			sendErrorResponse(ctx, 404, "Username or password are incorrect")
 		default:

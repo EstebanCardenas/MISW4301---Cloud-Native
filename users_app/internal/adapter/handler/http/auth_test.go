@@ -107,6 +107,54 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, expectedResponse, response)
 	})
 
+	t.Run("user has pending verification", func(t *testing.T) {
+		mockService.LoginFunc = func(ctx context.Context, req *port.LoginRequest) (*port.LoginResponse, error) {
+			return nil, domain.ErrUserPendingVerify
+		}
+		// Create req body
+		body := LoginRequestBody{Username: "myuser", Password: "mypass"}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create response recorder
+		req, _ := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		// Assert
+		assert.Equal(t, 401, w.Code)
+		expectedResp := map[string]any{
+			"error": "User is pending for verification",
+		}
+		var response map[string]any
+		json.Unmarshal(w.Body.Bytes(), &response)
+		assert.Equal(t, response, expectedResp)
+	})
+
+	t.Run("user is not verified", func(t *testing.T) {
+		mockService.LoginFunc = func(ctx context.Context, req *port.LoginRequest) (*port.LoginResponse, error) {
+			return nil, domain.ErrUserNotVerified
+		}
+		// Create req body
+		body := LoginRequestBody{Username: "myuser", Password: "mypass"}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create response recorder
+		req, _ := http.NewRequest(http.MethodPost, "/auth/login", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		// Assert
+		assert.Equal(t, 401, w.Code)
+		expectedResp := map[string]any{
+			"error": "User is not verified",
+		}
+		var response map[string]any
+		json.Unmarshal(w.Body.Bytes(), &response)
+		assert.Equal(t, response, expectedResp)
+	})
+
 	t.Run("user not found or incorrect password", func(t *testing.T) {
 		// Mock the service to return the specific error
 		mockService.LoginFunc = func(ctx context.Context, req *port.LoginRequest) (*port.LoginResponse, error) {

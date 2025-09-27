@@ -9,11 +9,16 @@ import (
 )
 
 type MockUserService struct {
-	CreateUserFunc   func(ctx context.Context, request *port.CreateUserRequest) (*port.CreateUserResponse, error)
-	UpdateUserFunc   func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error
-	QueryMyselfFunc  func(ctx context.Context, userId uuid.UUID) (*domain.User, error)
-	GetUserCountFunc func(ctx context.Context) (uint, error)
-	ResetUsersFunc   func(ctx context.Context) error
+	CreateUserFunc       func(ctx context.Context, request *port.CreateUserRequest) (*port.CreateUserResponse, error)
+	UpdateUserFunc       func(ctx context.Context, userId uuid.UUID, request *port.UpdateUserRequest) error
+	QueryMyselfFunc      func(ctx context.Context, userId uuid.UUID) (*domain.User, error)
+	GetUserCountFunc     func(ctx context.Context) (uint, error)
+	ResetUsersFunc       func(ctx context.Context) error
+	UpdateUserStatusFunc func(
+		ctx context.Context,
+		secretToken string,
+		request *port.UpdateUserStatusRequest,
+	) error
 }
 
 func (m *MockUserService) CreateUser(ctx context.Context, request *port.CreateUserRequest) (*port.CreateUserResponse, error) {
@@ -30,4 +35,12 @@ func (m *MockUserService) GetUserCount(ctx context.Context) (uint, error) {
 }
 func (m *MockUserService) ResetUsers(ctx context.Context) error {
 	return m.ResetUsersFunc(ctx)
+}
+
+func (m *MockUserService) UpdateUserStatus(
+	ctx context.Context,
+	secretToken string,
+	request *port.UpdateUserStatusRequest,
+) error {
+	return m.UpdateUserStatusFunc(ctx, secretToken, request)
 }

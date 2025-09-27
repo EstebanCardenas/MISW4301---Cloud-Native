@@ -1,6 +1,8 @@
 package hash
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"regexp"
 
@@ -34,4 +36,9 @@ func (service *BycryptService) HashPassword(password string) (string, string, er
 // ComparePassword compares input password with hashed password
 func (service *BycryptService) ComparePassword(password, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+func (service *BycryptService) Hash256(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }

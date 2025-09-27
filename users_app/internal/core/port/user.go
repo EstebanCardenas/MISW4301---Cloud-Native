@@ -9,12 +9,13 @@ import (
 )
 
 type CreateUserRequest struct {
-	Username    string
-	Password    string
-	Email       string
-	Dni         *string
-	FullName    *string
-	PhoneNumber *string
+	Username             string
+	Password             string
+	Email                string
+	Dni                  *string
+	FullName             *string
+	PhoneNumber          *string
+	UpdateUserWebhookUrl string
 }
 
 func (req *CreateUserRequest) ToDomainModel() *domain.User {
@@ -25,7 +26,6 @@ func (req *CreateUserRequest) ToDomainModel() *domain.User {
 		Dni:         req.Dni,
 		FullName:    req.FullName,
 		Password:    req.Password,
-		Status:      domain.NotVerified,
 	}
 }
 
@@ -41,12 +41,38 @@ type UpdateUserRequest struct {
 	Status      *domain.UserStatus
 }
 
+type UpdateUserStatusRequest struct {
+	RUV            string
+	UserIdentifier string
+	CreatedAt      string
+	Status         string
+	Score          float64
+	VerifyToken    string
+}
+
+type VerificationRequestPayload struct {
+	User struct {
+		Email    string
+		Dni      *string
+		FullName *string
+		Phone    *string
+	}
+	TransactionIdentifier string
+	UserIdentifier        string
+	UserWebHook           string
+}
+
 type UserService interface {
 	CreateUser(ctx context.Context, request *CreateUserRequest) (*CreateUserResponse, error)
 	UpdateUser(ctx context.Context, userId uuid.UUID, request *UpdateUserRequest) error
 	QueryMyself(ctx context.Context, userId uuid.UUID) (*domain.User, error)
 	GetUserCount(ctx context.Context) (uint, error)
 	ResetUsers(ctx context.Context) error
+	UpdateUserStatus(
+		ctx context.Context,
+		secretToken string,
+		request *UpdateUserStatusRequest,
+	) error
 }
 
 type UserRepository interface {
@@ -57,4 +83,5 @@ type UserRepository interface {
 	SaveUserToken(ctx context.Context, id uuid.UUID) (time.Time, error)
 	GetUserCount(ctx context.Context) (uint, error)
 	ResetUsers(ctx context.Context) error
+	CreateVerificationRequest(ctx context.Context, payload *VerificationRequestPayload) error
 }

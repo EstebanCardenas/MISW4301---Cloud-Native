@@ -20,6 +20,9 @@ func TestUserService_CreateUser_Success(t *testing.T) {
 			user.CreatedAt = time.Now()
 			return nil
 		},
+		CreateVerificationRequestFunc: func(ctx context.Context, payload *port.VerificationRequestPayload) error {
+			return nil
+		},
 	}
 	mockHash := &mock.MockHashService{
 		HashPasswordFunc: func(password string) (string, string, error) {
@@ -284,5 +287,95 @@ func TestUserService_ResetUsers_RepoError(t *testing.T) {
 	err := service.ResetUsers(context.Background())
 	if err == nil {
 		t.Fatalf("expected error, got nil")
+	}
+}
+
+func TestUserService_UpdateUserStatus_Success(t *testing.T) {
+	// Setup
+	mockRepo := &repository.MockUserRepository{
+		UpdateUserFunc: func(context.Context, uuid.UUID, *port.UpdateUserRequest) error {
+			return nil
+		},
+		CreateVerificationRequestFunc: func(ctx context.Context, payload *port.VerificationRequestPayload) error {
+			return nil
+		},
+	}
+	mockHash := &mock.MockHashService{
+		HashPasswordFunc: func(password string) (string, string, error) {
+			return "hashed", "salt", nil
+		},
+		Hash256Func: func(string) string {
+			return "myhash"
+		},
+	}
+	service := NewUserService(mockRepo, mockHash)
+
+	// Act
+	request := port.UpdateUserStatusRequest{
+		Status:      string(domain.Verified),
+		VerifyToken: "myhash",
+	}
+	err := service.UpdateUserStatus(
+		t.Context(),
+		"secret-token",
+		&request,
+	)
+	if err != nil {
+		t.Fatalf("expected nil, got %v", err)
+	}
+}
+
+func TestUserService_UpdateUserStatus_InvalidToken(t *testing.T) {
+	// Setup
+	mockRepo := &repository.MockUserRepository{}
+	mockHash := &mock.MockHashService{
+		Hash256Func: func(string) string {
+			return "myhash"
+		},
+	}
+	service := NewUserService(mockRepo, mockHash)
+
+	// Act
+	request := port.UpdateUserStatusRequest{
+		Status:      string(domain.Verified),
+		VerifyToken: "another-hash",
+	}
+	err := service.UpdateUserStatus(
+		t.Context(),
+		"secret-token",
+		&request,
+	)
+	if err != domain.ErrInvalidVerifyToken {
+		t.Fatalf("expected ErrInvalidVerifyToken, got %v", err)
+	}
+}
+
+func TestUserService_UpdateUserStatus_UpdateUserFail(t *testing.T) {
+	// Setup
+	myErr := errors.New("update user error")
+	mockRepo := &repository.MockUserRepository{
+		UpdateUserFunc: func(context.Context, uuid.UUID, *port.UpdateUserRequest) error {
+			return myErr
+		},
+	}
+	mockHash := &mock.MockHashService{
+		Hash256Func: func(string) string {
+			return "myhash"
+		},
+	}
+	service := NewUserService(mockRepo, mockHash)
+
+	// Act
+	request := port.UpdateUserStatusRequest{
+		Status:      string(domain.Verified),
+		VerifyToken: "myhash",
+	}
+	err := service.UpdateUserStatus(
+		t.Context(),
+		"secret-token",
+		&request,
+	)
+	if err != myErr {
+		t.Fatalf("expected %v, got %v", myErr, err)
 	}
 }

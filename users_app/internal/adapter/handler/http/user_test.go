@@ -510,3 +510,135 @@ func TestResetUsers(t *testing.T) {
 		assert.Equal(t, "Internal server error", actualResponse["error"])
 	})
 }
+
+func TestUpdateUserStatus(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	mockService := &mock.MockUserService{}
+	handler := NewUserHandler(mockService)
+	router.PATCH("/users/status", handler.UpdateUserStatus)
+
+	t.Run("invalid verify token from service", func(t *testing.T) {
+		mockService.UpdateUserStatusFunc = func(ctx context.Context, verifyToken string, request *port.UpdateUserStatusRequest) error {
+			return domain.ErrInvalidVerifyToken
+		}
+
+		// Create request body
+		body := UpdateUserStatusRequestBody{
+			RUV:            "some-ruv",
+			UserIdentifier: "user-123",
+			CreatedAt:      "2024-01-01T00:00:00Z",
+			Status:         "VERIFICADO",
+			Score:          95.5,
+			VerifyToken:    "invalid-token",
+		}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create a new HTTP request and a response recorder
+		req, _ := http.NewRequest(http.MethodPatch, "/users/status", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+
+		// Serve the request
+		router.ServeHTTP(w, req)
+
+		// Assert the response
+		assert.Equal(t, http.StatusForbidden, w.Code)
+		var actualResponse map[string]any
+		json.Unmarshal(w.Body.Bytes(), &actualResponse)
+		assert.Equal(t, "Verify token is invalid", actualResponse["error"])
+	})
+
+	t.Run("user does not exist", func(t *testing.T) {
+		mockService.UpdateUserStatusFunc = func(ctx context.Context, verifyToken string, request *port.UpdateUserStatusRequest) error {
+			return domain.ErrUserDoesNotExist
+		}
+
+		// Create request body
+		body := UpdateUserStatusRequestBody{
+			RUV:            "some-ruv",
+			UserIdentifier: "user-123",
+			CreatedAt:      "2024-01-01T00:00:00Z",
+			Status:         "VERIFICADO",
+			Score:          95.5,
+			VerifyToken:    "invalid-token",
+		}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create a new HTTP request and a response recorder
+		req, _ := http.NewRequest(http.MethodPatch, "/users/status", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+
+		// Serve the request
+		router.ServeHTTP(w, req)
+
+		// Assert the response
+		assert.Equal(t, http.StatusNotFound, w.Code)
+		var actualResponse map[string]any
+		json.Unmarshal(w.Body.Bytes(), &actualResponse)
+		assert.Equal(t, "User with given ID doesn't exist", actualResponse["error"])
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		mockService.UpdateUserStatusFunc = func(ctx context.Context, verifyToken string, request *port.UpdateUserStatusRequest) error {
+			return domain.ErrInternal
+		}
+
+		// Create request body
+		body := UpdateUserStatusRequestBody{
+			RUV:            "some-ruv",
+			UserIdentifier: "user-123",
+			CreatedAt:      "2024-01-01T00:00:00Z",
+			Status:         "VERIFICADO",
+			Score:          95.5,
+			VerifyToken:    "invalid-token",
+		}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create a new HTTP request and a response recorder
+		req, _ := http.NewRequest(http.MethodPatch, "/users/status", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+
+		// Serve the request
+		router.ServeHTTP(w, req)
+
+		// Assert the response
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		var actualResponse map[string]any
+		json.Unmarshal(w.Body.Bytes(), &actualResponse)
+		assert.Equal(t, "Internal server error", actualResponse["error"])
+	})
+
+	t.Run("successful status update", func(t *testing.T) {
+		mockService.UpdateUserStatusFunc = func(ctx context.Context, verifyToken string, request *port.UpdateUserStatusRequest) error {
+			return nil
+		}
+
+		// Create request body
+		body := UpdateUserStatusRequestBody{
+			RUV:            "some-ruv",
+			UserIdentifier: "user-123",
+			CreatedAt:      "2024-01-01T00:00:00Z",
+			Status:         "VERIFICADO",
+			Score:          95.5,
+			VerifyToken:    "invalid-token",
+		}
+		jsonBody, _ := json.Marshal(body)
+
+		// Create a new HTTP request and a response recorder
+		req, _ := http.NewRequest(http.MethodPatch, "/users/status", bytes.NewBuffer(jsonBody))
+		req.Header.Set("Content-Type", "application/json")
+		w := httptest.NewRecorder()
+
+		// Serve the request
+		router.ServeHTTP(w, req)
+
+		// Assert the response
+		assert.Equal(t, http.StatusOK, w.Code)
+		var actualResponse map[string]any
+		json.Unmarshal(w.Body.Bytes(), &actualResponse)
+		assert.Equal(t, "User status updated successfully", actualResponse["msg"])
+	})
+}

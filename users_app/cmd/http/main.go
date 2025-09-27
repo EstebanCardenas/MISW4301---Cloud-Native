@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/auth"
+	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/client"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/postgres"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/postgres/repository"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/handler/http"
@@ -38,7 +39,8 @@ func main() {
 	bycryptService := hash.NewBycryptService()
 
 	// Init user
-	userRepo, err := repository.NewUserRepository(conn.DB)
+	verificationClient := client.NewTrueNativeClient()
+	userRepo, err := repository.NewUserRepository(conn.DB, verificationClient)
 	if err != nil {
 		slog.Error("Failed to init userRepo", "error", err)
 		os.Exit(1)

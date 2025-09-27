@@ -1,6 +1,10 @@
 package http
 
 import (
+	"encoding/json"
+	"fmt"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
@@ -33,13 +37,15 @@ func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 		return
 	}
 
+	usersHost := os.Getenv("USERS_HOST")
 	createUserReq := port.CreateUserRequest{
-		Username:    reqBody.Username,
-		Password:    reqBody.Password,
-		Email:       reqBody.Email,
-		Dni:         reqBody.Dni,
-		FullName:    reqBody.FullName,
-		PhoneNumber: reqBody.PhoneNumber,
+		Username:             reqBody.Username,
+		Password:             reqBody.Password,
+		Email:                reqBody.Email,
+		Dni:                  reqBody.Dni,
+		FullName:             reqBody.FullName,
+		PhoneNumber:          reqBody.PhoneNumber,
+		UpdateUserWebhookUrl: fmt.Sprintf("%v/users/status", usersHost),
 	}
 	res, err := handler.service.CreateUser(ctx, &createUserReq)
 	if err != nil {
@@ -49,6 +55,7 @@ func (handler *UserHandler) CreateUser(ctx *gin.Context) {
 		case domain.ErrInvalidCreateUserPayload:
 			sendErrorResponse(ctx, 400, "Missing mandatory fields from request body")
 		default:
+			slog.Error("Failed to create user", "error", err.Error())
 			sendErrorResponse(ctx, 500, "Internal server error")
 		}
 		return
@@ -102,6 +109,62 @@ func (handler *UserHandler) UpdateUser(ctx *gin.Context) {
 
 	sendResponse(ctx, 200, map[string]string{
 		"msg": "el usuario ha sido actualizado",
+	})
+}
+
+type UpdateUserStatusRequestBody struct {
+	RUV            string  `json:"RUV"`
+	UserIdentifier string  `json:"userIdentifier"`
+	CreatedAt      string  `json:"createdAt"`
+	Status         string  `json:"status"`
+	Score          float64 `json:"score"`
+	VerifyToken    string  `json:"verifyToken"`
+}
+
+func (handler *UserHandler) UpdateUserStatus(ctx *gin.Context) {
+	slog.Info("Updating user status...")
+	var reqBody UpdateUserStatusRequestBody
+	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
+		slog.Error("Failed to parse request body", "error", err)
+		sendErrorResponse(ctx, 400, "Failed to convert request body to JSON")
+		return
+	}
+
+	slog.Info("Update user request body:")
+	jsonBytes, err := json.MarshalIndent(reqBody, "", "  ")
+	if err == nil {
+		fmt.Println(string(jsonBytes))
+	}
+
+	secretToken := os.Getenv("TRUE_NATIVE_SECRET_TOKEN")
+	request := port.UpdateUserStatusRequest{
+		RUV:            reqBody.RUV,
+		UserIdentifier: reqBody.UserIdentifier,
+		CreatedAt:      reqBody.CreatedAt,
+		Status:         reqBody.Status,
+		Score:          reqBody.Score,
+		VerifyToken:    reqBody.VerifyToken,
+	}
+	err = handler.service.UpdateUserStatus(ctx, secretToken, &request)
+	if err == domain.ErrInvalidVerifyToken {
+		slog.Info("Invalid verify token")
+		sendErrorResponse(ctx, 403, "Verify token is invalid")
+		return
+	}
+	if err == domain.ErrUserDoesNotExist {
+		slog.Info("User with ID not found", "id", reqBody.UserIdentifier)
+		sendErrorResponse(ctx, 404, "User with given ID doesn't exist")
+		return
+	}
+	if err != nil {
+		slog.Error("Failed to update user status", "error", err)
+		sendErrorResponse(ctx, 500, "Internal server error")
+		return
+	}
+
+	slog.Info("User status updated.", "newStatus", reqBody.Status)
+	sendResponse(ctx, 200, gin.H{
+		"msg": "User status updated successfully",
 	})
 }
 

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
@@ -30,6 +31,7 @@ func (userService *UserService) CreateUser(ctx context.Context, request *port.Cr
 	}
 
 	user := request.ToDomainModel()
+	user.Status = domain.PendingVerify
 
 	hasedPwd, salt, err := userService.hashService.HashPassword(user.Password)
 	if err != nil {
@@ -39,6 +41,28 @@ func (userService *UserService) CreateUser(ctx context.Context, request *port.Cr
 	user.Salt = salt
 
 	err = userService.userRepo.CreateUser(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create verification request
+	payload := port.VerificationRequestPayload{
+		User: struct {
+			Email    string
+			Dni      *string
+			FullName *string
+			Phone    *string
+		}{
+			Email:    user.Email,
+			Dni:      user.Dni,
+			FullName: user.FullName,
+			Phone:    user.PhoneNumber,
+		},
+		TransactionIdentifier: uuid.NewString(),
+		UserIdentifier:        user.Id.String(),
+		UserWebHook:           request.UpdateUserWebhookUrl,
+	}
+	err = userService.userRepo.CreateVerificationRequest(ctx, &payload)
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +92,36 @@ func (userService *UserService) UpdateUser(ctx context.Context, userId uuid.UUID
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (userService *UserService) UpdateUserStatus(
+	ctx context.Context,
+	secretToken string,
+	request *port.UpdateUserStatusRequest,
+) error {
+	// Verify token
+	token := fmt.Sprintf(
+		"%s:%s:%v",
+		secretToken, request.RUV, request.Score,
+	)
+	sha_token := userService.hashService.Hash256(token)
+	if sha_token != request.VerifyToken {
+		return domain.ErrInvalidVerifyToken
+	}
+
+	// Perform update
+	updateUserRequest := port.UpdateUserRequest{
+		Status: (*domain.UserStatus)(&request.Status),
+	}
+	userId, _ := uuid.Parse(request.UserIdentifier)
+	err := userService.UpdateUser(ctx, userId, &updateUserRequest)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Send result email
 
 	return nil
 }

@@ -13,16 +13,20 @@ import (
 )
 
 type UserRepository struct {
-	DB *gorm.DB
+	DB                 *gorm.DB
+	VerificationClient port.VerificationClient
 }
 
-func NewUserRepository(db *gorm.DB) (*UserRepository, error) {
+func NewUserRepository(
+	db *gorm.DB,
+	verificationClient port.VerificationClient,
+) (*UserRepository, error) {
 	err := db.AutoMigrate(&models.User{})
 	if err != nil {
 		return nil, err
 	}
 
-	return &UserRepository{db}, nil
+	return &UserRepository{db, verificationClient}, nil
 }
 
 func (repo *UserRepository) CreateUser(ctx context.Context, user *domain.User) error {
@@ -164,6 +168,11 @@ func (repo *UserRepository) GetUserById(ctx context.Context, userId uuid.UUID) (
 	}
 
 	return userModel.ToDomainModel(), nil
+}
+
+func (repo *UserRepository) CreateVerificationRequest(ctx context.Context, payload *port.VerificationRequestPayload) error {
+	err := repo.VerificationClient.CreateVerificationRequest(payload)
+	return err
 }
 
 func (repo *UserRepository) GetUserCount(ctx context.Context) (uint, error) {

@@ -124,3 +124,56 @@ func TestAuthService_Login_SaveTokenError(t *testing.T) {
 		t.Fatalf("expected SaveUserToken error, got %v", err)
 	}
 }
+
+func TestAuthService_Login_PendingVerify(t *testing.T) {
+	mockRepo := &repository.MockUserRepository{
+		GetUserByUsernameFunc: func(ctx context.Context, user string) (*domain.User, error) {
+			return &domain.User{
+				Id:       uuid.New(),
+				Password: "testpasshash",
+				Status:   domain.PendingVerify,
+			}, nil
+		},
+	}
+	mockHash := &mockHash.MockHashService{
+		ComparePasswordFunc: func(password string, hashedPassword string) error {
+			return nil
+		},
+	}
+	authService := NewAuthService(mockRepo, nil, mockHash)
+	req := &port.LoginRequest{
+		Username: "testuser",
+		Password: "testpass",
+	}
+	_, err := authService.Login(context.Background(), req)
+	if err != domain.ErrUserPendingVerify {
+		t.Fatalf("expected ErrUserPendingVerify, got %v", err)
+	}
+
+}
+
+func TestAuthService_Login_NotVerified(t *testing.T) {
+	mockRepo := &repository.MockUserRepository{
+		GetUserByUsernameFunc: func(ctx context.Context, user string) (*domain.User, error) {
+			return &domain.User{
+				Id:       uuid.New(),
+				Password: "testpasshash",
+				Status:   domain.NotVerified,
+			}, nil
+		},
+	}
+	mockHash := &mockHash.MockHashService{
+		ComparePasswordFunc: func(password string, hashedPassword string) error {
+			return nil
+		},
+	}
+	authService := NewAuthService(mockRepo, nil, mockHash)
+	req := &port.LoginRequest{
+		Username: "testuser",
+		Password: "testpass",
+	}
+	_, err := authService.Login(context.Background(), req)
+	if err != domain.ErrUserNotVerified {
+		t.Fatalf("expected ErrUserNotVerified, got %v", err)
+	}
+}

@@ -28,6 +28,7 @@ func NewRouter(
 	usersGroup.POST("/", userHandler.CreateUser)
 	usersGroup.PATCH("/:id", userHandler.UpdateUser)
 	usersGroup.GET("/me", authMiddleware(tokenService), userHandler.QueryMyself)
+	usersGroup.PATCH("/status", userHandler.UpdateUserStatus)
 	usersGroup.GET("/count", userHandler.GetUserCount)
 	usersGroup.POST("/reset", userHandler.ResetUsers)
 
