@@ -62,7 +62,14 @@ spec:
               service:
                 name: rf005-service
                 port:
-                  number: 80        
+                  number: 80
+          - path: /notifications
+            pathType: Prefix
+            backend:
+              service:
+                name: notifications-app-service
+                port:
+                  number: 80
           - path: /native
             pathType: Prefix
             backend:
