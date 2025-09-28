@@ -106,6 +106,7 @@ class CreditCardController:
         credit_cards_with_status: List[CreditCard] = []
         for card in credit_cards:
             updated_card = self.http_client.get_credit_card(card.ruv)
+            print("Updated card: ", updated_card)
 
             credit_cards_with_status.append(
                 CreditCard(
@@ -120,6 +121,8 @@ class CreditCardController:
                     updated_at=card.updated_at,
                 )
             )
+
+            print("Credit cards: ", credit_cards_with_status)
 
         return credit_cards_with_status
 

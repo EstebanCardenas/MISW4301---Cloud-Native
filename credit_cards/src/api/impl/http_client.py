@@ -193,6 +193,8 @@ class RequestsHttpClient(HttpClient):
                 timeout=(3, 10),
             )
 
+            print("EP Response: ", response.json())
+
             match response.status_code:
                 case 200:
                     response_body = response.json()
