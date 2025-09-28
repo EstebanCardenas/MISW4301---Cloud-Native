@@ -3,46 +3,30 @@
 
 person "User" as user
 
-frame "k8s" {
+frame "AWS lambda & SQS" {
+  component "SQS" as sqsComponent
 
-  
+  frame "<img:DOCKER{scale=0.5}>" as consumerDocker {
+    component "consumer" as consumerComponent
+  }
+
+  consumerComponent --> sqsComponent : "Consume messages"
+}
+
+component "TrueNative" as TrueNative
+
+frame "k8s" {
    component "Ingress" as ingress
    
   user ..> ingress : "HTTP"
 
    component "users-app-service" as usersAppService
-   component "posts-app-service" as postsAppService
-   component "offers-app-service" as offersAppService
-   component "routes-app-service" as routesAppService
-   component "scores-app-service" as scoresAppService
-   component "rf003-service" as rf003Service
-   component "rf004-service" as rf004Service
-   component "rf005-service" as rf005Service
+   component "credit-cards-app-service" as creditCardsAppService
+   component "notification-app-service" as notificationAppService
 
   ingress --> usersAppService : "HTTP"
-  ingress --> postsAppService : "HTTP"
-  ingress --> offersAppService : "HTTP"
-  ingress --> routesAppService : "HTTP"
-  ingress --> scoresAppService : "HTTP"
-  ingress --> rf003Service : "HTTP"
-  ingress --> rf004Service : "HTTP"
-  ingress --> rf005Service : "HTTP"
-
-  rf003Service ..> usersAppService : "HTTP"
-  rf003Service ..> postsAppService : "HTTP"
-  rf003Service ..> routesAppService : "HTTP"
-
-  rf004Service ..> usersAppService : "HTTP"
-  rf004Service ..> postsAppService : "HTTP"
-  rf004Service ..> routesAppService : "HTTP"
-  rf004Service ..> offersAppService : "HTTP"
-  rf004Service ..> scoresAppService : "HTTP"
-
-  rf005Service ..> usersAppService : "HTTP"
-  rf005Service ..> postsAppService : "HTTP"
-  rf005Service ..> routesAppService : "HTTP"
-  rf005Service ..> offersAppService : "HTTP"
-  rf005Service ..> scoresAppService : "HTTP"
+  ingress --> creditCardsAppService : "HTTP"
+  ingress --> notificationAppService : "HTTP"
 
   frame "pod" as usersAppPod {
     frame "users-app" {
@@ -52,53 +36,37 @@ frame "k8s" {
     }
   }
 
-  frame "pod" as postsAppPod {
-    frame "posts-app" {
-      frame "<img:DOCKER{scale=0.5}>" as postsAppDocker {
-        component "posts_app" as postsAppComponent
+  frame "pod" as creditCardsAppPod {
+    frame "credit-cards-app" {
+      frame "<img:DOCKER{scale=0.5}>" as creditCardsAppDocker {
+        component "credit_cards_app" as creditCardsAppComponent
       }
     }
   }
 
-  frame "pod" as offersAppPod {
-    frame "offers-app" {
-      frame "<img:DOCKER{scale=0.5}>" as offersAppDocker {
-        component "offers_app" as offersAppComponent
-      }
-    }
-  }
-
-  frame "pod" as routesAppPod {
-    frame "routes-app" {
-      frame "<img:DOCKER{scale=0.5}>" as routesAppDocker {
-        component "routes_app" as routesAppComponent
-      }
-    }
-  }
-
-  frame "pod" as scoresAppPod {
-    frame "scores-app" {
-      frame "<img:DOCKER{scale=0.5}>" as scoresAppDocker {
-        component "scores_app" as scoresAppComponent
+  frame "pod" as notificationAppPod {
+    frame "notification-app" {
+      frame "<img:DOCKER{scale=0.5}>" as notificationAppDocker {
+        component "notification_app" as notificationAppComponent
       }
     }
   }
 
   usersAppService --> usersAppComponent
-  postsAppService --> postsAppComponent
-  offersAppService --> offersAppComponent
-  routesAppService --> routesAppComponent
-  scoresAppService --> scoresAppComponent
+  creditCardsAppService --> creditCardsAppComponent
+  notificationAppService --> notificationAppComponent
 
   database "db" as dbComponent
   
   usersAppComponent --> dbComponent
-  postsAppComponent --> dbComponent
-  offersAppComponent --> dbComponent
-  routesAppComponent --> dbComponent
+  creditCardsAppComponent --> dbComponent
 
   artifact "db-volumen" as dbVolume
 
   dbComponent --> dbVolume
 }
+
+creditCardsAppComponent ..> TrueNative : "HTTP"
+usersAppComponent ..> TrueNative : "HTTP"
+
 @enduml

@@ -20,6 +20,8 @@ Líder: Andrés Donoso
     - [Requerimiento RF-003](#requerimiento-rf-003)
     - [Requerimiento RF-004](#requerimiento-rf-004)
     - [Requerimiento RF-005](#requerimiento-rf-005)
+    - [Requerimiento RF-006](#requerimiento-rf-006)
+    - [Requerimiento RF-007](#requerimiento-rf-007)
 
 # Integrantes
 <table>
@@ -320,3 +322,65 @@ Líder: Andrés Donoso
 
 <img src="./diagrams/rf005-flow.jpg" alt="Diagrama de flujo rf005">
 <img src="./diagrams/rf005-sequence.jpg" alt="Diagrama de secuencia rf005">
+
+### Requerimiento RF-006
+
+<table>
+  <tr>
+    <th>Requerimiento</th>
+    <th>RF006</th>
+  </tr>
+  <tr>
+    <td>Patrón utilizado</td>
+    <td>Productor-consumidor y Polling Pattern</td>
+  </tr>
+  <tr>
+    <td>Justificación</td>
+    <td>Con el patrón productor-consumidor se hace entrega de eventos a un solo consumidor por medio de colas FIFO. Los eventos son almacenados en la cola hasta que puedan ser procesados, en caso de que la respuesta del servicio de tarjetas aún no esté disponible se lanzará un error interno que generará que se vuelva a procesar el mensaje por el consumidor hasta que sea procesado satisfactoriamente. Este procesamiento del consumidor es Polling Pattern, ya que se consulta periódicamente si la respuesta del servicio ya está completada para realizar la actualización respectiva y envío de correo.</td>
+  </tr>
+  <tr>
+    <td>Componentes involucrados</td>
+    <td>
+      <ul>
+        <li>rf006</li>
+        <li>Microservicio usuarios</li>
+        <li>Microservicio tarjetas</li>
+        <li>Consumidor</li>
+        <li>TrueNative</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<img src="./diagrams/rf006-flow.jpg" alt="Diagrama de flujo rf006">
+<img src="./diagrams/rf006-sequence.jpg" alt="Diagrama de secuencia rf006">
+
+### Requerimiento RF-007
+
+<table>
+  <tr>
+    <th>Requerimiento</th>
+    <th>RF007</th>
+  </tr>
+  <tr>
+    <td>Patrón utilizado</td>
+    <td>Request callback pattern</td>
+  </tr>
+  <tr>
+    <td>Justificación</td>
+    <td>Con este patrón se informa el resultado de la operación a través de un webhook para realizar las actualizaciones respectivas en BD y permitir a los usuarios usar la aplicación.</td>
+  </tr>
+  <tr>
+    <td>Componentes involucrados</td>
+    <td>
+      <ul>
+        <li>rf007</li>
+        <li>Microservicio usuarios</li>
+        <li>TrueNative</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<img src="./diagrams/rf007-flow.jpg" alt="Diagrama de flujo rf007">
+<img src="./diagrams/rf007-sequence.jpg" alt="Diagrama de secuencia rf007">

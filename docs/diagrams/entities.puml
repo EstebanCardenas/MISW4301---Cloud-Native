@@ -20,54 +20,20 @@ entity "users" as users {
     * updatedAt : timestamptz
 }
 
-entity "routes" as routes {
+entity "creditCard" as creditCards {
     * id : uuid
     --
-    * flightId : varchar(255)
-    * sourceAirportCode : varchar(10)
-    * sourceCountry : varchar(255)
-    * destinyAirportCode : varchar(10)
-    * destinyCountry : varchar(255)
-    * bagCost : int
-    * plannedStartDate : timestamptz
-    * plannedEndDate : timestamptz
-    * createdAt : timestamptz
+    * token : varchar(255)
+    * userId : uuid
+    * lastFourDigits : varchar(4)
+    * ruv : varchar(255)
+    * issuer: varchar(255) <<VISA | MASTERCARD | AMERICAN EXPRESS | DISCOVER | DINERS CLUB | UNKNOWN>>
+    * status: varchar(50) <<POR_VERIFICAR | RECHAZADA | APROBADA>>
     * updatedAt : timestamptz
-}
-
-entity "posts" as posts {
-    * id : uuid
-    --
-    * routeId : uuid
-    * userId : uuid
-    * expireAt : timestamptz
-    * createdAt : timestamptz
-}
-
-entity "offers" as offers {
-    * id : uuid
-    --
-    * postId : uuid
-    * userId : uuid
-    * description : varchar(140)
-    * size : varchar(20) <<LARGE | MEDIUM | SMALL>>
-    * fragile : boolean
-    * offer : numeric
-    * createdAt : timestamptz
-}
-
-entity "scores" as scores {
-    * id : uuid
-    --
-    * offerId : uuid
-    * value : float
     * createdAt : timestamptz
 }
 
 ' ==== RELACIONES ====
-users ||--o{ posts
-posts ||--|| routes
-posts ||--o{ offers
-offers ||--|| scores
+users ||--o{ creditCards
 
 @enduml

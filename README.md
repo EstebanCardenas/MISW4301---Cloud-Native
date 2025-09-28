@@ -9,10 +9,10 @@
   - [Estructura de cada aplicación](#estructura-de-cada-aplicación)
   - [Despliegue de la aplicación completa](#despliegue-de-la-aplicación-completa)
     - [Requisitos](#requisitos)
-    - [1. Creación de imágenes](#1-creación-de-imágenes)
-    - [2. Cargar imágenes a Minikube](#2-cargar-imágenes-a-minikube)
-    - [3. Ejecutar en Minikube](#3-ejecutar-en-minikube)
-    - [4. Obtener url de un servicio](#4-obtener-url-de-un-servicio)
+    - [1. Creación de infraestructura](#1-creación-de-infraestructura)
+    - [2. Configuración base de datos](#2-configuración-base-de-datos)
+    - [3. Construir y subir imágenes](#3-construir-y-subir-imágenes)
+    - [4. Aplicar deployments](#4-aplicar-deployments)
 
 ## Estructura del Proyecto
 
@@ -30,6 +30,8 @@
 ├── rf003                   # Aplicación para requerimiento rf003
 ├── rf004                   # Aplicación para requerimiento rf004
 ├── rf005                   # Aplicación para requerimiento rf005
+├── rf006                   # Aplicación para requerimiento rf006
+├── consumer                # Consumer
 ├── vale.ini                # Configuración para Vale.
 ├── config.yaml             # Configuración del repositorio.
 ├── Makefile                # Scripts para evaluación.
@@ -59,6 +61,8 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 6. [rf003](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf003)
 7. [rf004](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf004)
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
+9. [rf006](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf006)
+10. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
 
 ## Despliegue de la aplicación completa
 

@@ -61,6 +61,18 @@ rf005:
   image_tag: 2.0.0
   authors:
     - d.corzos
+rf006:
+  folder: rf006
+  image_name: rf006
+  image_tag: 2.0.0
+  authors:
+    - af.donoso
+consumer:
+  folder: consumer
+  image_name: consumer
+  image_tag: 2.0.0
+  authors:
+    - gd.martinez
 notifications:
   folder: notifications_app
   image_name: notifications_app
