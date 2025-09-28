@@ -8,6 +8,7 @@ data:
   SERVER_PORT: "3000"
   TRUE_NATIVE_HOST: http://service-truenative
   USERS_HOST: http://users-app-service
+  NOTIFICATIONS_HOST: http://notifications-service
 
 # Secret
 ---
@@ -91,6 +92,11 @@ spec:
                 configMapKeyRef:
                   name: users-app-config
                   key: USERS_HOST
+            - name: NOTIFICATIONS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: NOTIFICATIONS_HOST
 
             - name: DB_USER
               valueFrom:

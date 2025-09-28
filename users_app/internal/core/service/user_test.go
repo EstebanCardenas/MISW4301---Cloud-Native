@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/mock/client"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/data/mock/repository"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/adapter/hash/mock"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
@@ -29,7 +30,8 @@ func TestUserService_CreateUser_Success(t *testing.T) {
 			return "hashed", "salt", nil
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.CreateUserRequest{
 		Username: "testuser",
 		Password: "password",
@@ -47,7 +49,8 @@ func TestUserService_CreateUser_Success(t *testing.T) {
 func TestUserService_CreateUser_InvalidPayload(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.CreateUserRequest{
 		Username: "",
 		Password: "",
@@ -76,7 +79,8 @@ func TestUserService_CreateUser_RepoError(t *testing.T) {
 			return "hashed", "salt", nil
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.CreateUserRequest{
 		Username: "testuser",
 		Password: "password",
@@ -102,7 +106,8 @@ func TestUserService_CreateUser_UserExists(t *testing.T) {
 			return "hashed", "salt", nil
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.CreateUserRequest{
 		Username: "testuser",
 		Password: "password",
@@ -127,7 +132,8 @@ func TestUserService_UpdateUser_Success(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.UpdateUserRequest{
 		FullName:    "Test User",
 		PhoneNumber: "123456789",
@@ -142,7 +148,8 @@ func TestUserService_UpdateUser_Success(t *testing.T) {
 func TestUserService_UpdateUser_InvalidPayload(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.UpdateUserRequest{}
 	err := service.UpdateUser(context.Background(), uuid.New(), req)
 	if err == nil {
@@ -156,7 +163,8 @@ func TestUserService_UpdateUser_InvalidPayload(t *testing.T) {
 func TestUserService_UpdateUser_InvalidStatus(t *testing.T) {
 	mockRepo := &repository.MockUserRepository{}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	status := domain.UserStatus("Unknown Status")
 	req := &port.UpdateUserRequest{
 		Status: &status,
@@ -177,7 +185,8 @@ func TestUserService_UpdateUser_UserNotFound(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	req := &port.UpdateUserRequest{
 		FullName: "Nonexistent User",
 	}
@@ -197,7 +206,8 @@ func TestUserService_QueryMyself_Success(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	uuid := uuid.New()
 	user, err := service.QueryMyself(context.Background(), uuid)
 	if err != nil {
@@ -215,7 +225,8 @@ func TestUserService_QueryMyself_UserDoesNotExist(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	user, err := service.QueryMyself(context.Background(), uuid.New())
 	if err == nil {
 		t.Fatalf("expected error, got nil")
@@ -235,7 +246,8 @@ func TestUserService_GetUserCount_Success(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	count, err := service.GetUserCount(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -252,7 +264,8 @@ func TestUserService_GetUserCount_RepoError(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	count, err := service.GetUserCount(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -269,7 +282,8 @@ func TestUserService_ResetUsers_Success(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	err := service.ResetUsers(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -283,7 +297,8 @@ func TestUserService_ResetUsers_RepoError(t *testing.T) {
 		},
 	}
 	mockHash := &mock.MockHashService{}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 	err := service.ResetUsers(context.Background())
 	if err == nil {
 		t.Fatalf("expected error, got nil")
@@ -299,6 +314,11 @@ func TestUserService_UpdateUserStatus_Success(t *testing.T) {
 		CreateVerificationRequestFunc: func(ctx context.Context, payload *port.VerificationRequestPayload) error {
 			return nil
 		},
+		GetUserByIdFunc: func(ctx context.Context, userId uuid.UUID) (*domain.User, error) {
+			return &domain.User{
+				Email: "myemail@test.com",
+			}, nil
+		},
 	}
 	mockHash := &mock.MockHashService{
 		HashPasswordFunc: func(password string) (string, string, error) {
@@ -308,12 +328,14 @@ func TestUserService_UpdateUserStatus_Success(t *testing.T) {
 			return "myhash"
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 
 	// Act
 	request := port.UpdateUserStatusRequest{
-		Status:      string(domain.Verified),
-		VerifyToken: "myhash",
+		Status:         string(domain.Verified),
+		VerifyToken:    "myhash",
+		UserIdentifier: uuid.NewString(),
 	}
 	err := service.UpdateUserStatus(
 		t.Context(),
@@ -333,7 +355,8 @@ func TestUserService_UpdateUserStatus_InvalidToken(t *testing.T) {
 			return "myhash"
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 
 	// Act
 	request := port.UpdateUserStatusRequest{
@@ -363,7 +386,8 @@ func TestUserService_UpdateUserStatus_UpdateUserFail(t *testing.T) {
 			return "myhash"
 		},
 	}
-	service := NewUserService(mockRepo, mockHash)
+	notifsClient := client.MockNotificationsClient{}
+	service := NewUserService(mockRepo, mockHash, &notifsClient)
 
 	// Act
 	request := port.UpdateUserStatusRequest{

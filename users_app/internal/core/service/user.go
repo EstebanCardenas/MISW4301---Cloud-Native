@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/domain"
 	"github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/users/internal/core/port"
@@ -11,17 +12,20 @@ import (
 )
 
 type UserService struct {
-	userRepo    port.UserRepository
-	hashService port.HashService
+	userRepo            port.UserRepository
+	hashService         port.HashService
+	notificationsClient port.NotificationsClient
 }
 
 func NewUserService(
 	repo port.UserRepository,
 	hashService port.HashService,
+	notificationsClient port.NotificationsClient,
 ) *UserService {
 	return &UserService{
-		userRepo:    repo,
-		hashService: hashService,
+		userRepo:            repo,
+		hashService:         hashService,
+		notificationsClient: notificationsClient,
 	}
 }
 
@@ -121,7 +125,42 @@ func (userService *UserService) UpdateUserStatus(
 		return err
 	}
 
-	// TODO: Send result email
+	// Send result email
+	userUuid, _ := uuid.Parse(request.UserIdentifier)
+	user, err := userService.QueryMyself(ctx, userUuid)
+	if err != nil {
+		return err
+	}
+
+	var fullName string
+	if user.FullName != nil {
+		fullName = *user.FullName
+	}
+	var dni string
+	if user.Dni != nil {
+		dni = *user.Dni
+	}
+	var phone string
+	if user.PhoneNumber != nil {
+		phone = *user.PhoneNumber
+	}
+	notifRequest := port.SendNotificationRequest{
+		Template: "rf-007",
+		To:       user.Email,
+		Subject:  "Resultado del proceso de verificación",
+		Data: port.NotificationRequestData{
+			FinalState:  domain.UserStatus(request.Status),
+			RUV:         request.RUV,
+			FullName:    fullName,
+			DNI:         dni,
+			PhoneNumber: phone,
+		},
+	}
+	err = userService.notificationsClient.SendNotification(&notifRequest)
+	if err != nil {
+		slog.Error("Failed to send email notification", "error", err)
+		return err
+	}
 
 	return nil
 }

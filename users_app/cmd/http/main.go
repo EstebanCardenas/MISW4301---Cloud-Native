@@ -45,7 +45,12 @@ func main() {
 		slog.Error("Failed to init userRepo", "error", err)
 		os.Exit(1)
 	}
-	userService := service.NewUserService(userRepo, bycryptService)
+	notificationsClient := client.NewEmailNotificationClient()
+	userService := service.NewUserService(
+		userRepo,
+		bycryptService,
+		notificationsClient,
+	)
 	userHandler := http.NewUserHandler(userService)
 
 	// Token service
