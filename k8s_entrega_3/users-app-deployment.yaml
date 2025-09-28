@@ -1,0 +1,232 @@
+# ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: users-app-config
+data:
+  SERVER_URL: "0.0.0.0"
+  SERVER_PORT: "3000"
+  TRUE_NATIVE_HOST: http://service-truenative
+  USERS_HOST: http://users-app-service
+  NOTIFICATIONS_HOST: http://notifications-service
+
+# Secret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: users-app-secret
+type: Opaque
+stringData:
+  # DB vars
+  DB_USER: "postgres"
+  DB_PASSWORD: "12345678"
+  DB_NAME: "danndb"
+  DB_PORT: "5432"
+  DB_HOST: "terraform-20250928140533495200000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
+  TRUE_NATIVE_SECRET_TOKEN: my-secret-token
+
+---
+# App service
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: users-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+# App deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-app-deployment
+  labels:
+    app: users-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-app
+  template:
+    metadata:
+      labels:
+        app: users-app
+    spec:
+      containers:
+        - name: users-app
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/users_app:3.0.0
+          ports:
+          - containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /users/ping
+              port: 3000
+            initialDelaySeconds: 5 
+            periodSeconds: 30
+            failureThreshold: 3
+          env:
+            - name: SERVER_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: SERVER_URL
+            - name: SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: SERVER_PORT
+            - name: TRUE_NATIVE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: TRUE_NATIVE_HOST
+            - name: USERS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: USERS_HOST
+            - name: NOTIFICATIONS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: users-app-config
+                  key: NOTIFICATIONS_HOST
+
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: DB_NAME
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: DB_PORT
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: DB_HOST
+            - name: TRUE_NATIVE_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: users-app-secret
+                  key: TRUE_NATIVE_SECRET_TOKEN
+
+            - name: DEBUG
+              value: "false"
+            - name: GIN_MODE
+              value: "release"
+
+# ---
+# # DB service
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: users-db-service
+# spec:
+#   type: ClusterIP
+#   selector:
+#     app: users-db
+#   ports:
+#     - protocol: TCP
+#       port: 5432
+#       targetPort: 5432
+
+# ---
+# # DB deployment
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: users-db-deployment
+#   labels:
+#     app: users-db
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: users-db
+#   template:
+#     metadata:
+#       labels:
+#         app: users-db
+#     spec:
+#       containers:
+#         - name: postgres-db
+#           image: postgres
+#           ports:
+#           - containerPort: 5432
+#           volumeMounts:
+#             - name: postgres-storage
+#               mountPath: /var/lib/postgresql/data
+#           env:
+#             - name: POSTGRES_DB
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: users-app-config
+#                   key: DB_NAME
+#             - name: POSTGRES_PASSWORD
+#               valueFrom:
+#                 configMapKeyRef:
+#                   name: users-app-config
+#                   key: DB_PASSWORD
+#           livenessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 30
+#             periodSeconds: 10
+#             timeoutSeconds: 5
+#             failureThreshold: 5
+#           readinessProbe:
+#             exec:
+#               command:
+#                 - pg_isready
+#                 - -U
+#                 - postgres
+#             initialDelaySeconds: 5
+#             periodSeconds: 5
+#             timeoutSeconds: 3
+#             failureThreshold: 3
+#       volumes:
+#         - name: postgres-storage
+#           emptyDir:
+#             sizeLimit: 1Gi
+# ---
+# # Block traffic DB Network Policy
+# apiVersion: networking.k8s.io/v1
+# kind: NetworkPolicy
+# metadata:
+#   name: users-network
+# spec:
+#   podSelector:
+#     matchLabels:
+#       app: users-db
+#   policyTypes:
+#     - Ingress
+#   ingress:
+#     - from:
+#       - podSelector:
+#           matchLabels:
+#             app: users-app
+#       ports:
+#         - protocol: TCP
+#           port: 5432

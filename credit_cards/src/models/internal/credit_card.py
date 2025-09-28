@@ -1,9 +1,13 @@
-from src.database.config import Base
-from datetime import datetime
 import uuid
+from datetime import datetime
 from enum import Enum
-from sqlalchemy import Column, String, DateTime, Enum as SQLEnum, func
+
+from sqlalchemy import Column, DateTime
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy import String, func
 from sqlalchemy.dialects.postgresql import UUID
+
+from src.database.config import Base
 
 
 class Issuer(Enum):
@@ -19,7 +23,7 @@ class Issuer(Enum):
 
 class Status(Enum):
     """Card status types"""
-    
+
     POR_VERIFICAR = "POR_VERIFICAR"
     RECHAZADA = "RECHAZADA"
     APROBADA = "APROBADA"
@@ -30,7 +34,7 @@ class CreditCard(Base):
 
     id: Column[UUID] = Column(UUID, primary_key=True, default=uuid.uuid4)
     token: Column[str] = Column(String(256), nullable=False)
-    user_id: Column[str] = Column(String, nullable=False)
+    user_id: Column[UUID] = Column(UUID, nullable=False)
     last_four_digits: Column[str] = Column(String(4), nullable=False)
     ruv: Column[str] = Column(String, nullable=False)
     issuer: Column[Issuer] = Column(SQLEnum(Issuer), nullable=False)

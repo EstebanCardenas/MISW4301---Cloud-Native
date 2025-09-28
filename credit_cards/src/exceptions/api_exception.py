@@ -9,6 +9,7 @@ class ApiExceptionType(Enum):
     SERVICE_UNAVAILABLE = "service_unavailable"
     AUTH_TOKEN_MISSING = "auth_token_missing"  # nosec
     AUTH_TOKEN_INVALID = "auth_token_invalid"  # nosec
+    DUPLICATED_RESOURCE = "duplicated_resource"
 
 
 class ApiException(Exception):

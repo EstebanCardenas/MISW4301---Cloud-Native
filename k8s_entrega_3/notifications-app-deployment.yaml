@@ -1,0 +1,67 @@
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: notifications-app-secret
+type: Opaque
+stringData:
+  SENDGRID_FROM_EMAIL: d.corzos@uniandes.edu.co
+  SENDGRID_API_KEY: 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
+
+---
+# App service
+apiVersion: v1
+kind: Service
+metadata:
+  name: notifications-service
+spec:
+  type: ClusterIP
+  selector:
+    app: notifications-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+
+---
+# App deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notifications-app-deployment
+  labels:
+    app: notifications-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notifications-app
+  template:
+    metadata:
+      labels:
+        app: notifications-app
+    spec:
+      containers:
+        - name: notifications-app
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/notifications_app:3.0.0
+          ports:
+            - containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /notifications/ping
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            failureThreshold: 3
+          env:
+            - name: SENDGRID_FROM_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-app-secret
+                  key: SENDGRID_FROM_EMAIL
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-app-secret
+                  key: SENDGRID_API_KEY
+        

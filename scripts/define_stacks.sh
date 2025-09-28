@@ -1,1 +1,1 @@
-STACKS=("eks" "rds" "registry") 
+STACKS=("eks" "rds" "registry" "consumer") 

@@ -23,7 +23,7 @@ stringData:
   DB_PASSWORD: "12345678"
   DB_NAME: "danndb"
   DB_PORT: "5432"
-  DB_HOST: "terraform-20250914152707823100000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
+  DB_HOST: "terraform-20250928015641899800000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com"
   TRUE_NATIVE_SECRET_TOKEN: my-secret-token
 
 ---
@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
         - name: users-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/users_app:2.0.0
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/users_app:3.0.0
           ports:
           - containerPort: 3000
           livenessProbe:

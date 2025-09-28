@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from uuid import UUID
 
 from sqlalchemy.orm import Session
 
 from src.models.internal.credit_card import CreditCard
+from src.models.internal.filters import CreditCardFilter
 
 
 class CreditCardRepository(ABC):
@@ -15,12 +17,14 @@ class CreditCardRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, db: Session, id: str) -> Optional[CreditCard]:
+    def get_by_id(self, db: Session, id: UUID) -> Optional[CreditCard]:
         """Get a credit card by ID"""
         pass
 
     @abstractmethod
-    def get_all(self, db: Session) -> List[CreditCard]:
+    def get_all(
+        self, db: Session, filters: CreditCardFilter | None = None
+    ) -> List[CreditCard]:
         """Get all credit cards"""
         pass
 

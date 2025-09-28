@@ -1,0 +1,90 @@
+# Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: credit-cards-app-secret
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql+psycopg2://postgres:12345678@terraform-20250928015641899800000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com:5432/danndb"
+  # DATABASE_URL: "postgresql+psycopg2://postgres:12345678@dann-db-service:5432/danndb"
+  TRUE_NATIVE_SERVICE_URL: "http://service-truenative"
+  USERS_SERVICE_URL: "http://users-app-service/users"
+  TRUE_NATIVE_SECRET_TOKEN: my-secret-token
+  NOTIFICATIONS_SERVICE_URL: "http://notifications-service"
+  SQS_QUEUE_URL: "https://sqs.us-east-1.amazonaws.com/381492016771/producer-consumer-queue"
+
+---
+# App service
+apiVersion: v1
+kind: Service
+metadata:
+  name: credit-cards-app-service
+spec:
+  type: ClusterIP
+  selector:
+    app: credit-cards-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9000
+
+---
+# App deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credit-cards-app-deployment
+  labels:
+    app: credit-cards-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credit-cards-app
+  template:
+    metadata:
+      labels:
+        app: credit-cards-app
+    spec:
+      containers:
+        - name: credit-cards-app
+          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/credit_cards_app:3.0.1
+          ports:
+          - containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /credit-cards/ping
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            failureThreshold: 5
+          envFrom:
+            - secretRef:
+                name: credit-cards-app-secret
+            - secretRef:
+                name: aws-credentials
+            # - name: DATABASE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: credit-cards-app-secret
+            #       key: DB_URL
+            # - name: TRUE_NATIVE_SERVICE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: credit-cards-app-secret
+            #       key: TRUE_NATIVE_SERVICE_URL
+            # - name: USERS_SERVICE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: credit-cards-app-secret
+            #       key: USERS_SERVICE_URL
+            # - name: TRUE_NATIVE_SECRET_TOKEN
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: credit-cards-app-secret
+            #       key: TRUE_NATIVE_SECRET_TOKEN
+            # - name: SQS_QUEUE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: credit-cards-app-secret
+            #       key: SQS_QUEUE_URL

@@ -104,8 +104,18 @@ eksapply:
 #	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl apply -f -
 	kubectl apply -f ${CURDIR}/k8s
 
+eksapply-entrega-3:
+	kubectl apply -f ${CURDIR}/k8s_entrega_3
+
 # delete all k8s resources from the EKS cluster
 eksdestroy:
 	kubectl delete -f ${CURDIR}/k8s
 # 	envsubst < "${CURDIR}/k8s/producer_deployment.yml" | kubectl delete -f -
 # 	envsubst < "${CURDIR}/k8s/publisher_deployment.yml" | kubectl delete -f -
+
+create-aws-secret:
+	kubectl create secret generic aws-credentials \
+	--from-literal=AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+  --from-literal=AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+  --from-literal=AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN} \
+  --from-literal=AWS_DEFAULT_REGION=us-east-1

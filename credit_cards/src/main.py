@@ -3,9 +3,12 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.api.impl.http_server import router as credit_cards_router
+from src.database.config import Base, engine
 from src.exceptions.api_exception import ApiException, ApiExceptionType
 
-app = FastAPI(title="credit-cards")
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="credit-cards-app")
 
 API_EXCEPTION_STATUS_MAP = {
     ApiExceptionType.VALIDATION_FAILED: 412,
@@ -14,6 +17,7 @@ API_EXCEPTION_STATUS_MAP = {
     ApiExceptionType.AUTH_TOKEN_MISSING: 403,
     ApiExceptionType.AUTH_TOKEN_INVALID: 401,
     ApiExceptionType.SERVICE_UNAVAILABLE: 503,
+    ApiExceptionType.DUPLICATED_RESOURCE: 409,
 }
 
 PYDANTIC_EXCEPTION_STATUS_MAP: dict[str, int] = {"enum": 412}
