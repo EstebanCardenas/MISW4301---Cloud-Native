@@ -7,6 +7,7 @@
   - [Estructura del Proyecto](#estructura-del-proyecto)
   - [Archivo de configuración](#archivo-de-configuración)
   - [Estructura de cada aplicación](#estructura-de-cada-aplicación)
+  - [Despliegue aplicación completa entrega 3](#despliegue-aplicación-completa-entrega-3)
   - [Despliegue de la aplicación completa](#despliegue-de-la-aplicación-completa)
     - [Requisitos](#requisitos)
     - [1. Creación de infraestructura](#1-creación-de-infraestructura)
@@ -63,6 +64,21 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
 9. [rf006](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf006)
 10. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
+
+## Despliegue aplicación completa entrega 3
+Para desplegar la aplicación puede correr el archivo `scripts/build_entrega_3.sh` o `scripts/build_entrega_3_with_input.sh`. Éste último toma las variables declaradas dentro de `scripts/define_inputs.sh` para facilitar la ejecución del comando.
+Para la variable `APP_VERSION` utilice el tag `3.0.0`.
+
+Este script construye todos los stacks, imágenes y K8s. En medio del proceso verás un mensaje para actualizar la url de la BD lo cual debes realizar en los siguientes archivos:
+- [k8s_entrega_3/credit-cards-deployment.yaml](./k8s_entrega_3/credit-cards-deployment.yaml)
+- [k8s_entrega_3/users-app-deployment.yaml](./k8s_entrega_3/users-app-deployment.yaml)
+
+Al finalizar todo el proceso, hay que realizar un cambio en la Lambda para que apunte al balanceador de carga. Para esto, siga los siguientes pasos:
+
+1. Entrar a Lambda en AWS
+2. Seleccionar `consumer-application`
+3. Ir al tab de configuraciones > Variables de entorno
+4. Modificar las urls para que apunten al balanceador de carga. Esto lo debe hacer para todas las urls. E.g. http://a7a285d596d9945e8be36f438457d3af-1676330551.us-east-1.elb.amazonaws.com/... 
 
 ## Despliegue de la aplicación completa
 
