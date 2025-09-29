@@ -9,7 +9,7 @@ from src.api.http_client import HttpClient
 from src.aws.sqs import send_verify_status_message
 from src.exceptions.api_exception import ApiException, ApiExceptionType
 from src.models.internal.created_card import CreatedCard
-from src.models.internal.credit_card import CreditCard, Status
+from src.models.internal.credit_card import CreditCard, Issuer, Status
 from src.models.internal.filters import CreditCardFilter
 from src.models.internal.register_credit_card import RegisterCreditCard
 from src.models.out.true_native import CardInfo, RegisterCreditCardRequest
@@ -65,6 +65,21 @@ class CreditCardController:
                 "El formato de la fecha de expiración es inválido",
             )
 
+    def __issuer_string_to_enum(self, issuer_str: str) -> Issuer:
+        match issuer_str:
+            case "VISA":
+                return Issuer.VISA
+            case "MASTERCARD":
+                return Issuer.MASTERCARD
+            case "AMERICAN EXPRESS":
+                return Issuer.AMERICAN_EXPRESS
+            case "DISCOVER":
+                return Issuer.DISCOVER
+            case "DINERS CLUB":
+                return Issuer.DINERS_CLUB
+            case _:
+                return Issuer.UNKNOWN
+
     def register_credit_card(
         self, db: Session, body: RegisterCreditCard, user_id: uuid.UUID, user_email: str
     ) -> CreditCard:
@@ -87,7 +102,7 @@ class CreditCardController:
             user_id=user_id,
             last_four_digits=body.card_number[-4:],
             ruv=created_card.ruv,
-            issuer=created_card.issuer,
+            issuer=self.__issuer_string_to_enum(created_card.issuer),
             status=Status.POR_VERIFICAR,
         )
         saved_credit_card = self.credit_card_repository.create(db, credit_card)

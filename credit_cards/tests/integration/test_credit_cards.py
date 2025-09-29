@@ -333,7 +333,7 @@ def test_register_credit_card_success(mock_sqs_send, mock_requests_factory):
                     {
                         "RUV": "12345",
                         "token": "12345",
-                        "issuer": "VISA",
+                        "issuer": "DINERS CLUB",
                         "transactionIdentifier": str(uuid.uuid4()),
                         "createdAt": "Sat, 27 Sep 2025 19:21:05 GMT",
                     },
@@ -350,6 +350,8 @@ def test_register_credit_card_success(mock_sqs_send, mock_requests_factory):
                 },
                 headers={"Authorization": "Bearer valid_token"},
             )
+
+            print(response.json())
 
             assert response.status_code == 201
 
