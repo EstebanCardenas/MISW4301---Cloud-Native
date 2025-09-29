@@ -199,6 +199,35 @@ Líder: Andrés Donoso
 <table>
   <tr>
     <th>Componente</th>
+    <th>notifications</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>notifications_app</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Servicio</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Gestionar los envíos de correos electrónicos</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      El componente notifications gestiona los envíos de correos electrónicos usando una integración con un proveedor de marketing email
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Comunicación síncrona con Sendgrid
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Componente</th>
     <th>consumer</th>
   </tr>
   <tr>
