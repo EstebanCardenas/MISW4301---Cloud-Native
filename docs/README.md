@@ -167,6 +167,63 @@ Líder: Andrés Donoso
   </tr>
 </table>
 
+<table>
+  <tr>
+    <th>Componente</th>
+    <th>consumer</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>consumer</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Lambda</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Consultar cada cierto tiempo si la respuesta de TrueNative ya se encuentra disponible para la tarjeta</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      El componente se ejecutará cada vez que hay disponible un mensaje en la cola para procesar, hay que tener en cuenta tiempos de ejecución, tener en cuenta el cold start y considerar el costo de ejecución según frecuencia de invocaciones.
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Recibir mensajes de la cola SQS.</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Componente</th>
+    <th>SQS</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>SQS</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Cola de mensajes</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Almacenar los mensajes enviados a la cola</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      Visibilidad del mensaje, retención de mensajes, tiempo de inicio del mensaje, todo lo anterior debe ser tenido en cuenta para un procesamiento exitoso.
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Recibir mensajes del ECS de tarjetas de crédito y almacenar el mensaje hasta que la lambda lo procese satisfactoriamente.</td>
+  </tr>
+</table>
 
 ### Vista de despliegue
 
