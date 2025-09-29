@@ -31,8 +31,9 @@
 ├── rf003                   # Aplicación para requerimiento rf003
 ├── rf004                   # Aplicación para requerimiento rf004
 ├── rf005                   # Aplicación para requerimiento rf005
-├── rf006                   # Aplicación para requerimiento rf006
 ├── consumer                # Consumer
+├── notifications_app       # Aplicación para enviar notificaciones por correo
+├── credit_cards            # Aplicación para tarjetas de crédito
 ├── vale.ini                # Configuración para Vale.
 ├── config.yaml             # Configuración del repositorio.
 ├── Makefile                # Scripts para evaluación.
@@ -44,7 +45,7 @@
    * `ci_evaluador_unit.yml` ejecuta pruebas unitarias.
 2. **k8s**: archivos de configuración y despliegue de las aplicaciones.
 3. **docs**: archivos de la documentación técnica.
-4. **<aplicación>**: una carpeta por cada aplicación (offers, posts, routes, users, scores, rf003, rf004, rf005). 
+4. **<aplicación>**: una carpeta por cada aplicación (offers, posts, routes, users, scores, rf003, rf004, rf005, credit_cards, notifications_app, consumer). 
 5. **makefile**: el archivo `makefile` es utilizado por los pipelines evaluadores, y contiene scripts de utilidad para construir la infraestructura del proyecto.
 
 ## Archivo de configuración
@@ -62,9 +63,9 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 6. [rf003](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf003)
 7. [rf004](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf004)
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
-9. [rf006](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf006)
 10. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
 11. [notifications](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/notifications_app)
+12. [credit_cards](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/credit_cards)
 
 ## Despliegue aplicación completa entrega 3
 Para desplegar la aplicación puede correr el archivo `scripts/build_entrega_3.sh` o `scripts/build_entrega_3_with_input.sh`. Éste último toma las variables declaradas dentro de `scripts/define_inputs.sh` para facilitar la ejecución del comando.
