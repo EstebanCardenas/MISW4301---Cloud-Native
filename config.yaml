@@ -16,61 +16,61 @@ cluster_name: dann-cluster
 users_app:
   folder: users_app
   image_name: users_app
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - ne.cardenas
 posts_app:
   folder: posts_app
   image_name: posts_app
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - d.corzos
 offers_app:
   folder: offers_app
   image_name: offers_app
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - af.donoso
 routes_app:
   folder: routes_app
   image_name: routes_app
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - gd.martinez
 scores_app:
   folder: scores_app
   image_name: scores_app
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - gd.martinez
 rf003:
   folder: rf003
   image_name: rf003
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - ne.cardenas
 rf004:
   folder: rf004
   image_name: rf004
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - af.donoso
 rf005:
   folder: rf005
   image_name: rf005
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - d.corzos
-rf006:
-  folder: rf006
-  image_name: rf006
-  image_tag: 2.0.0
+credit_cards:
+  folder: credit_cards
+  image_name: credit_cards
+  image_tag: 3.0.0
   authors:
     - af.donoso
 consumer:
   folder: consumer
   image_name: consumer
-  image_tag: 2.0.0
+  image_tag: 3.0.0
   authors:
     - gd.martinez
 notifications:
