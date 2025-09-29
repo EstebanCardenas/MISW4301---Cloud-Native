@@ -23,6 +23,7 @@
 │   └── workflows/          # Pipelines del repositorio
 ├── docs/                   # Archivos de documentación técnica
 ├── k8s/                    # Archivos para despliegue en k8s
+├── k8s_entrega_3/          # Archivos para desplegar la 3ra entrega en k8s
 ├── offers_app              # Aplicación de ofertas
 ├── posts_app               # Aplicación de publicaciones
 ├── routes_app              # Aplicación de trayectos
@@ -41,7 +42,7 @@
 ```
 
 1. **github/workflows**: archivos de ci para validaciones del proyecto.
-   * `ci_evaluador_entrega2_k8s.yml` verifica configuración de k8s y ejecuta pruebas sobre cada aplicación.
+   * `ci_evaluador_entrega3.yml` verifica configuración de k8s y ejecuta pruebas sobre cada aplicación.
    * `ci_evaluador_unit.yml` ejecuta pruebas unitarias.
 2. **k8s**: archivos de configuración y despliegue de las aplicaciones.
 3. **docs**: archivos de la documentación técnica.
