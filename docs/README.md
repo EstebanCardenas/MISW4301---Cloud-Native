@@ -462,10 +462,10 @@ Líder: Andrés Donoso
     <td>Componentes involucrados</td>
     <td>
       <ul>
-        <li>rf006</li>
         <li>Microservicio usuarios</li>
         <li>Microservicio tarjetas</li>
         <li>Consumidor</li>
+        <li>SQS</li>
         <li>TrueNative</li>
       </ul>
     </td>
@@ -494,7 +494,6 @@ Líder: Andrés Donoso
     <td>Componentes involucrados</td>
     <td>
       <ul>
-        <li>rf007</li>
         <li>Microservicio usuarios</li>
         <li>TrueNative</li>
       </ul>
