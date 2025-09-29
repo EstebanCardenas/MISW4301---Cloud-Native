@@ -156,9 +156,10 @@ Líder: Andrés Donoso
     <td>Gestionar el requerimiento rf005</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>  
+    <td>Consideraciones de diseño</td>
     <td>
-      El componente rf005 funciona como orquestador de la transacción entera. Al ser un orquestador central, puede convertirse en un punto único de fallo y un cuello de botella.
+      El componente <strong>rf005</strong> funciona como orquestador de la transacción completa. 
+      Al ser un orquestador central, puede convertirse en un punto único de fallo y un cuello de botella.
     </td>
   </tr>
   <tr>
@@ -185,14 +186,15 @@ Líder: Andrés Donoso
     <td>Gestionar las tarjetas de crédito de un usuario</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>  
+    <td>Consideraciones de diseño</td>
     <td>
-      El componente credit-cards maneja la creación de las tarjetas utilizando el servicio TrueNative. Al momento del registro, envía un mensaje a una cola SQS para vigilar el estado de la tarjeta.
+      El componente <strong>credit-cards</strong> maneja la creación de tarjetas utilizando el servicio TrueNative. 
+      Al momento del registro, envía un mensaje a una cola SQS para vigilar el estado de la tarjeta.
     </td>
   </tr>
   <tr>
     <td>Integraciones</td>
-    <td>Comunicación síncrona con TrueNative y asíncrona con la función Lambda que hace polling para el estado de la tarjeta
+    <td>Comunicación síncrona con TrueNative y asíncrona con la función Lambda que hace polling para el estado de la tarjeta.</td>
   </tr>
 </table>
 
@@ -214,14 +216,14 @@ Líder: Andrés Donoso
     <td>Gestionar los envíos de correos electrónicos</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>  
+    <td>Consideraciones de diseño</td>
     <td>
-      El componente notifications gestiona los envíos de correos electrónicos usando una integración con un proveedor de marketing email
+      El componente <strong>notifications</strong> gestiona los envíos de correos electrónicos mediante integración con un proveedor de email marketing.
     </td>
   </tr>
   <tr>
     <td>Integraciones</td>
-    <td>Comunicación síncrona con Sendgrid
+    <td>Comunicación síncrona con Sendgrid.</td>
   </tr>
 </table>
 
@@ -232,7 +234,7 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Código/Id del componente</td>
-    <td>consumer</td>
+    <td>consumer_lambda</td>
   </tr>
   <tr>
     <td>Tipo</td>
@@ -240,12 +242,13 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Responsabilidad</td>
-    <td>Consultar cada cierto tiempo si la respuesta de TrueNative ya se encuentra disponible para la tarjeta</td>
+    <td>Consultar periódicamente si la respuesta de TrueNative ya está disponible para la tarjeta.</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>  
+    <td>Consideraciones de diseño</td>
     <td>
-      El componente se ejecutará cada vez que hay disponible un mensaje en la cola para procesar, hay que tener en cuenta tiempos de ejecución, tener en cuenta el cold start y considerar el costo de ejecución según frecuencia de invocaciones.
+      El componente se ejecuta cuando hay mensajes disponibles en la cola. 
+      Se deben considerar tiempos de ejecución, cold start y costo según la frecuencia de invocaciones.
     </td>
   </tr>
   <tr>
@@ -261,7 +264,7 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Código/Id del componente</td>
-    <td>SQS</td>
+    <td>sqs_queue</td>
   </tr>
   <tr>
     <td>Tipo</td>
@@ -269,17 +272,18 @@ Líder: Andrés Donoso
   </tr>
   <tr>
     <td>Responsabilidad</td>
-    <td>Almacenar los mensajes enviados a la cola</td>
+    <td>Almacenar los mensajes enviados para su posterior procesamiento.</td>
   </tr>
   <tr>
-    <td>Consideraciones de diseño</td>  
+    <td>Consideraciones de diseño</td>
     <td>
-      Visibilidad del mensaje, retención de mensajes, tiempo de inicio del mensaje, todo lo anterior debe ser tenido en cuenta para un procesamiento exitoso.
+      Se deben configurar la visibilidad, la retención y el tiempo de vida de los mensajes 
+      para garantizar un procesamiento exitoso.
     </td>
   </tr>
   <tr>
     <td>Integraciones</td>
-    <td>Recibir mensajes del ECS de tarjetas de crédito y almacenar el mensaje hasta que la lambda lo procese satisfactoriamente.</td>
+    <td>Recibir mensajes del servicio de tarjetas de crédito y mantenerlos hasta que la Lambda los procese satisfactoriamente.</td>
   </tr>
 </table>
 
