@@ -64,6 +64,7 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
 9. [rf006](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf006)
 10. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
+11. [notifications](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/notifications_app)
 
 ## Despliegue aplicación completa entrega 3
 Para desplegar la aplicación puede correr el archivo `scripts/build_entrega_3.sh` o `scripts/build_entrega_3_with_input.sh`. Éste último toma las variables declaradas dentro de `scripts/define_inputs.sh` para facilitar la ejecución del comando.
