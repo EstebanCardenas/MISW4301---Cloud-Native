@@ -165,5 +165,5 @@ class CreditCardController:
         self.credit_card_repository.update(db, credit_card)
 
         self.http_client.send_notification(
-            user_email, credit_card.last_four_digits, credit_card.ruv
+            user_email, credit_card.last_four_digits, credit_card.ruv, new_status.value
         )

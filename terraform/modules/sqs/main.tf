@@ -4,7 +4,7 @@ resource "aws_sqs_queue" "main" {
   max_message_size           = 262144 # 256 KB
   message_retention_seconds  = 3600 # 1 hour
   receive_wait_time_seconds  = 1
-  visibility_timeout_seconds = 10
+  visibility_timeout_seconds = 3
 }
 
 #############################################################

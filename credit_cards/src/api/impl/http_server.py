@@ -15,6 +15,7 @@ from src.models.incoming.credit_cards import (
 from src.models.internal.filters import CreditCardFilter
 from src.models.internal.register_credit_card import RegisterCreditCard
 from src.models.out.credit_card import CreditCardResponse, RegisterCreditCardResponse
+from src.models.internal.credit_card import Status
 
 router = APIRouter(prefix="/credit-cards")
 
@@ -131,7 +132,15 @@ def update_credit_card_status(
     controller: CreditCardController = Depends(build_credit_card_controller),
     db=Depends(get_db),
 ):
-    controller.update_credit_card_status(
-        db, credit_card_id, body.newStatus, body.userEmail
-    )
+    match body.newStatus:
+        case "APROBADA":
+            status = Status.APROBADA
+
+        case "RECHAZADA":
+            status = Status.RECHAZADA
+
+        case _:
+            status = Status.POR_VERIFICAR
+
+    controller.update_credit_card_status(db, credit_card_id, status, body.userEmail)
     return {"msg": "Estado de la tarjeta de crédito actualizado"}

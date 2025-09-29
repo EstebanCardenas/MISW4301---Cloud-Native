@@ -130,7 +130,9 @@ class RequestsHttpClient(HttpClient):
                 "El servicio está temporalmente fuera de servicio.",
             )
 
-    def send_notification(self, email: str, card_number: str, ruv: str) -> None:
+    def send_notification(
+        self, email: str, card_number: str, ruv: str, status: str
+    ) -> None:
         try:
             response = requests.post(
                 f"{BASE_URLS[Service.NOTIFICATIONS]}/notifications",
@@ -141,6 +143,7 @@ class RequestsHttpClient(HttpClient):
                     "data": {
                         "numero_tarjeta": card_number,
                         "ruv": ruv,
+                        "estado": status,
                     },
                 },
                 timeout=(3, 10),
