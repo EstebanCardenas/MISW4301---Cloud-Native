@@ -5,7 +5,7 @@ metadata:
   name: credit-cards-app-secret
 type: Opaque
 stringData:
-  DATABASE_URL: "postgresql+psycopg2://postgres:12345678@terraform-20250928140533495200000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com:5432/danndb"
+  DATABASE_URL: "postgresql+psycopg2://postgres:12345678@terraform-20250929011950919700000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com:5432/danndb"
   # DATABASE_URL: "postgresql+psycopg2://postgres:12345678@dann-db-service:5432/danndb"
   TRUE_NATIVE_SERVICE_URL: "http://service-truenative"
   USERS_SERVICE_URL: "http://users-app-service/users"

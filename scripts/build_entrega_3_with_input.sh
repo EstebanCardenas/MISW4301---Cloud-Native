@@ -45,7 +45,13 @@ for IMG_NAME in "${IMG_LIST[@]}"; do
     fi
 
     printf "${BOLD_CYAN}Building and pushing image: $IMG_NAME${RESET}\n"
-    make dkbuild APP_NAME=$IMG_NAME APP_VERSION=$APP_VERSION DIR=$IMG_NAME ACCOUNT_ID=$AWS_ACCOUNT_ID
+    if [ "$IMG_NAME" == "credit_cards_app" ]; then
+        DIR="credit_cards"
+    else
+        DIR=$IMG_NAME
+    fi
+
+    make dkbuild APP_NAME=$IMG_NAME APP_VERSION=$APP_VERSION DIR=$DIR ACCOUNT_ID=$AWS_ACCOUNT_ID
     printf "${BOLD_CYAN}Pushing image: $IMG_NAME${RESET}\n"
     make dkpush APP_NAME=$IMG_NAME APP_VERSION=$APP_VERSION ACCOUNT_ID=$AWS_ACCOUNT_ID
 done
