@@ -170,6 +170,35 @@ Líder: Andrés Donoso
 <table>
   <tr>
     <th>Componente</th>
+    <th>credit-cards</th>
+  </tr>
+  <tr>
+    <td>Código/Id del componente</td>
+    <td>credit_cards_app</td>
+  </tr>
+  <tr>
+    <td>Tipo</td>
+    <td>Servicio</td>
+  </tr>
+  <tr>
+    <td>Responsabilidad</td>
+    <td>Gestionar las tarjetas de crédito de un usuario</td>
+  </tr>
+  <tr>
+    <td>Consideraciones de diseño</td>  
+    <td>
+      El componente credit-cards maneja la creación de las tarjetas utilizando el servicio TrueNative. Al momento del registro, envía un mensaje a una cola SQS para vigilar el estado de la tarjeta.
+    </td>
+  </tr>
+  <tr>
+    <td>Integraciones</td>
+    <td>Comunicación síncrona con TrueNative y asíncrona con la función Lambda que hace polling para el estado de la tarjeta
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th>Componente</th>
     <th>consumer</th>
   </tr>
   <tr>
@@ -224,6 +253,7 @@ Líder: Andrés Donoso
     <td>Recibir mensajes del ECS de tarjetas de crédito y almacenar el mensaje hasta que la lambda lo procese satisfactoriamente.</td>
   </tr>
 </table>
+
 
 ### Vista de despliegue
 
