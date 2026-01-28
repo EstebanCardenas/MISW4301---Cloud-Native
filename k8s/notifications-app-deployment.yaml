@@ -6,7 +6,6 @@ metadata:
 type: Opaque
 stringData:
   SENDGRID_FROM_EMAIL: d.corzos@uniandes.edu.co
-  SENDGRID_API_KEY: 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
 
 ---
 # App service
