@@ -46,7 +46,8 @@ spec:
     spec:
       containers:
         - name: rf004-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf004:2.0.0
+          # image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf004:2.0.0
+          image: rf004:3.0.0
           ports:
           - containerPort: 9000
           env:

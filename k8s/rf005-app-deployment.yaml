@@ -46,7 +46,8 @@ spec:
     spec:
       containers:
         - name: rf005-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf005:2.0.0
+          # image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf005:2.0.0
+          image: rf005:3.0.0
           ports:
             - containerPort: 9000
           livenessProbe:

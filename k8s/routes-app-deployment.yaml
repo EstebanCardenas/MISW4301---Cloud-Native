@@ -5,7 +5,8 @@ metadata:
   name: routes-app-secret
 type: Opaque
 stringData:
-  DATABASE_URL: "postgresql://postgres:12345678@terraform-20250914152707823100000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com:5432/danndb"
+  # DATABASE_URL: "postgresql://postgres:12345678@terraform-20250914152707823100000001.c1wwg4wiavc5.us-east-1.rds.amazonaws.com:5432/danndb"
+  DATABASE_URL: "postgresql://postgres:12345678@dann-db-service:5432/danndb"
 
 ---
 # App service
@@ -42,7 +43,8 @@ spec:
     spec:
       containers:
         - name: routes-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/routes_app:2.0.0
+          # image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/routes_app:2.0.0
+          image: routes_app:3.0.0
           ports:
             - containerPort: 9000
           livenessProbe:

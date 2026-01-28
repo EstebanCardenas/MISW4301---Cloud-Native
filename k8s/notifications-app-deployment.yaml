@@ -43,7 +43,8 @@ spec:
     spec:
       containers:
         - name: notifications-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/notifications_app:3.0.0
+          # image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/notifications_app:3.0.0
+          image: notifications_app:3.0.0
           ports:
             - containerPort: 9000
           livenessProbe:

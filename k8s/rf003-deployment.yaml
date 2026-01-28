@@ -46,8 +46,9 @@ spec:
     spec:
       containers:
         - name: rf003-app
-          image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf003:2.0.0
-          imagePullPolicy: Always
+          # image: 381492016771.dkr.ecr.us-east-1.amazonaws.com/rf003:2.0.0
+          image: rf003:3.0.0
+          # imagePullPolicy: Always
           ports:
           - containerPort: 3000
           env:
