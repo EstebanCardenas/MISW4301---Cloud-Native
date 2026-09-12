@@ -1,12 +1,50 @@
-# Cloud-native application — Group 1
+# Cloud-native ride-sharing backend — Group 1
 
-Master's course project for **MISW4301 — Cloud Application Development** (Universidad de los Andes). A set of Python microservices deployed on Kubernetes, with Terraform-managed infrastructure on AWS.
+Master's course project for **MISW4301 — Cloud Application Development** at **Universidad de los Andes**.
+
+This repository is a cloud-native backend for a ride-sharing marketplace: drivers publish trips, passengers make offers, and the platform matches them, scores users, and handles payments. The system is a set of independently deployable **Python microservices** running on **Amazon EKS**, with infrastructure provisioned by **Terraform**. Cross-service workflows (create trip, accept offer, complete ride) use the **Saga** pattern. Card onboarding talks to an external provider (**TrueNative**) through **SQS** and an **AWS Lambda** poller. Email goes out through **SendGrid**.
+
+The group (Andrés Donoso, Germán Martínez, Nicolás Cárdenas, Daniel Corzo) built and operated the stack as one delivery: Docker images, Kubernetes manifests, CI, and AWS (EKS, ELB, RDS-style DB secrets, Lambda, SQS).
+
+**Stack:** Python · Docker · Kubernetes · Terraform · Helm · AWS (EKS, Lambda, SQS, ELB) · GitHub Actions
+
+## What the system does
+
+| Service | Role |
+| --- | --- |
+| `users_app` | User accounts and identity |
+| `posts_app` | Trip / ride publications |
+| `routes_app` | Routes (`trayectos`) |
+| `offers_app` | Passenger offers on a trip |
+| `scores_app` | User scores / reputation |
+| `rf003` | Saga orchestrator (HTTP to posts, routes, users) |
+| `rf004` | Saga orchestrator (posts, routes, users, offers) |
+| `rf005` | Saga orchestrator for a later business flow |
+| `credit_cards` | Card registration via TrueNative; enqueues status checks |
+| `notifications_app` | Transactional email via SendGrid |
+| `consumer` | Lambda that reads SQS and polls TrueNative until a card is ready |
+
+Sagas trade a single distributed transaction for compensating steps. Orchestrators are easier to reason about than choreography, and they can also become a bottleneck or a single point of failure — that trade-off is documented in [docs/README.md](docs/README.md).
+
+## Architecture
+
+Component view:
+
+![Component view](docs/diagrams/components.png)
+
+Deployment view (EKS, load balancer, data stores, Lambda/SQS):
+
+![Deployment view](docs/diagrams/deployment.png)
+
+More views (entities, network, RF-003–007 flows) live under [`docs/diagrams`](docs/diagrams) and [`docs/README.md`](docs/README.md).
 
 ## Table of contents
 
+- [What the system does](#what-the-system-does)
+- [Architecture](#architecture)
 - [Project structure](#project-structure)
 - [Configuration file](#configuration-file)
-- [Per-application structure](#per-application-structure)
+- [Per-application docs](#per-application-docs)
 - [Deploy the full application (delivery 3)](#deploy-the-full-application-delivery-3)
 - [Deploy the full application](#deploy-the-full-application)
   - [Prerequisites](#prerequisites)
@@ -21,7 +59,7 @@ Master's course project for **MISW4301 — Cloud Application Development** (Univ
 .
 ├── github/
 │   └── workflows/          # Repository pipelines
-├── docs/                   # Technical documentation
+├── docs/                   # Architecture docs and diagrams
 ├── k8s/                    # Kubernetes deployment manifests
 ├── k8s_entrega_3/          # Kubernetes manifests for delivery 3
 ├── offers_app              # Offers service
@@ -29,33 +67,33 @@ Master's course project for **MISW4301 — Cloud Application Development** (Univ
 ├── routes_app              # Routes service
 ├── users_app               # Users service
 ├── scores_app              # Scores service
-├── rf003                   # Service for requirement RF003
-├── rf004                   # Service for requirement RF004
-├── rf005                   # Service for requirement RF005
-├── consumer                # Consumer
+├── rf003                   # Saga orchestrator RF003
+├── rf004                   # Saga orchestrator RF004
+├── rf005                   # Orchestrator RF005
+├── consumer                # SQS-triggered Lambda consumer
 ├── notifications_app       # Email notifications service
 ├── credit_cards            # Credit cards service
 ├── vale.ini                # Vale configuration
-├── config.yaml             # Repository configuration
-├── Makefile                # Evaluation scripts
+├── config.yaml             # Repository / evaluation configuration
+├── Makefile                # Evaluation and infra helper scripts
 └── README.md
 ```
 
-1. **github/workflows**: CI files used to validate the project.
+1. **github/workflows**: CI used to validate the project.
    * `ci_evaluador_entrega3.yml` checks Kubernetes configuration and runs tests for each application.
    * `ci_evaluador_unit.yml` runs unit tests.
 2. **k8s**: application configuration and deployment files.
-3. **docs**: technical documentation.
-4. **&lt;application&gt;**: one folder per application (offers, posts, routes, users, scores, rf003, rf004, rf005, credit_cards, notifications_app, consumer).
-5. **makefile**: used by the evaluation pipelines; includes utility scripts to build project infrastructure.
+3. **docs**: architecture documentation and diagrams.
+4. **Application folders**: one folder per service (offers, posts, routes, users, scores, rf003, rf004, rf005, credit_cards, notifications_app, consumer).
+5. **Makefile**: used by the evaluation pipelines; includes scripts to build infrastructure.
 
 ## Configuration file
 
-`config.yaml` holds the configuration used by the pipelines to evaluate the delivery.
+`config.yaml` holds the configuration used by the pipelines to evaluate the delivery (service folders, image tags, authors).
 
-## Per-application structure
+## Per-application docs
 
-For each application, use its own documentation to deploy it:
+Each service has its own README for local and cluster deploy:
 
 1. [offers](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/offers_app)
 2. [posts](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/posts_app)
@@ -116,7 +154,7 @@ Update the following files:
 
 Change the database host secret in each of them:
 
-![Database host secret configuration](./docs/readme-assets/secret-config.png)
+<img src="docs/readme-assets/secret-config.png" alt="Kubernetes secret showing the database host field" width="720" />
 
 ### 3. Build and push images
 
