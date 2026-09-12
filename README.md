@@ -1,61 +1,62 @@
-# Proyecto grupo 1
+# Cloud-native application — Group 1
 
-## Tabla de contenido
+Master's course project for **MISW4301 — Cloud Application Development** (Universidad de los Andes). A set of Python microservices deployed on Kubernetes, with Terraform-managed infrastructure on AWS.
 
-- [Proyecto grupo 1](#proyecto-grupo-1)
-  - [Tabla de contenido](#tabla-de-contenido)
-  - [Estructura del Proyecto](#estructura-del-proyecto)
-  - [Archivo de configuración](#archivo-de-configuración)
-  - [Estructura de cada aplicación](#estructura-de-cada-aplicación)
-  - [Despliegue aplicación completa entrega 3](#despliegue-aplicación-completa-entrega-3)
-  - [Despliegue de la aplicación completa](#despliegue-de-la-aplicación-completa)
-    - [Requisitos](#requisitos)
-    - [1. Creación de infraestructura](#1-creación-de-infraestructura)
-    - [2. Configuración base de datos](#2-configuración-base-de-datos)
-    - [3. Construir y subir imágenes](#3-construir-y-subir-imágenes)
-    - [4. Aplicar deployments](#4-aplicar-deployments)
+## Table of contents
 
-## Estructura del Proyecto
+- [Project structure](#project-structure)
+- [Configuration file](#configuration-file)
+- [Per-application structure](#per-application-structure)
+- [Deploy the full application (delivery 3)](#deploy-the-full-application-delivery-3)
+- [Deploy the full application](#deploy-the-full-application)
+  - [Prerequisites](#prerequisites)
+  - [1. Create infrastructure](#1-create-infrastructure)
+  - [2. Configure the database](#2-configure-the-database)
+  - [3. Build and push images](#3-build-and-push-images)
+  - [4. Apply deployments](#4-apply-deployments)
+
+## Project structure
 
 ```
 .
 ├── github/
-│   └── workflows/          # Pipelines del repositorio
-├── docs/                   # Archivos de documentación técnica
-├── k8s/                    # Archivos para despliegue en k8s
-├── k8s_entrega_3/          # Archivos para desplegar la 3ra entrega en k8s
-├── offers_app              # Aplicación de ofertas
-├── posts_app               # Aplicación de publicaciones
-├── routes_app              # Aplicación de trayectos
-├── users_app               # Aplicación de usuarios
-├── scores_app              # Aplicación de scores
-├── rf003                   # Aplicación para requerimiento rf003
-├── rf004                   # Aplicación para requerimiento rf004
-├── rf005                   # Aplicación para requerimiento rf005
+│   └── workflows/          # Repository pipelines
+├── docs/                   # Technical documentation
+├── k8s/                    # Kubernetes deployment manifests
+├── k8s_entrega_3/          # Kubernetes manifests for delivery 3
+├── offers_app              # Offers service
+├── posts_app               # Posts service
+├── routes_app              # Routes service
+├── users_app               # Users service
+├── scores_app              # Scores service
+├── rf003                   # Service for requirement RF003
+├── rf004                   # Service for requirement RF004
+├── rf005                   # Service for requirement RF005
 ├── consumer                # Consumer
-├── notifications_app       # Aplicación para enviar notificaciones por correo
-├── credit_cards            # Aplicación para tarjetas de crédito
-├── vale.ini                # Configuración para Vale.
-├── config.yaml             # Configuración del repositorio.
-├── Makefile                # Scripts para evaluación.
-└── README.md               
+├── notifications_app       # Email notifications service
+├── credit_cards            # Credit cards service
+├── vale.ini                # Vale configuration
+├── config.yaml             # Repository configuration
+├── Makefile                # Evaluation scripts
+└── README.md
 ```
 
-1. **github/workflows**: archivos de ci para validaciones del proyecto.
-   * `ci_evaluador_entrega3.yml` verifica configuración de k8s y ejecuta pruebas sobre cada aplicación.
-   * `ci_evaluador_unit.yml` ejecuta pruebas unitarias.
-2. **k8s**: archivos de configuración y despliegue de las aplicaciones.
-3. **docs**: archivos de la documentación técnica.
-4. **<aplicación>**: una carpeta por cada aplicación (offers, posts, routes, users, scores, rf003, rf004, rf005, credit_cards, notifications_app, consumer). 
-5. **makefile**: el archivo `makefile` es utilizado por los pipelines evaluadores, y contiene scripts de utilidad para construir la infraestructura del proyecto.
+1. **github/workflows**: CI files used to validate the project.
+   * `ci_evaluador_entrega3.yml` checks Kubernetes configuration and runs tests for each application.
+   * `ci_evaluador_unit.yml` runs unit tests.
+2. **k8s**: application configuration and deployment files.
+3. **docs**: technical documentation.
+4. **&lt;application&gt;**: one folder per application (offers, posts, routes, users, scores, rf003, rf004, rf005, credit_cards, notifications_app, consumer).
+5. **makefile**: used by the evaluation pipelines; includes utility scripts to build project infrastructure.
 
-## Archivo de configuración
+## Configuration file
 
-El archivo `config.yaml` contiene la configuración que se usa en los pipelines para evaluar la entrega.
+`config.yaml` holds the configuration used by the pipelines to evaluate the delivery.
 
-## Estructura de cada aplicación
+## Per-application structure
 
-Para cada aplicación creada, dirigirse a su documentación respectiva para realizar el despliegue
+For each application, use its own documentation to deploy it:
+
 1. [offers](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/offers_app)
 2. [posts](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/posts_app)
 3. [routes](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/routes_app)
@@ -64,28 +65,32 @@ Para cada aplicación creada, dirigirse a su documentación respectiva para real
 6. [rf003](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf003)
 7. [rf004](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf004)
 8. [rf005](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/rf005)
-10. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
-11. [notifications](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/notifications_app)
-12. [credit_cards](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/credit_cards)
+9. [consumer](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/consumer)
+10. [notifications](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/notifications_app)
+11. [credit_cards](https://github.com/MISW-4301-Desarrollo-Apps-en-la-Nube/s202514-proyecto-grupo1/tree/main/credit_cards)
 
-## Despliegue aplicación completa entrega 3
-Para desplegar la aplicación puede correr el archivo `scripts/build_entrega_3.sh` o `scripts/build_entrega_3_with_input.sh`. Éste último toma las variables declaradas dentro de `scripts/define_inputs.sh` para facilitar la ejecución del comando.
-Para la variable `APP_VERSION` utilice el tag `3.0.0`.
+## Deploy the full application (delivery 3)
 
-Este script construye todos los stacks, imágenes y K8s. En medio del proceso verás un mensaje para actualizar la url de la BD lo cual debes realizar en los siguientes archivos:
+To deploy the application, run `scripts/build_entrega_3.sh` or `scripts/build_entrega_3_with_input.sh`. The latter reads the variables declared in `scripts/define_inputs.sh` to make the command easier to run.
+
+For `APP_VERSION`, use the tag `3.0.0`.
+
+This script builds all stacks, images, and Kubernetes resources. Midway through you will see a prompt to update the database URL. Do that in these files:
+
 - [k8s_entrega_3/credit-cards-deployment.yaml](./k8s_entrega_3/credit-cards-deployment.yaml)
 - [k8s_entrega_3/users-app-deployment.yaml](./k8s_entrega_3/users-app-deployment.yaml)
 
-Al finalizar todo el proceso, hay que realizar un cambio en la Lambda para que apunte al balanceador de carga. Para esto, siga los siguientes pasos:
+When the process finishes, point the Lambda at the load balancer:
 
-1. Entrar a Lambda en AWS
-2. Seleccionar `consumer-application`
-3. Ir al tab de configuraciones > Variables de entorno
-4. Modificar las urls para que apunten al balanceador de carga. Esto lo debe hacer para todas las urls. E.g. http://a7a285d596d9945e8be36f438457d3af-1676330551.us-east-1.elb.amazonaws.com/... 
+1. Open AWS Lambda
+2. Select `consumer-application`
+3. Go to Configuration > Environment variables
+4. Update the URLs so they point at the load balancer. Do this for every URL, e.g. `http://a7a285d596d9945e8be36f438457d3af-1676330551.us-east-1.elb.amazonaws.com/...`
 
-## Despliegue de la aplicación completa
+## Deploy the full application
 
-### Requisitos
+### Prerequisites
+
 - terraform
 - kubectl
 - docker
@@ -93,39 +98,40 @@ Al finalizar todo el proceso, hay que realizar un cambio en la Lambda para que a
 - helm
 - make
 
-### 1. Creación de infraestructura
+### 1. Create infrastructure
+
 ```
 bash scripts/build_stacks.sh
 ```
 
-### 2. Configuración base de datos
+### 2. Configure the database
 
-<p>
-Entrar a los siguientes archivos:
-</p>
-<ul>
-  <li>k8s/offers-app-deployment</li>
-  <li>k8s/posts-app-deployment</li>
-  <li>k8s/routes-app-deployment</li>
-  <li>k8s/scores-app-deployment</li>
-  <li>k8s/users-app-deployment</li>
-</ul>
+Update the following files:
 
-Y actualizar el secreto del host de la base de datos en cada uno de ellos:
+- `k8s/offers-app-deployment`
+- `k8s/posts-app-deployment`
+- `k8s/routes-app-deployment`
+- `k8s/scores-app-deployment`
+- `k8s/users-app-deployment`
 
-![alt text](./docs/readme-assets/secret-config.png)
+Change the database host secret in each of them:
 
-### 3. Construir y subir imágenes
+![Database host secret configuration](./docs/readme-assets/secret-config.png)
+
+### 3. Build and push images
 
 ```
 bash scripts/build_images.sh
 ```
 
-### 4. Aplicar deployments
+### 4. Apply deployments
+
 ```bash
 bash scripts/build_k8s.sh
 ```
 
-Puede que en este paso no se haya podido aplicar la configuración del ingress. Si se obtiene un mensaje de error relacionado a esto, correr el siguiente comando:
+Ingress configuration may fail at this step. If you get an ingress-related error, run:
 
-`kubectl apply -f ./k8s`
+```bash
+kubectl apply -f ./k8s
+```
