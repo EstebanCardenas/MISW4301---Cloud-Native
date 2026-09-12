@@ -152,9 +152,7 @@ Update the following files:
 - `k8s/scores-app-deployment`
 - `k8s/users-app-deployment`
 
-Change the database host secret in each of them:
-
-<img src="docs/readme-assets/secret-config.png" alt="Kubernetes secret showing the database host field" width="720" />
+Change the database host secret in each of them (the `DB_HOST` field in the Kubernetes secret for that deployment).
 
 ### 3. Build and push images
 
